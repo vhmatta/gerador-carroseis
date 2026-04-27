@@ -20,6 +20,8 @@ import {
   ExternalLink,
   Palette,
   RotateCcw,
+  FileText,
+  X,
 } from "lucide-react";
 import CarrosselSlide, {
   SlideData,
@@ -36,6 +38,12 @@ import {
   ErroParseIA,
   chamarIADireto,
 } from "../lib/formatarCarrossel";
+import {
+  parsearTextoColado,
+  sincronizarSlides,
+  ErroParseTexto,
+  EXEMPLO_TEXTO_COLADO,
+} from "../lib/parsearTextoColado";
 import { TEMAS_DISPONIVEIS, obterTema } from "./temas";
 import { FONTE_LABELS, FONTE_FAMILIAS } from "./temas/tipos";
 
@@ -76,9 +84,31 @@ export default function CarrosselEditor() {
   const [temaIA, setTemaIA] = useState("");
   const [respostaIA, setRespostaIA] = useState("");
   const [mostrarPainelIA, setMostrarPainelIA] = useState(false);
+  const [mostrarPainelCola, setMostrarPainelCola] = useState(false);
+  const [textoColado, setTextoColado] = useState("");
   const [promptCopiado, setPromptCopiado] = useState(false);
   const [gerandoViaAPI, setGerandoViaAPI] = useState(false);
   const [modeloIA, setModeloIA] = useState("anthropic/claude-3.5-sonnet");
+  // Chave manual OpenRouter (opcional). Persiste no localStorage do usuário.
+  const [chaveManualIA, setChaveManualIA] = useState<string>(() => {
+    try {
+      return localStorage.getItem("openrouter_api_key_manual") || "";
+    } catch {
+      return "";
+    }
+  });
+  const atualizarChaveManual = useCallback((nova: string) => {
+    setChaveManualIA(nova);
+    try {
+      if (nova.trim()) {
+        localStorage.setItem("openrouter_api_key_manual", nova.trim());
+      } else {
+        localStorage.removeItem("openrouter_api_key_manual");
+      }
+    } catch {
+      // localStorage indisponível — não bloqueia uso
+    }
+  }, []);
   const slideRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const temaAtivo = useMemo(() => obterTema(temaId), [temaId]);
@@ -206,6 +236,45 @@ export default function CarrosselEditor() {
     }
   };
 
+  // ====== PROCESSAR TEXTO COLADO (modo offline, sem IA) ======
+  const processarTextoColado = () => {
+    if (!textoColado.trim()) {
+      setStatus({ tipo: "erro", msg: "Cole algum conteúdo no campo." });
+      return;
+    }
+    try {
+      const { slides: novosSlides, avisos } = parsearTextoColado(textoColado);
+      // Sincroniza com slides atuais (preserva fotos)
+      const slidesFinais = sincronizarSlides(slides, novosSlides);
+      setSlides(slidesFinais);
+      setIndiceAtivo(0);
+      setMostrarPainelCola(false);
+      setTextoColado("");
+
+      const numAdicionados = Math.max(0, novosSlides.length - slides.length);
+      const numRemovidos = Math.max(0, slides.length - novosSlides.length);
+
+      let msg = `${novosSlides.length} ${novosSlides.length === 1 ? "slide aplicado" : "slides aplicados"}`;
+      if (numAdicionados > 0) msg += ` (+${numAdicionados} novos)`;
+      if (numRemovidos > 0) msg += ` (-${numRemovidos} removidos)`;
+      if (avisos.length > 0) msg += ` · ${avisos.length} ${avisos.length === 1 ? "aviso" : "avisos"}`;
+
+      setStatus({ tipo: "sucesso", msg });
+      setTimeout(() => setStatus({ tipo: "idle" }), 5000);
+
+      // Mostra avisos no console pra debug
+      if (avisos.length > 0) {
+        console.warn("Avisos do parser:", avisos);
+      }
+    } catch (err: any) {
+      const msg =
+        err instanceof ErroParseTexto
+          ? err.message
+          : err?.message || "Erro ao processar o texto.";
+      setStatus({ tipo: "erro", msg });
+    }
+  };
+
   // ====== GERAR VIA API DIRETA (Vercel Function + OpenRouter) ======
   const gerarViaAPI = async () => {
     if (!temaIA.trim()) {
@@ -220,6 +289,7 @@ export default function CarrosselEditor() {
         marca,
         temaVisual: temaAtivo,
         modelo: modeloIA,
+        apiKey: chaveManualIA.trim() || undefined,
       });
       // Preserva fotos existentes
       const comFotos: SlideData[] = resultado.slides.map((n, i) => ({
@@ -331,7 +401,25 @@ export default function CarrosselEditor() {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
-              onClick={() => setMostrarPainelIA((v) => !v)}
+              onClick={() => {
+                setMostrarPainelCola((v) => !v);
+                if (!mostrarPainelCola) setMostrarPainelIA(false);
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                mostrarPainelCola
+                  ? "bg-[#FFC528] text-black"
+                  : "bg-[#1a1a1a] border border-gray-800 text-gray-300 hover:border-[#FFC528] hover:text-white"
+              }`}
+              title="Cole texto pronto e o app organiza nos slides"
+            >
+              <FileText size={16} />
+              Colar conteúdo
+            </button>
+            <button
+              onClick={() => {
+                setMostrarPainelIA((v) => !v);
+                if (!mostrarPainelIA) setMostrarPainelCola(false);
+              }}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${
                 mostrarPainelIA
                   ? "bg-[#FFC528] text-black"
@@ -380,6 +468,18 @@ export default function CarrosselEditor() {
             gerandoViaAPI={gerandoViaAPI}
             modeloIA={modeloIA}
             onModeloChange={setModeloIA}
+            chaveManualIA={chaveManualIA}
+            onChaveManualChange={atualizarChaveManual}
+          />
+        )}
+
+        {/* Painel de Cola de Texto */}
+        {mostrarPainelCola && (
+          <PainelCola
+            texto={textoColado}
+            onTextoChange={setTextoColado}
+            onAplicar={processarTextoColado}
+            onFechar={() => setMostrarPainelCola(false)}
           />
         )}
 
@@ -696,6 +796,150 @@ function IconBtn({
 }
 
 // ============================================================
+// PAINEL DE COLA DE TEXTO — formato rotulado, sem IA
+// ============================================================
+function PainelCola({
+  texto,
+  onTextoChange,
+  onAplicar,
+  onFechar,
+}: {
+  texto: string;
+  onTextoChange: (v: string) => void;
+  onAplicar: () => void;
+  onFechar: () => void;
+}) {
+  const [mostrarExemplo, setMostrarExemplo] = useState(false);
+  const numLinhas = texto.split("\n").length;
+  const numSlidesEstimado = (() => {
+    if (!texto.trim()) return 0;
+    // Conta separadores explícitos
+    const porSlideMarker = (texto.match(/^[\s]*(?:={3,}\s*)?(?:SLIDE)\s*(?:[#:.]?\s*\d+)?(?:\s*={3,})?[\s]*$/gim) || []).length;
+    if (porSlideMarker > 0) return porSlideMarker;
+    // Conta divisores ---
+    const porDivisor = (texto.match(/^[\s]*-{3,}[\s]*$/gm) || []).length;
+    if (porDivisor > 0) return porDivisor + 1;
+    // Conta blocos separados por linha em branco dupla
+    const porLinhaBranca = texto.split(/\n\s*\n\s*\n+/).filter(b => b.trim()).length;
+    if (porLinhaBranca > 1) return porLinhaBranca;
+    // Conta blocos por linha em branco simples (se cada um tem KICKER/HEADLINE)
+    const blocos = texto.split(/\n\s*\n/).filter(b => b.trim());
+    return blocos.length || 1;
+  })();
+
+  return (
+    <div className="bg-gradient-to-br from-[#1a1a1a] to-[#141414] border border-[#FFC528]/30 rounded-xl p-5 space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-[#FFC528]">
+          <FileText size={18} />
+          <h3 className="text-sm font-bold uppercase tracking-wider">
+            Colar conteúdo
+          </h3>
+          <span className="text-[10px] text-gray-500 normal-case font-normal">
+            · sem usar IA, organiza o texto direto nos slides
+          </span>
+        </div>
+        <button
+          onClick={onFechar}
+          className="text-gray-500 hover:text-white transition-colors"
+          title="Fechar"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      <p className="text-xs text-gray-400 leading-relaxed">
+        Cole texto rotulado (formato <code className="text-[#FFC528]">KICKER:</code>, <code className="text-[#FFC528]">HEADLINE:</code>, <code className="text-[#FFC528]">CORPO:</code>...). 
+        Separe slides com linha em branco dupla, <code className="text-[#FFC528]">---</code>, ou marcadores <code className="text-[#FFC528]">SLIDE 1</code>, <code className="text-[#FFC528]">SLIDE 2</code>.
+        O número de slides do app é ajustado automaticamente.
+      </p>
+
+      {/* Stats */}
+      <div className="flex items-center gap-4 text-[11px] text-gray-500">
+        <span>📝 {numLinhas} {numLinhas === 1 ? "linha" : "linhas"}</span>
+        <span>🎴 {numSlidesEstimado} {numSlidesEstimado === 1 ? "slide detectado" : "slides detectados"}</span>
+        <button
+          onClick={() => setMostrarExemplo((v) => !v)}
+          className="ml-auto text-[#FFC528] hover:underline"
+        >
+          {mostrarExemplo ? "Esconder exemplo" : "Ver exemplo de formato"}
+        </button>
+      </div>
+
+      {/* Exemplo */}
+      {mostrarExemplo && (
+        <div className="bg-[#0f0f0f] border border-gray-800 rounded-md p-4 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">
+              Formato esperado
+            </span>
+            <button
+              onClick={() => onTextoChange(EXEMPLO_TEXTO_COLADO)}
+              className="text-[10px] text-[#FFC528] hover:underline"
+            >
+              Usar este exemplo
+            </button>
+          </div>
+          <pre className="text-[11px] text-gray-400 font-mono whitespace-pre-wrap leading-relaxed">
+{EXEMPLO_TEXTO_COLADO}
+          </pre>
+          <div className="text-[10px] text-gray-600 pt-2 border-t border-gray-800 space-y-1">
+            <div><strong className="text-gray-400">Rótulos aceitos:</strong> KICKER, HEADLINE/TITULO, CORPO/TEXTO, DESTAQUE, NUMERO, LEGENDA, PILL/CTA, LAYOUT, CORFUNDO/FUNDO</div>
+            <div><strong className="text-gray-400">Cores de fundo:</strong> preto, amarelo, bege, branco</div>
+            <div><strong className="text-gray-400">Multi-linha:</strong> se um campo continua na linha de baixo, basta não começar com outro RÓTULO:</div>
+          </div>
+        </div>
+      )}
+
+      {/* Textarea */}
+      <textarea
+        value={texto}
+        onChange={(e) => onTextoChange(e.target.value)}
+        placeholder={`Cole seu conteúdo aqui. Por exemplo:
+
+KICKER: TESE Nº 1
+HEADLINE: Por décadas, algo foi assunto de poucos.
+CORPO: Aqui você desenvolve o tema...
+DESTAQUE: E então aconteceu a virada.
+
+---
+
+KICKER: O DADO
+HEADLINE: +32%
+CORPO: Justifique o número.`}
+        rows={14}
+        className="w-full bg-[#0f0f0f] border border-gray-800 rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#FFC528] resize-y font-mono"
+        spellCheck={false}
+      />
+
+      {/* Ações */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <p className="text-[10px] text-gray-600 flex-1 min-w-0">
+          💡 Os slides existentes vão ser{" "}
+          <strong className="text-gray-400">substituídos</strong>, mas as fotos
+          já carregadas são <strong className="text-gray-400">preservadas</strong>.
+        </p>
+        <button
+          onClick={() => onTextoChange("")}
+          disabled={!texto}
+          className="text-[11px] text-gray-500 hover:text-white px-3 py-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          Limpar
+        </button>
+        <button
+          onClick={onAplicar}
+          disabled={!texto.trim()}
+          className="flex items-center gap-2 px-5 py-2 rounded-md text-sm font-bold bg-[#FFC528] text-black hover:bg-[#ffd55a] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <CheckCircle2 size={16} />
+          Aplicar {numSlidesEstimado > 0 ? `(${numSlidesEstimado} ${numSlidesEstimado === 1 ? "slide" : "slides"})` : ""}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // PAINEL DE IA — API direta (Vercel) OU copiar prompt + colar
 // ============================================================
 function PainelIA({
@@ -712,6 +956,8 @@ function PainelIA({
   gerandoViaAPI,
   modeloIA,
   onModeloChange,
+  chaveManualIA,
+  onChaveManualChange,
 }: {
   tema: string;
   onTemaChange: (v: string) => void;
@@ -726,10 +972,14 @@ function PainelIA({
   gerandoViaAPI: boolean;
   modeloIA: string;
   onModeloChange: (m: string) => void;
+  chaveManualIA: string;
+  onChaveManualChange: (v: string) => void;
 }) {
   const temPrompt = Boolean(prompt);
   const temResposta = Boolean(resposta.trim());
   const [modoAvancado, setModoAvancado] = useState(false);
+  const [mostrarChave, setMostrarChave] = useState(false);
+  const [expandirChaveManual, setExpandirChaveManual] = useState(Boolean(chaveManualIA));
 
   return (
     <div className="bg-gradient-to-br from-[#1a1a1a] to-[#141414] border border-[#FFC528]/30 rounded-xl p-5 space-y-5">
@@ -794,21 +1044,94 @@ function PainelIA({
             <optgroup label="💎 Premium (melhor qualidade)">
               <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (recomendado)</option>
               <option value="openai/gpt-4o">GPT-4o</option>
-              <option value="anthropic/claude-3.5-haiku">Claude 3.5 Haiku (mais barato)</option>
-              <option value="openai/gpt-4o-mini">GPT-4o mini (mais barato)</option>
+              <option value="anthropic/claude-3.5-haiku">Claude 3.5 Haiku (barato e ótimo)</option>
+              <option value="openai/gpt-4o-mini">GPT-4o mini (barato)</option>
+              <option value="google/gemini-flash-1.5">Gemini Flash 1.5 (rápido)</option>
+              <option value="deepseek/deepseek-chat">DeepSeek Chat</option>
             </optgroup>
             <optgroup label="🆓 Grátis (tier gratuito OpenRouter)">
-              <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (grátis)</option>
+              <option value="deepseek/deepseek-r1:free">DeepSeek R1 (grátis · qualidade alta)</option>
               <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (grátis)</option>
-              <option value="deepseek/deepseek-r1:free">DeepSeek R1 (grátis)</option>
               <option value="qwen/qwen-2.5-72b-instruct:free">Qwen 2.5 72B (grátis)</option>
-              <option value="mistralai/mistral-nemo:free">Mistral Nemo (grátis)</option>
+              <option value="mistralai/mistral-nemo:free">Mistral Nemo (grátis · leve)</option>
+              <option value="google/gemma-2-9b-it:free">Gemma 2 9B (grátis · leve)</option>
             </optgroup>
           </select>
 
+          {/* ====== CHAVE MANUAL (toggle) ====== */}
+          <div className="border border-gray-800 rounded-md overflow-hidden">
+            <button
+              onClick={() => setExpandirChaveManual((v) => !v)}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-[#0f0f0f] hover:bg-[#141414] transition-colors text-xs"
+            >
+              <span className="flex items-center gap-2 text-gray-400">
+                <span className="text-[#FFC528]">🔑</span>
+                <span className="font-bold uppercase tracking-wider">
+                  Chave manual (opcional)
+                </span>
+                {chaveManualIA && (
+                  <span className="bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded text-[9px] font-bold">
+                    ATIVA
+                  </span>
+                )}
+              </span>
+              <span className="text-gray-600 text-[10px]">
+                {expandirChaveManual ? "▲ ocultar" : "▼ expandir"}
+              </span>
+            </button>
+
+            {expandirChaveManual && (
+              <div className="p-3 bg-[#0a0a0a] border-t border-gray-800 space-y-2">
+                <p className="text-[10px] text-gray-500 leading-relaxed">
+                  Cole sua chave do OpenRouter aqui se quiser usar a sua conta em vez
+                  da configurada na Vercel. A chave fica salva no localStorage do seu
+                  navegador (não vai pro repositório, log ou servidor além do OpenRouter).
+                  Ideal pra escolher o modelo grátis sem rate-limit ou usar créditos próprios.
+                </p>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type={mostrarChave ? "text" : "password"}
+                      value={chaveManualIA}
+                      onChange={(e) => onChaveManualChange(e.target.value)}
+                      placeholder="sk-or-v1-..."
+                      className="w-full bg-[#0f0f0f] border border-gray-800 rounded-md px-3 py-2 pr-9 text-xs text-white placeholder:text-gray-700 focus:outline-none focus:border-[#FFC528] font-mono"
+                    />
+                    <button
+                      onClick={() => setMostrarChave((v) => !v)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#FFC528] text-[10px]"
+                      title={mostrarChave ? "Ocultar" : "Mostrar"}
+                    >
+                      {mostrarChave ? "🙈" : "👁️"}
+                    </button>
+                  </div>
+                  {chaveManualIA && (
+                    <button
+                      onClick={() => onChaveManualChange("")}
+                      className="px-3 py-2 bg-[#1a0f0f] border border-red-900/40 rounded-md text-[10px] text-red-400 hover:bg-red-900/20 hover:border-red-700 transition-colors font-bold uppercase tracking-wider"
+                      title="Remover chave do localStorage"
+                    >
+                      Limpar
+                    </button>
+                  )}
+                </div>
+                <a
+                  href="https://openrouter.ai/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-[#FFC528] hover:underline inline-flex items-center gap-1"
+                >
+                  → Pegar/criar chave no OpenRouter
+                </a>
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <p className="text-[10px] text-gray-600 flex-1 min-w-0">
-              Requer <code className="text-[#FFC528]">OPENROUTER_API_KEY</code> configurada no Vercel.
+              {chaveManualIA
+                ? "Usando sua chave manual (do navegador)"
+                : <>Usando <code className="text-[#FFC528]">OPENROUTER_API_KEY</code> da Vercel</>}
             </p>
             <button
               onClick={onGerarViaAPI}

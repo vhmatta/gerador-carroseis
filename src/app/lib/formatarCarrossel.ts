@@ -237,12 +237,16 @@ export interface ChamarIAOpcoes {
   marca: string;
   temaVisual: TemaConfig;
   modelo?: string;
+  /** Chave OpenRouter manual (opcional). Se omitida, usa a configurada na Vercel. */
+  apiKey?: string;
 }
 
 export interface ChamarIAResultado {
   slides: SlideData[];
   modelo: string;
   respostaCrua: string;
+  /** "manual" se usou a chave passada pelo usuário, "vercel" se usou a env var */
+  fonteDaChave?: "manual" | "vercel";
 }
 
 export async function chamarIADireto(opcoes: ChamarIAOpcoes): Promise<ChamarIAResultado> {
@@ -258,7 +262,11 @@ export async function chamarIADireto(opcoes: ChamarIAOpcoes): Promise<ChamarIARe
     resp = await fetch("/api/ia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, model: opcoes.modelo }),
+      body: JSON.stringify({
+        prompt,
+        model: opcoes.modelo,
+        ...(opcoes.apiKey ? { apiKey: opcoes.apiKey } : {}),
+      }),
     });
   } catch (err: any) {
     throw new ErroParseIA(
@@ -274,9 +282,10 @@ export async function chamarIADireto(opcoes: ChamarIAOpcoes): Promise<ChamarIARe
   const data = await resp.json();
   const textoCru = data?.texto || "";
   const modelo = data?.modelo || opcoes.modelo || "desconhecido";
+  const fonteDaChave = data?.fonteDaChave;
 
   const slides = parsearRespostaIA(textoCru);
-  return { slides, modelo, respostaCrua: textoCru };
+  return { slides, modelo, respostaCrua: textoCru, fonteDaChave };
 }
 
 function normalizarSlide(bruto: SlideIABruto, i: number): SlideData {
