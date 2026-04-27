@@ -7,33 +7,52 @@
  *   Valor: sk-or-v1-...
  *
  * O frontend chama POST /api/ia com { prompt, model? } e recebe { texto } ou { error }.
+ *
+ * v6.1 — adiciona retry automático com modelos backup quando o principal está lotado.
  */
 
 export const config = {
   runtime: "edge",
 };
 
-// Modelos sugeridos do OpenRouter. O usuário pode passar qualquer model slug válido.
+// Modelos válidos no OpenRouter (verificados em abril/2026).
 const MODELOS_PERMITIDOS = [
+  // Premium (pagos)
   "anthropic/claude-3.5-sonnet",
   "anthropic/claude-3.5-haiku",
   "openai/gpt-4o",
   "openai/gpt-4o-mini",
-  "google/gemini-2.0-flash-exp:free",
   "google/gemini-flash-1.5",
-  "meta-llama/llama-3.3-70b-instruct",
-  "meta-llama/llama-3.3-70b-instruct:free",
   "deepseek/deepseek-chat",
+  // Grátis
+  "google/gemini-2.0-flash-exp:free",
+  "meta-llama/llama-3.3-70b-instruct:free",
   "deepseek/deepseek-r1:free",
   "qwen/qwen-2.5-72b-instruct:free",
   "mistralai/mistral-nemo:free",
-  "google/gemma-4-26b-a4b-it:free",
+  "google/gemma-2-9b-it:free",
+];
+
+// Cadeia de fallback: se o modelo escolhido falhar com 429/500, tenta esses (em ordem).
+const FALLBACKS_GRATIS = [
+  "google/gemini-2.0-flash-exp:free",
+  "deepseek/deepseek-r1:free",
+  "qwen/qwen-2.5-72b-instruct:free",
+  "mistralai/mistral-nemo:free",
+];
+
+const FALLBACKS_PAGOS = [
+  "anthropic/claude-3.5-haiku",
+  "openai/gpt-4o-mini",
+  "google/gemini-flash-1.5",
 ];
 
 const MODELO_DEFAULT = "anthropic/claude-3.5-sonnet";
 
+// Status que justificam tentar outro modelo (sem dar erro pro usuário).
+const STATUS_RETRY = [408, 429, 500, 502, 503, 504];
+
 export default async function handler(req: Request): Promise<Response> {
-  // CORS básico (útil em dev local)
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -73,56 +92,133 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const modelSolicitado = body.model || MODELO_DEFAULT;
-  // Permite qualquer modelo do OpenRouter, mas loga se estiver fora da lista conhecida
-  const modelFinal = modelSolicitado;
-
   const systemPrompt =
     body.system ||
     "Você é um assistente que responde estritamente no formato solicitado pelo usuário. Se for pedido JSON, responda APENAS com o JSON puro, sem markdown, sem texto antes ou depois.";
 
-  try {
-    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://gerador-potencial.vercel.app",
-        "X-Title": "Gerador Potencial",
-      },
-      body: JSON.stringify({
-        model: modelFinal,
-        max_tokens: 4000,
-        temperature: 0.7,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
+  // Monta a cadeia de tentativas: modelo escolhido + fallbacks da mesma categoria
+  const ehGratis = modelSolicitado.includes(":free");
+  const cadeiaModelos = [
+    modelSolicitado,
+    ...(ehGratis ? FALLBACKS_GRATIS : FALLBACKS_PAGOS).filter(
+      (m) => m !== modelSolicitado
+    ),
+  ];
 
-    if (!resp.ok) {
-      const texto = await resp.text().catch(() => "");
-      return json(
+  // Tenta cada modelo da cadeia até um funcionar
+  let ultimoErro = "";
+  let ultimoStatus = 502;
+  const tentativasFalhas: string[] = [];
+
+  for (const modelAtual of cadeiaModelos) {
+    try {
+      const resp = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
         {
-          error: `OpenRouter retornou ${resp.status}: ${texto.slice(0, 400)}`,
-        },
-        resp.status === 401 ? 401 : 502
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://gerador-potencial.vercel.app",
+            "X-Title": "Gerador Potencial",
+          },
+          body: JSON.stringify({
+            model: modelAtual,
+            max_tokens: 4000,
+            temperature: 0.7,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: prompt },
+            ],
+          }),
+        }
       );
-    }
 
-    const data = await resp.json();
-    const texto = data?.choices?.[0]?.message?.content;
-    if (!texto || typeof texto !== "string") {
-      return json({ error: "Resposta da IA vazia ou malformada." }, 502);
-    }
+      if (resp.ok) {
+        const data = await resp.json();
+        const texto = data?.choices?.[0]?.message?.content;
+        if (!texto || typeof texto !== "string") {
+          ultimoErro = "Resposta vazia ou malformada";
+          tentativasFalhas.push(`${modelAtual}: resposta vazia`);
+          continue;
+        }
+        return json({
+          texto,
+          modelo: modelAtual,
+          modeloSolicitado: modelSolicitado,
+          tentativasFalhas: tentativasFalhas.length > 0 ? tentativasFalhas : undefined,
+        });
+      }
 
-    return json({ texto, modelo: modelFinal });
-  } catch (err: any) {
-    return json(
-      { error: `Erro ao chamar OpenRouter: ${err?.message || String(err)}` },
-      502
-    );
+      // Não OK — captura o erro
+      const textoErro = await resp.text().catch(() => "");
+      ultimoStatus = resp.status;
+      ultimoErro = traduzirErro(resp.status, textoErro);
+      tentativasFalhas.push(`${modelAtual}: ${ultimoErro}`);
+
+      // Se NÃO é erro de retry (ex: 401 unauthorized, 400 bad request), para imediatamente
+      if (!STATUS_RETRY.includes(resp.status)) {
+        break;
+      }
+    } catch (err: any) {
+      ultimoErro = `Erro de rede: ${err?.message || String(err)}`;
+      tentativasFalhas.push(`${modelAtual}: ${ultimoErro}`);
+    }
   }
+
+  // Todos os modelos da cadeia falharam
+  return json(
+    {
+      error: montarMensagemFinal(ultimoErro, tentativasFalhas, ehGratis),
+      tentativasFalhas,
+    },
+    ultimoStatus === 401 ? 401 : 502
+  );
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function traduzirErro(status: number, textoErro: string): string {
+  const erro = textoErro.toLowerCase();
+
+  if (status === 401) {
+    return "Chave de API inválida ou revogada (verifique em openrouter.ai/keys)";
+  }
+  if (status === 402 || erro.includes("insufficient")) {
+    return "Sem créditos suficientes na conta do OpenRouter";
+  }
+  if (status === 404) {
+    return "Modelo não existe ou foi descontinuado";
+  }
+  if (status === 429) {
+    return "Modelo sobrecarregado (rate-limited) — tentando outro modelo";
+  }
+  if (status === 408 || status === 504) {
+    return "Timeout — modelo demorou demais pra responder";
+  }
+  if (status >= 500) {
+    return "OpenRouter ou provedor com erro temporário";
+  }
+  return `HTTP ${status}: ${textoErro.slice(0, 200)}`;
+}
+
+function montarMensagemFinal(
+  ultimoErro: string,
+  tentativas: string[],
+  ehGratis: boolean
+): string {
+  if (tentativas.length === 1) {
+    return `Falha: ${ultimoErro}`;
+  }
+
+  const modelosTentados = tentativas.length;
+  const sugestao = ehGratis
+    ? "Os modelos grátis estão muito demandados agora. Tente daqui a alguns minutos, ou use um modelo pago (Claude Haiku é o mais barato)."
+    : "Verifique sua chave e créditos no OpenRouter.";
+
+  return `Tentei ${modelosTentados} modelos sem sucesso. Último erro: ${ultimoErro}. ${sugestao}`;
 }
 
 function json(data: any, status = 200): Response {
