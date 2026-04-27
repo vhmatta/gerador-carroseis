@@ -27,6 +27,7 @@ const MODELOS_PERMITIDOS = [
   "deepseek/deepseek-r1:free",
   "qwen/qwen-2.5-72b-instruct:free",
   "mistralai/mistral-nemo:free",
+  "google/gemma-4-26b-a4b-it:free",
 ];
 
 const MODELO_DEFAULT = "anthropic/claude-3.5-sonnet";
