@@ -49,13 +49,13 @@ function LayoutFotoCheia({ slide, tema, marca, numero, coresResolvidas }: Layout
       />
       <Topbar cor={CORES.amarelo} marca={marca} numero={numero} />
       <div style={{ position: "absolute", bottom: 90, left: 56, right: 56, color: CORES.branco }}>
-        <Kicker texto={slide.kicker} cor={coresResolvidas.kicker} accent={CORES.amarelo} />
+        <Kicker texto={slide.kicker} cor={coresResolvidas.kicker} accent={CORES.amarelo} slide={slide}/>
         <Headline texto={slide.headline} cor={coresResolvidas.headline} tamanho={98} fontFamily={fonteHeadline}
           slide={slide}
         />
         {slide.destaque && (
           <div style={{ marginTop: 22 }}>
-            <Destaque texto={slide.destaque} cor={coresResolvidas.destaque} fontFamily={fonteHeadline} />
+            <Destaque texto={slide.destaque} cor={coresResolvidas.destaque} fontFamily={fonteHeadline} slide={slide}/>
           </div>
         )}
         {slide.mostrarPill && slide.textoPill && (
@@ -92,18 +92,18 @@ function LayoutSplitHorizontal({ slide, tema, marca, numero, coresResolvidas }: 
           flexDirection: "column",
         }}
       >
-        <Kicker texto={slide.kicker} cor={coresResolvidas.kicker} accent={CORES.amarelo} />
+        <Kicker texto={slide.kicker} cor={coresResolvidas.kicker} accent={CORES.amarelo} slide={slide}/>
         <Headline texto={slide.headline} cor={coresResolvidas.headline === CORES.amarelo ? CORES.branco : coresResolvidas.headline} tamanho={64} fontFamily={fonteHeadline}
           slide={slide}
         />
         {slide.corpo && (
           <div style={{ marginTop: 24 }}>
-            <Corpo texto={slide.corpo} cor={CORES.branco} fontFamily={tema.fonteCorpo} />
+            <Corpo texto={slide.corpo} cor={CORES.branco} fontFamily={tema.fonteCorpo} slide={slide}/>
           </div>
         )}
         {slide.destaque && (
           <div style={{ marginTop: 20 }}>
-            <Destaque texto={slide.destaque} cor={coresResolvidas.destaque} fontFamily={fonteHeadline} />
+            <Destaque texto={slide.destaque} cor={coresResolvidas.destaque} fontFamily={fonteHeadline} slide={slide}/>
           </div>
         )}
       </div>
@@ -127,13 +127,13 @@ function LayoutSplitInvertido({ slide, tema, marca, numero, coresResolvidas }: L
       />
       <Topbar cor={textoClaro} marca={marca} numero={numero} />
       <div style={{ position: "absolute", top: 120, left: 56, right: 56, color: textoClaro }}>
-        <Kicker texto={slide.kicker} cor={slide.corKicker || textoClaro} accent={CORES.preto} />
+        <Kicker texto={slide.kicker} cor={slide.corKicker || textoClaro} accent={CORES.preto} slide={slide}/>
         <Headline texto={slide.headline} cor={slide.corHeadline || textoClaro} tamanho={70} fontFamily={fonteHeadline}
           slide={slide}
         />
         {slide.corpo && (
           <div style={{ marginTop: 22, maxWidth: 900 }}>
-            <Corpo texto={slide.corpo} cor={textoClaro} fontFamily={tema.fonteCorpo} />
+            <Corpo texto={slide.corpo} cor={textoClaro} fontFamily={tema.fonteCorpo} slide={slide}/>
           </div>
         )}
       </div>
@@ -154,7 +154,7 @@ function LayoutTipografiaPura({ slide, tema, marca, numero, coresResolvidas }: L
     <div style={{ position: "absolute", inset: 0, backgroundColor: fundo }}>
       <Topbar cor={cor} marca={marca} numero={numero} />
       <div style={{ position: "absolute", top: 130, left: 56, right: 56, color: cor }}>
-        <Kicker texto={slide.kicker} cor={slide.corKicker || cor} accent={accentDivider} />
+        <Kicker texto={slide.kicker} cor={slide.corKicker || cor} accent={accentDivider} slide={slide}/>
         {!temBigNumber && (
           <Headline texto={slide.headline} cor={headlineCor} tamanho={96} fontFamily={fonteHeadline}
           slide={slide}
@@ -163,16 +163,16 @@ function LayoutTipografiaPura({ slide, tema, marca, numero, coresResolvidas }: L
       </div>
       {temBigNumber && (
         <div style={{ position: "absolute", top: 340, left: 56, right: 56 }}>
-          <BigNumber texto={slide.numero} cor={headlineCor} fontFamily={fonteHeadline} />
+          <BigNumber texto={slide.numero} cor={headlineCor} fontFamily={fonteHeadline} slide={slide}/>
         </div>
       )}
       <div style={{ position: "absolute", bottom: 110, left: 56, right: 56, color: cor }}>
         {slide.destaque && (
           <div style={{ marginBottom: 22 }}>
-            <Destaque texto={slide.destaque} cor={slide.corDestaque || accentDivider} fontFamily={fonteHeadline} />
+            <Destaque texto={slide.destaque} cor={slide.corDestaque || accentDivider} fontFamily={fonteHeadline} slide={slide}/>
           </div>
         )}
-        <Corpo texto={slide.corpo} cor={cor} fontFamily={tema.fonteCorpo} />
+        <Corpo texto={slide.corpo} cor={cor} fontFamily={tema.fonteCorpo} slide={slide}/>
       </div>
     </div>
   );

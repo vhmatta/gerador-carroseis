@@ -87,7 +87,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas }: Layo
         />
         {slide.destaque && (
           <div style={{ marginTop: 20 }}>
-            <Destaque texto={slide.destaque} cor={slide.corDestaque || CORES.amarelo} fontFamily={FONTE_CORPO_SANS} tamanho={22} />
+            <Destaque texto={slide.destaque} cor={slide.corDestaque || CORES.amarelo} fontFamily={FONTE_CORPO_SANS} tamanho={22} slide={slide}/>
           </div>
         )}
       </div>
@@ -145,7 +145,7 @@ function LayoutTextoTopoFotoEmbaixo({ slide, tema, marca, numero, coresResolvida
       {/* Corpo embaixo da foto */}
       {slide.corpo && (
         <div style={{ position: "absolute", bottom: 70, left: 56, right: 56 }}>
-          <Corpo texto={slide.corpo} cor={CORES.preto} fontFamily={FONTE_CORPO_SANS} tamanho={20} />
+          <Corpo texto={slide.corpo} cor={CORES.preto} fontFamily={FONTE_CORPO_SANS} tamanho={20} slide={slide}/>
         </div>
       )}
     </div>
@@ -278,7 +278,7 @@ function LayoutSerifCentral({ slide, tema, marca, numero, coresResolvidas }: Lay
             textAlign: "center",
           }}
         >
-          <Corpo texto={slide.corpo} cor={CORES.preto} fontFamily={FONTE_CORPO_SANS} tamanho={18} />
+          <Corpo texto={slide.corpo} cor={CORES.preto} fontFamily={FONTE_CORPO_SANS} tamanho={18} slide={slide}/>
         </div>
       )}
     </div>
@@ -333,7 +333,7 @@ function LayoutHeadlineAmarelaPreta({ slide, tema, marca, numero, coresResolvida
 
       {slide.corpo && (
         <div style={{ position: "absolute", bottom: 80, left: 56, right: 56 }}>
-          <Corpo texto={slide.corpo} cor={CORES.branco} fontFamily={FONTE_CORPO_SANS} tamanho={18} />
+          <Corpo texto={slide.corpo} cor={CORES.branco} fontFamily={FONTE_CORPO_SANS} tamanho={18} slide={slide}/>
         </div>
       )}
     </div>
@@ -389,7 +389,7 @@ function LayoutFotoFullCTA({ slide, tema, marca, numero, coresResolvidas }: Layo
         />
         {slide.destaque && (
           <div style={{ marginTop: 10 }}>
-            <Corpo texto={slide.destaque} cor={CORES.branco} fontFamily={FONTE_CORPO_SANS} tamanho={20} />
+            <Corpo texto={slide.destaque} cor={CORES.branco} fontFamily={FONTE_CORPO_SANS} tamanho={20} slide={slide}/>
           </div>
         )}
         {slide.mostrarPill && slide.textoPill && (

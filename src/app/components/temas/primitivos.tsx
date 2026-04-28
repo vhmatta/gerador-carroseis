@@ -1,6 +1,6 @@
 import React from "react";
-import type { CoresResolvidas, TemaConfig, SlideData } from "./tipos";
-import { resolverFonteHeadline } from "./tipos";
+import type { CoresResolvidas, TemaConfig, SlideData, ConfigBaseElemento, ElementoTipo } from "./tipos";
+import { resolverFonteHeadline, resolverEstiloElemento, FONTE_FAMILIAS } from "./tipos";
 
 // ============================================================
 // PRIMITIVOS VISUAIS COMPARTILHADOS
@@ -52,21 +52,44 @@ export function Kicker({
   cor,
   accent,
   mostrarDivisor = true,
+  slide,
+  tamanho = 14,
+  peso = 800,
+  tracking = 3,
+  caps = true,
 }: {
   texto: string;
   cor: string;
   accent: string;
   mostrarDivisor?: boolean;
+  slide?: SlideData;
+  tamanho?: number;
+  peso?: number;
+  tracking?: number;
+  caps?: boolean;
 }) {
   if (!texto) return null;
+
+  const estilo = slide
+    ? resolverEstiloElemento(slide, "kicker", {
+        tamanho,
+        peso: peso as any,
+        caps,
+        tracking,
+      })
+    : {
+        fontSize: tamanho,
+        fontFamily: "'Poppins', sans-serif",
+        fontWeight: peso,
+        letterSpacing: `${tracking}px`,
+        textTransform: caps ? ("uppercase" as const) : ("none" as const),
+      };
+
   return (
     <>
       <div
         style={{
-          fontSize: 14,
-          fontWeight: 800,
-          letterSpacing: "3px",
-          textTransform: "uppercase",
+          ...estilo,
           color: cor,
         }}
       >
@@ -87,7 +110,7 @@ export function Kicker({
   );
 }
 
-/** Headline grande (respeita fontFamily customizada + caps/escala do slide). */
+/** Headline grande (respeita fontFamily customizada + caps/escala/overrides do slide). */
 export function Headline({
   texto,
   cor,
@@ -110,30 +133,51 @@ export function Headline({
   letterSpacing?: string;
   lineHeight?: number;
   italic?: boolean;
-  /** Se passado, aplica overrides de caps e escala do slide */
+  /** Se passado, aplica overrides de caps/escala/fonte/peso/tracking do slide */
   slide?: SlideData;
   /** Tamanho mínimo em px (pra garantir legibilidade) */
   tamanhoMinimo?: number;
 }) {
   if (!texto) return null;
 
-  // Resolve caps override do slide
-  const capsEfetivo =
-    slide?.headlineCaps === undefined ? uppercase : slide.headlineCaps;
+  // Converte letterSpacing de string pra px (pra passar pro novo sistema)
+  const trackingNumerico = parseLetterSpacing(letterSpacing);
 
-  // Resolve escala override do slide
-  const escala = slide?.headlineEscala ?? 1;
-  const tamanhoFinal = Math.max(tamanhoMinimo, Math.round(tamanho * escala));
+  // Se tem slide, usa o resolvedor avançado (v7)
+  if (slide) {
+    const estilo = resolverEstiloElemento(slide, "headline", {
+      tamanho,
+      peso: pesoHeadline as any,
+      caps: uppercase,
+      tracking: trackingNumerico,
+    });
+    return (
+      <div
+        style={{
+          ...estilo,
+          fontFamily: estilo.fontFamily || fontFamily,
+          fontSize: Math.max(tamanhoMinimo, estilo.fontSize),
+          color: cor,
+          lineHeight,
+          whiteSpace: "pre-line",
+          fontStyle: italic ? "italic" : "normal",
+        }}
+      >
+        {texto}
+      </div>
+    );
+  }
 
+  // Modo legado (sem slide): comportamento da v6
   return (
     <div
       style={{
         fontFamily,
-        fontSize: tamanhoFinal,
+        fontSize: Math.max(tamanhoMinimo, tamanho),
         fontWeight: pesoHeadline,
         lineHeight,
         letterSpacing,
-        textTransform: capsEfetivo ? "uppercase" : "none",
+        textTransform: uppercase ? "uppercase" : "none",
         color: cor,
         whiteSpace: "pre-line",
         fontStyle: italic ? "italic" : "normal",
@@ -144,6 +188,13 @@ export function Headline({
   );
 }
 
+function parseLetterSpacing(ls: string): number {
+  if (!ls || ls === "normal") return 0;
+  const match = ls.match(/(-?\d+(?:\.\d+)?)\s*px/);
+  if (match) return parseFloat(match[1]);
+  return 0;
+}
+
 /** Corpo de texto padrão. */
 export function Corpo({
   texto,
@@ -152,6 +203,8 @@ export function Corpo({
   fontFamily,
   italic = false,
   maxWidth,
+  slide,
+  peso = 400,
 }: {
   texto: string;
   cor: string;
@@ -159,15 +212,32 @@ export function Corpo({
   fontFamily: string;
   italic?: boolean;
   maxWidth?: number;
+  slide?: SlideData;
+  peso?: number;
 }) {
   if (!texto) return null;
+
+  const estilo = slide
+    ? resolverEstiloElemento(slide, "corpo", {
+        tamanho,
+        peso: peso as any,
+        caps: false,
+      })
+    : {
+        fontSize: tamanho,
+        fontFamily,
+        fontWeight: peso,
+        letterSpacing: "normal" as const,
+        textTransform: "none" as const,
+      };
+
   return (
     <div
       style={{
-        fontFamily,
-        fontSize: tamanho,
+        ...estilo,
+        // Se o slide override mudou a fonte, respeita; senão usa a fontFamily passada
+        fontFamily: slide?.tipoCorpo?.fonte ? estilo.fontFamily : fontFamily,
         lineHeight: 1.45,
-        fontWeight: 400,
         color: cor,
         whiteSpace: "pre-line",
         fontStyle: italic ? "italic" : "normal",
@@ -185,19 +255,37 @@ export function Destaque({
   cor,
   fontFamily,
   tamanho = 26,
+  slide,
+  peso = 900,
 }: {
   texto: string;
   cor: string;
   fontFamily: string;
   tamanho?: number;
+  slide?: SlideData;
+  peso?: number;
 }) {
   if (!texto) return null;
+
+  const estilo = slide
+    ? resolverEstiloElemento(slide, "destaque", {
+        tamanho,
+        peso: peso as any,
+        caps: false,
+      })
+    : {
+        fontSize: tamanho,
+        fontFamily,
+        fontWeight: peso,
+        letterSpacing: "normal" as const,
+        textTransform: "none" as const,
+      };
+
   return (
     <div
       style={{
-        fontFamily,
-        fontSize: tamanho,
-        fontWeight: 900,
+        ...estilo,
+        fontFamily: slide?.tipoDestaque?.fonte ? estilo.fontFamily : fontFamily,
         lineHeight: 1.35,
         color: cor,
       }}
@@ -343,20 +431,37 @@ export function BigNumber({
   cor,
   fontFamily,
   tamanho = 240,
+  slide,
+  peso = 900,
 }: {
   texto: string;
   cor: string;
   fontFamily: string;
   tamanho?: number;
+  slide?: SlideData;
+  peso?: number;
 }) {
+  const estilo = slide
+    ? resolverEstiloElemento(slide, "numero", {
+        tamanho,
+        peso: peso as any,
+        caps: false,
+        tracking: -8,
+      })
+    : {
+        fontSize: tamanho,
+        fontFamily,
+        fontWeight: peso,
+        letterSpacing: "-8px" as const,
+        textTransform: "none" as const,
+      };
+
   return (
     <div
       style={{
-        fontFamily,
-        fontSize: tamanho,
-        fontWeight: 900,
+        ...estilo,
+        fontFamily: slide?.tipoNumero?.fonte ? estilo.fontFamily : fontFamily,
         lineHeight: 0.85,
-        letterSpacing: "-8px",
         color: cor,
       }}
     >

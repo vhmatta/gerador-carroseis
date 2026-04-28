@@ -45,7 +45,17 @@ import {
   EXEMPLO_TEXTO_COLADO,
 } from "../lib/parsearTextoColado";
 import { TEMAS_DISPONIVEIS, obterTema } from "./temas";
-import { FONTE_LABELS, FONTE_FAMILIAS } from "./temas/tipos";
+import {
+  FONTE_LABELS,
+  FONTE_FAMILIAS,
+  PESO_LABELS,
+  CAPS_LABELS,
+  type FonteId,
+  type PesoFonte,
+  type ModoCaps,
+  type TipografiaOverride,
+  type ElementoTipo,
+} from "./temas/tipos";
 
 // ============================================================
 // UTILS
@@ -1425,22 +1435,8 @@ function PainelEdicao({
         </div>
       )}
 
-      {/* Fonte do headline */}
-      <div>
-        <Label icone={<Type size={12} />}>Fonte do headline</Label>
-        <select
-          value={slide.fonteHeadline || temaAtivo.fonteHeadlineDefault}
-          onChange={(e) => onChange({ fonteHeadline: e.target.value as FonteHeadline })}
-          className="w-full bg-[#0f0f0f] border border-gray-800 rounded-md px-2.5 py-2 text-xs text-white focus:outline-none focus:border-[#FFC528]"
-          style={{ fontFamily: FONTE_FAMILIAS[slide.fonteHeadline || temaAtivo.fonteHeadlineDefault] }}
-        >
-          {(Object.keys(FONTE_LABELS) as FonteHeadline[]).map((f) => (
-            <option key={f} value={f} style={{ fontFamily: FONTE_FAMILIAS[f] }}>
-              {FONTE_LABELS[f]}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Painel de Tipografia (modo simples + avançado) */}
+      <PainelTipografia slide={slide} onChange={onChange} temaAtivo={temaAtivo} />
 
       {/* Textos */}
       <div className="space-y-3">
@@ -1698,6 +1694,406 @@ function CampoTexto({
         <input type="text" {...props} />
       )}
       {dica && <p className="text-[10px] text-gray-600 mt-1">{dica}</p>}
+    </div>
+  );
+}
+
+// ============================================================
+// PAINEL DE TIPOGRAFIA AVANÇADA (v7)
+// Modo simples (sempre visível) + Modo avançado (expansível)
+// ============================================================
+
+const ELEMENTOS: { id: ElementoTipo; label: string; ehNumero?: boolean }[] = [
+  { id: "kicker", label: "Kicker" },
+  { id: "headline", label: "Headline" },
+  { id: "corpo", label: "Corpo" },
+  { id: "destaque", label: "Destaque" },
+  { id: "numero", label: "Big Number", ehNumero: true },
+];
+
+function PainelTipografia({
+  slide,
+  onChange,
+  temaAtivo,
+}: {
+  slide: SlideData;
+  onChange: (patch: Partial<SlideData>) => void;
+  temaAtivo: any;
+}) {
+  const [mostrarAvancado, setMostrarAvancado] = useState(false);
+  const escalaGeral = slide.escalaGeral ?? 1;
+
+  const fonteAtual = slide.fonteHeadline || temaAtivo.fonteHeadlineDefault;
+  const headlineCapsAtual = slide.headlineCaps;
+
+  // Caps simples: 3 estados (padrão / CAPS / minúsculas)
+  const capsSimples: "padrao" | "caps" | "min" =
+    headlineCapsAtual === undefined ? "padrao" : headlineCapsAtual ? "caps" : "min";
+
+  const setCapsSimples = (modo: "padrao" | "caps" | "min") => {
+    if (modo === "padrao") onChange({ headlineCaps: undefined });
+    else if (modo === "caps") onChange({ headlineCaps: true });
+    else onChange({ headlineCaps: false });
+  };
+
+  const resetar = () => {
+    onChange({
+      escalaGeral: undefined,
+      fonteHeadline: undefined,
+      headlineCaps: undefined,
+      headlineEscala: undefined,
+      tipoKicker: undefined,
+      tipoHeadline: undefined,
+      tipoCorpo: undefined,
+      tipoDestaque: undefined,
+      tipoNumero: undefined,
+    });
+  };
+
+  const temAlgumOverride =
+    slide.escalaGeral !== undefined ||
+    slide.fonteHeadline !== undefined ||
+    slide.headlineCaps !== undefined ||
+    slide.headlineEscala !== undefined ||
+    slide.tipoKicker !== undefined ||
+    slide.tipoHeadline !== undefined ||
+    slide.tipoCorpo !== undefined ||
+    slide.tipoDestaque !== undefined ||
+    slide.tipoNumero !== undefined;
+
+  return (
+    <div className="space-y-3 pt-2 border-t border-gray-800">
+      <div className="flex items-center justify-between">
+        <Label icone={<Type size={12} />}>Tipografia</Label>
+        {temAlgumOverride && (
+          <button
+            onClick={resetar}
+            className="text-[10px] text-gray-500 hover:text-[#FFC528] flex items-center gap-1 transition-colors"
+            title="Voltar todos os controles ao padrão do tema"
+          >
+            <RotateCcw size={10} />
+            Resetar
+          </button>
+        )}
+      </div>
+
+      {/* MODO SIMPLES — sempre visível */}
+      <div className="space-y-3 bg-[#0a0a0a] border border-gray-800 rounded-md p-3">
+        {/* Tamanho geral (slider) */}
+        <SliderTamanhoGeral
+          valor={escalaGeral}
+          onChange={(v) => onChange({ escalaGeral: v === 1 ? undefined : v })}
+        />
+
+        {/* Caso (3 opções) */}
+        <div>
+          <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1.5">
+            Caso do headline
+          </div>
+          <div className="grid grid-cols-3 gap-1">
+            <BotaoCaso ativo={capsSimples === "padrao"} onClick={() => setCapsSimples("padrao")}>
+              Padrão
+            </BotaoCaso>
+            <BotaoCaso ativo={capsSimples === "caps"} onClick={() => setCapsSimples("caps")}>
+              CAPS
+            </BotaoCaso>
+            <BotaoCaso ativo={capsSimples === "min"} onClick={() => setCapsSimples("min")}>
+              minúsculas
+            </BotaoCaso>
+          </div>
+        </div>
+
+        {/* Fonte do headline */}
+        <div>
+          <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1.5">
+            Fonte do headline
+          </div>
+          <select
+            value={fonteAtual}
+            onChange={(e) => onChange({ fonteHeadline: e.target.value as FonteId })}
+            className="w-full bg-[#0f0f0f] border border-gray-800 rounded px-2.5 py-2 text-xs text-white focus:outline-none focus:border-[#FFC528]"
+            style={{ fontFamily: FONTE_FAMILIAS[fonteAtual] }}
+          >
+            {(Object.keys(FONTE_LABELS) as FonteId[]).map((f) => (
+              <option key={f} value={f} style={{ fontFamily: FONTE_FAMILIAS[f] }}>
+                {FONTE_LABELS[f]}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* TOGGLE AVANÇADO */}
+      <button
+        onClick={() => setMostrarAvancado((v) => !v)}
+        className="w-full flex items-center justify-between text-[11px] text-gray-400 hover:text-[#FFC528] transition-colors py-1.5 px-1"
+      >
+        <span className="flex items-center gap-1.5">
+          <Sparkles size={11} />
+          Tipografia avançada por elemento
+        </span>
+        <ChevronRight
+          size={14}
+          className={`transition-transform ${mostrarAvancado ? "rotate-90" : ""}`}
+        />
+      </button>
+
+      {/* MODO AVANÇADO */}
+      {mostrarAvancado && (
+        <div className="space-y-2">
+          {ELEMENTOS.map((el) => (
+            <SecaoElemento
+              key={el.id}
+              elementoId={el.id}
+              label={el.label}
+              ehNumero={el.ehNumero}
+              slide={slide}
+              onChange={onChange}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SliderTamanhoGeral({
+  valor,
+  onChange,
+}: {
+  valor: number;
+  onChange: (v: number) => void;
+}) {
+  const pct = Math.round(valor * 100);
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
+          Tamanho geral
+        </span>
+        <span className="text-[10px] text-[#FFC528] font-mono">{pct}%</span>
+      </div>
+      <input
+        type="range"
+        min={70}
+        max={150}
+        step={5}
+        value={pct}
+        onChange={(e) => onChange(parseInt(e.target.value, 10) / 100)}
+        className="w-full accent-[#FFC528]"
+      />
+    </div>
+  );
+}
+
+function BotaoCaso({
+  children,
+  ativo,
+  onClick,
+}: {
+  children: React.ReactNode;
+  ativo: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`text-[10px] py-1.5 rounded transition-all ${
+        ativo
+          ? "bg-[#FFC528] text-black font-bold"
+          : "bg-[#0f0f0f] border border-gray-800 text-gray-400 hover:border-gray-600"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SecaoElemento({
+  elementoId,
+  label,
+  ehNumero,
+  slide,
+  onChange,
+}: {
+  elementoId: ElementoTipo;
+  label: string;
+  ehNumero?: boolean;
+  slide: SlideData;
+  onChange: (patch: Partial<SlideData>) => void;
+}) {
+  const [aberto, setAberto] = useState(false);
+  const campoOverride = `tipo${elementoId.charAt(0).toUpperCase() + elementoId.slice(1)}` as keyof SlideData;
+  const override = (slide[campoOverride] as TipografiaOverride | undefined) || {};
+
+  const tamanhoBase = ehNumero ? 240 : elementoId === "headline" ? 88 : elementoId === "kicker" ? 14 : 24;
+
+  const aplicar = (patch: Partial<TipografiaOverride>) => {
+    const novo = { ...override, ...patch };
+    // Limpa propriedades undefined explicitamente pra não poluir o objeto
+    const limpo: TipografiaOverride = {};
+    if (novo.escala !== undefined) limpo.escala = novo.escala;
+    if (novo.tamanhoPx !== undefined) limpo.tamanhoPx = novo.tamanhoPx;
+    if (novo.fonte !== undefined) limpo.fonte = novo.fonte;
+    if (novo.peso !== undefined) limpo.peso = novo.peso;
+    if (novo.caps !== undefined) limpo.caps = novo.caps;
+    if (novo.tracking !== undefined) limpo.tracking = novo.tracking;
+
+    onChange({
+      [campoOverride]: Object.keys(limpo).length > 0 ? limpo : undefined,
+    } as Partial<SlideData>);
+  };
+
+  const limpar = () => onChange({ [campoOverride]: undefined } as Partial<SlideData>);
+
+  const temOverride = Object.keys(override).length > 0;
+
+  return (
+    <div className="bg-[#0a0a0a] border border-gray-800 rounded-md overflow-hidden">
+      <button
+        onClick={() => setAberto((v) => !v)}
+        className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#0f0f0f] transition-colors"
+      >
+        <span className="text-[11px] font-bold text-gray-300 flex items-center gap-2">
+          {label}
+          {temOverride && (
+            <span className="text-[8px] bg-[#FFC528] text-black px-1.5 py-0.5 rounded font-bold">
+              EDITADO
+            </span>
+          )}
+        </span>
+        <ChevronRight
+          size={12}
+          className={`text-gray-500 transition-transform ${aberto ? "rotate-90" : ""}`}
+        />
+      </button>
+
+      {aberto && (
+        <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-gray-800">
+          {/* Tamanho (px absoluto) */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[9px] text-gray-500 uppercase tracking-wider">
+                Tamanho ({tamanhoBase}px padrão)
+              </span>
+              <span className="text-[9px] text-gray-400 font-mono">
+                {override.tamanhoPx ?? Math.round(tamanhoBase * (override.escala ?? 1))}px
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min={Math.round(tamanhoBase * 0.4)}
+                max={Math.round(tamanhoBase * 1.8)}
+                step={1}
+                value={override.tamanhoPx ?? Math.round(tamanhoBase * (override.escala ?? 1))}
+                onChange={(e) => aplicar({ tamanhoPx: parseInt(e.target.value, 10), escala: undefined })}
+                className="flex-1 accent-[#FFC528]"
+              />
+              <input
+                type="number"
+                value={override.tamanhoPx ?? Math.round(tamanhoBase * (override.escala ?? 1))}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value, 10);
+                  if (!isNaN(v)) aplicar({ tamanhoPx: v, escala: undefined });
+                }}
+                className="w-14 bg-[#0f0f0f] border border-gray-800 rounded px-1.5 py-1 text-[10px] text-white focus:outline-none focus:border-[#FFC528]"
+              />
+            </div>
+          </div>
+
+          {/* Fonte */}
+          <div>
+            <div className="text-[9px] text-gray-500 uppercase tracking-wider mb-1">
+              Fonte
+            </div>
+            <select
+              value={override.fonte || ""}
+              onChange={(e) => aplicar({ fonte: (e.target.value || undefined) as FonteId | undefined })}
+              className="w-full bg-[#0f0f0f] border border-gray-800 rounded px-2 py-1.5 text-[10px] text-white focus:outline-none focus:border-[#FFC528]"
+            >
+              <option value="">— padrão —</option>
+              {(Object.keys(FONTE_LABELS) as FonteId[]).map((f) => (
+                <option key={f} value={f}>
+                  {FONTE_LABELS[f]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Peso */}
+          <div>
+            <div className="text-[9px] text-gray-500 uppercase tracking-wider mb-1">
+              Peso
+            </div>
+            <select
+              value={override.peso ?? ""}
+              onChange={(e) =>
+                aplicar({ peso: e.target.value ? (parseInt(e.target.value, 10) as PesoFonte) : undefined })
+              }
+              className="w-full bg-[#0f0f0f] border border-gray-800 rounded px-2 py-1.5 text-[10px] text-white focus:outline-none focus:border-[#FFC528]"
+            >
+              <option value="">— padrão —</option>
+              {(Object.keys(PESO_LABELS) as unknown as PesoFonte[]).map((p) => (
+                <option key={p} value={p}>
+                  {PESO_LABELS[p]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Caps */}
+          <div>
+            <div className="text-[9px] text-gray-500 uppercase tracking-wider mb-1">
+              Capitalização
+            </div>
+            <select
+              value={override.caps || "padrao"}
+              onChange={(e) =>
+                aplicar({ caps: e.target.value === "padrao" ? undefined : (e.target.value as ModoCaps) })
+              }
+              className="w-full bg-[#0f0f0f] border border-gray-800 rounded px-2 py-1.5 text-[10px] text-white focus:outline-none focus:border-[#FFC528]"
+            >
+              {(Object.keys(CAPS_LABELS) as ModoCaps[]).map((c) => (
+                <option key={c} value={c}>
+                  {CAPS_LABELS[c]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Tracking */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[9px] text-gray-500 uppercase tracking-wider">
+                Espaçamento
+              </span>
+              <span className="text-[9px] text-gray-400 font-mono">
+                {override.tracking ?? 0}px
+              </span>
+            </div>
+            <input
+              type="range"
+              min={-5}
+              max={10}
+              step={0.5}
+              value={override.tracking ?? 0}
+              onChange={(e) => aplicar({ tracking: parseFloat(e.target.value) || undefined })}
+              className="w-full accent-[#FFC528]"
+            />
+          </div>
+
+          {temOverride && (
+            <button
+              onClick={limpar}
+              className="w-full text-[9px] text-gray-500 hover:text-[#FFC528] py-1 flex items-center justify-center gap-1 transition-colors"
+            >
+              <RotateCcw size={9} />
+              Limpar este elemento
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
