@@ -263,98 +263,90 @@ export default function CarrosselEditor() {
   // --- Render ---
 
   return (
-    <div className="w-full min-h-screen bg-[var(--v6-bg-base)] text-[var(--v6-text-primary)] font-sans">
-      {/* Header / Top Bar */}
-      <header className="sticky top-0 z-[100] bg-[var(--v6-bg-base)]/80 backdrop-blur-md border-b border-[var(--v6-border)] px-6 py-3">
+    <div className="w-full min-h-screen bg-[#050505] text-white/90 font-sans">
+      {/* Header / Top Bar - Simplificado para sumir com o App.tsx Header */}
+      <header className="sticky top-0 z-[100] bg-[#050505]/80 backdrop-blur-md border-b border-white/5 px-6 py-4">
         <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
           {/* Logo / Brand Input */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#FFC528] rounded-lg">
-              <Zap size={18} className="text-black fill-black" />
-              <span className="font-black text-black tracking-tight text-sm">POTENCIAL</span>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-6 bg-[#FFC528] rounded-full" />
+              <h1 className="text-lg font-bold tracking-tight font-['Archivo']">Editor de Carrossel</h1>
             </div>
-            <div className="h-6 w-[1px] bg-[var(--v6-border)]" />
+            <div className="h-6 w-[1px] bg-white/10" />
             <div className="relative group">
               <input
                 type="text"
                 value={marca}
                 onChange={(e) => setMarca(e.target.value)}
-                className="bg-[var(--v6-bg-sunken)] border border-[var(--v6-border)] rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-[#FFC528] w-48 transition-all hover:border-gray-600"
+                className="bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-[#FFC528] w-64 transition-all"
                 placeholder="SUA MARCA AQUI"
               />
-              <div className="absolute left-3 -top-2 px-1 bg-[var(--v6-bg-base)] text-[9px] text-[var(--v6-text-muted)] font-bold uppercase tracking-wider opacity-0 group-focus-within:opacity-100 transition-opacity">
-                Tagline da Marca
-              </div>
+              <span className="absolute -top-2 left-3 bg-[#050505] px-1 text-[9px] font-bold text-white/20 uppercase tracking-widest">Branding Principal</span>
             </div>
           </div>
 
-          {/* Central Actions (History) */}
-          <div className="hidden md:flex items-center gap-1 bg-[var(--v6-bg-sunken)] p-1 rounded-lg border border-[var(--v6-border)]">
-            <HeaderActionBtn onClick={undo} disabled={!canUndo} title="Desfazer (Ctrl+Z)">
-              <Undo2 size={16} />
-            </HeaderActionBtn>
-            <HeaderActionBtn onClick={redo} disabled={!canRedo} title="Refazer (Ctrl+Y)">
-              <Redo2 size={16} />
-            </HeaderActionBtn>
-          </div>
-
           {/* Right Actions (Import/Export) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-white/[0.03] p-1 rounded-xl border border-white/5 mr-2">
+              <HeaderActionBtn onClick={undo} disabled={!canUndo} title="Desfazer (Ctrl+Z)">
+                <Undo2 size={16} />
+              </HeaderActionBtn>
+              <HeaderActionBtn onClick={redo} disabled={!canRedo} title="Refazer (Ctrl+Y)">
+                <Redo2 size={16} />
+              </HeaderActionBtn>
+            </div>
+
             <button
               onClick={() => setPanelAtivo(panelAtivo === "cola" ? null : "cola")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                 panelAtivo === "cola" 
                   ? "bg-[#FFC528] text-black border-[#FFC528]" 
-                  : "bg-[var(--v6-bg-sunken)] text-[var(--v6-text-secondary)] border-[var(--v6-border)] hover:text-white"
+                  : "bg-white/[0.03] text-white/60 border-white/10 hover:text-white"
               }`}
             >
               <FileText size={14} />
-              <span className="hidden sm:inline">Colar Texto</span>
+              Colar Conteúdo
             </button>
 
             <button
               onClick={() => setPanelAtivo(panelAtivo === "ia" ? null : "ia")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                 panelAtivo === "ia" 
                   ? "bg-[#FFC528] text-black border-[#FFC528]" 
-                  : "bg-[var(--v6-bg-sunken)] text-[var(--v6-text-secondary)] border-[var(--v6-border)] hover:text-white"
+                  : "bg-white/[0.03] text-white/60 border-white/10 hover:text-white"
               }`}
             >
               <Sparkles size={14} />
-              <span className="hidden sm:inline">Gerar com IA</span>
+              Gerador IA
             </button>
 
-            <div className="h-6 w-[1px] bg-[var(--v6-border)] mx-1" />
+            <div className="h-6 w-[1px] bg-white/10 mx-1" />
 
             <button
               onClick={exportarTudo}
               disabled={exportando}
-              className="flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-black bg-[#FFC528] text-black hover:bg-[#ffd55a] transition-all disabled:opacity-40 shadow-[0_0_20px_rgba(255,197,40,0.15)]"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black bg-[#FFC528] text-black hover:bg-[#ffd55a] transition-all disabled:opacity-30 shadow-[0_10px_20px_rgba(255,197,40,0.1)]"
             >
               {exportando ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : (
                 <Download size={14} />
               )}
-              BAIXAR CARROSSEL
+              EXPORTAR TUDO (ZIP)
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-[1800px] mx-auto px-6 py-6 h-[calc(100vh-64px)] overflow-hidden">
+      <main className="max-w-[1800px] mx-auto px-6 py-8 h-[calc(100vh-76px)] overflow-hidden">
         
         {/* Floating Overlay Panels */}
         <div className="relative">
-          <Suspense fallback={
-            <div className="absolute top-0 right-0 z-50 w-full max-w-xl bg-[var(--v6-bg-base)] border border-[var(--v6-border)] rounded-2xl p-12 flex flex-col items-center justify-center gap-4 animate-pulse">
-              <Loader2 className="w-8 h-8 text-[#FFC528] animate-spin" />
-              <p className="text-xs font-bold text-[var(--v6-text-muted)] uppercase tracking-widest">Carregando Módulo...</p>
-            </div>
-          }>
+          <Suspense fallback={<div className="p-20 text-center text-white/20">Carregando...</div>}>
             {panelAtivo === "ia" && (
-              <div className="absolute top-0 right-0 z-50 w-full max-w-xl animate-in slide-in-from-top-4 duration-300">
+              <div className="absolute top-0 right-0 z-50 w-full max-w-xl shadow-2xl">
                 <IAPanel 
                   numSlides={slides.length} 
                   temaVisual={temaAtivo}
@@ -365,7 +357,7 @@ export default function CarrosselEditor() {
               </div>
             )}
             {panelAtivo === "cola" && (
-              <div className="absolute top-0 right-0 z-50 w-full max-w-xl animate-in slide-in-from-top-4 duration-300">
+              <div className="absolute top-0 right-0 z-50 w-full max-w-xl shadow-2xl">
                 <PastePanel 
                   onAplicar={aoAplicarCola} 
                   onClose={() => setPanelAtivo(null)} 
@@ -375,40 +367,55 @@ export default function CarrosselEditor() {
           </Suspense>
         </div>
 
-        <div className="grid grid-cols-12 gap-6 h-full">
+        <div className="grid grid-cols-12 gap-8 h-full">
           {/* Col 1: Slide List (Sidebar) */}
-          <SlideList 
-            slides={slides}
-            indiceAtivo={indiceAtivo}
-            temaId={temaId}
-            layoutNome={(s) => obterTema(temaId).layouts.find(l => l.id === s.layout)?.nome || "Layout"}
-            onSelect={setIndiceAtivo}
-            onRemover={removerSlide}
-            onDuplicar={duplicarSlide}
-            onMover={moverSlide}
-            onAdicionarSlide={() => adicionarSlide()}
-          />
+          <div className="col-span-12 md:col-span-2">
+            <SlideList 
+              slides={slides}
+              indiceAtivo={indiceAtivo}
+              temaId={temaId}
+              layoutNome={(s) => obterTema(temaId).layouts.find(l => l.id === s.layout)?.nome || "Layout"}
+              onSelect={setIndiceAtivo}
+              onRemover={removerSlide}
+              onDuplicar={duplicarSlide}
+              onMover={moverSlide}
+              onAdicionarSlide={() => adicionarSlide()}
+            />
+          </div>
 
           {/* Col 2: Preview Area (Center) */}
-          <section className="col-span-12 md:col-span-6 flex flex-col h-full overflow-hidden">
-            <SlidePreview 
-              slide={slideAtivo}
-              index={indiceAtivo}
-              total={slides.length}
-              marca={marca}
-              temaId={temaId}
-              formato={formato}
-              onFormatoChange={setFormato}
-              onPrev={() => setIndiceAtivo(i => Math.max(0, i - 1))}
-              onNext={() => setIndiceAtivo(i => Math.min(slides.length - 1, i + 1))}
-              onExport={exportarAtual}
-              podePrev={indiceAtivo > 0}
-              podeNext={indiceAtivo < slides.length - 1}
-            />
+          <section className="col-span-12 md:col-span-6 flex flex-col h-full bg-[#0a0a0a] rounded-3xl border border-white/5 p-8 shadow-inner overflow-hidden">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xs font-bold text-white/20 uppercase tracking-widest">Visualização em Tempo Real</h3>
+              <div className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-mono text-white/40">
+                SLIDE {indiceAtivo + 1} / {slides.length}
+              </div>
+            </div>
+            
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <SlidePreview 
+                slide={slideAtivo}
+                index={indiceAtivo}
+                total={slides.length}
+                marca={marca}
+                temaId={temaId}
+                formato={formato}
+                onFormatoChange={setFormato}
+                onPrev={() => setIndiceAtivo(i => Math.max(0, i - 1))}
+                onNext={() => setIndiceAtivo(i => Math.min(slides.length - 1, i + 1))}
+                onExport={exportarAtual}
+                podePrev={indiceAtivo > 0}
+                podeNext={indiceAtivo < slides.length - 1}
+              />
+            </div>
           </section>
 
           {/* Col 3: Edit Panel (Right) */}
-          <aside className="col-span-12 md:col-span-4 h-full overflow-y-auto pr-1">
+          <aside className="col-span-12 md:col-span-4 h-full overflow-y-auto bg-[#0a0a0a] rounded-3xl border border-white/5 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-1.5 h-6 bg-[#FFC528] rounded-full" />
+              <h2 className="text-xl font-bold font-['Archivo']">Design & Conteúdo</h2>
+            </div>
             <EditPanel 
               slide={slideAtivo}
               onChange={atualizarSlide}
