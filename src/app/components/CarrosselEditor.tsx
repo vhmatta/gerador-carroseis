@@ -28,7 +28,7 @@ import { TEMAS_DISPONIVEIS, obterTema } from "./temas";
 // Novos Componentes Modulares
 import { SlideList } from "./SlideList";
 import { SlidePreview } from "./SlidePreview";
-import { EditPanel } from "./EditPanel";
+import EditPanel from "./EditPanel";
 
 // Lazy-loaded Panels
 const IAPanel = lazy(() => import("./IAPanel").then(m => ({ default: m.IAPanel })));
