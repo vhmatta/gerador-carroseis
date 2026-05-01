@@ -25,7 +25,7 @@ import {
 } from "../lib/formatarCarrossel";
 import { SlideData } from "./CarrosselSlide";
 import { TemaConfig } from "./temas/tipos";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useLocalStorage } from "../lib/useLocalStorage";
 
 interface IAPanelProps {
   numSlides: number;

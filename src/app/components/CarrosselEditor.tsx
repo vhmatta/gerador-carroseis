@@ -34,9 +34,9 @@ const IAPanel = lazy(() => import("./IAPanel").then(m => ({ default: m.IAPanel }
 const PastePanel = lazy(() => import("./PastePanel").then(m => ({ default: m.PastePanel })));
 
 // Hooks
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useUndoRedo } from "../hooks/useUndoRedo";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useLocalStorage } from "../lib/useLocalStorage";
+import { useUndoRedo } from "../lib/useUndoRedo";
+import { useKeyboardShortcuts } from "../lib/useKeyboardShortcuts";
 import { useConfirm } from "./ui/ConfirmModal";
 
 // Libs
