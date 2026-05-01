@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import { obterTema } from "./temas";
 import { resolverCores } from "./temas/tipos";
 import type { SlideData, TemaId } from "./temas/tipos";
@@ -19,7 +19,7 @@ interface Props {
   escala?: number;
 }
 
-const CarrosselSlide = forwardRef<HTMLDivElement, Props>(function CarrosselSlide(
+const CarrosselSlide = memo(forwardRef<HTMLDivElement, Props>(function CarrosselSlide(
   { slide, index, total, marca, temaId, escalaReal = false, escala = 1 },
   ref
 ) {
@@ -52,6 +52,6 @@ const CarrosselSlide = forwardRef<HTMLDivElement, Props>(function CarrosselSlide
       })}
     </div>
   );
-});
+}));
 
 export default CarrosselSlide;
