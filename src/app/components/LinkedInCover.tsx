@@ -134,10 +134,9 @@ export default function LinkedInCover({
         </div>
       </div>
 
-      {/* Logo parcele aqui */}
       <div
         className="absolute"
-        style={{ height: "52px", left: "34px", top: "34px", width: "256px" }}
+        style={{ height: "85px", left: "34px", top: "34px", width: "420px" }}
       >
         <img
           alt="Parcele Aqui"
