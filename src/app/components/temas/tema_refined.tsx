@@ -17,7 +17,7 @@ import {
 // ============================================================
 
 const CORES = {
-  preto: "#0a0a0a",
+  preto: "#050505",
   branco: "#ffffff",
   bege: "#F4F1EA",
   amarelo: "#FFC528",

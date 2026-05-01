@@ -123,7 +123,7 @@ export default function LinkedInCover({
       {/* Logo no topo esquerdo */}
       <div
         className="absolute"
-        style={{ height: "45px", left: "30px", top: "45px", width: "220px" }}
+        style={{ height: "110px", left: "30px", top: "25px", width: "540px" }}
       >
         <img
           alt="Parcele Aqui"

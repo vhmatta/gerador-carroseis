@@ -105,7 +105,7 @@ main .text-gray-600 { color: var(--v6-text-muted) !important; }
 }
 
 .dark {
-  --background: #252525;
+  --background: #050505;
   --foreground: #fafafa;
   --card: #252525;
   --card-foreground: #fafafa;

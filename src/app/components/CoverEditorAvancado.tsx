@@ -374,7 +374,7 @@ function GlobalStyles() {
         outline: none;
         border-color: #FFC528;
         background: rgba(255, 255, 255, 0.06);
-        box-shadow: 0 0 0 4px rgba(255, 197, 40, 0.1);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
       }
       .input-base:disabled {
         opacity: 0.3;

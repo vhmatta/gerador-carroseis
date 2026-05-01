@@ -10,7 +10,7 @@ import { FotoOuPlaceholder, Pill } from "./primitivos";
 // ============================================================
 
 const CORES = {
-  preto: "#1a1a1a",      // um pouco menos escuro que o Classic (mais cinza)
+  preto: "#050505",      // Absolute Black premium
   branco: "#ffffff",
   bege: "#EEEAE1",       // bege levemente mais quente
   amarelo: "#FFC528",

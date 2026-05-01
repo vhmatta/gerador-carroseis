@@ -95,7 +95,7 @@ function AppShell() {
           style={{
             maxWidth: 1400,
             margin: "0 auto",
-            padding: "20px 32px",
+            padding: "14px 32px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -112,22 +112,23 @@ function AppShell() {
             <div>
               <h1
                 style={{
-                  fontSize: "18px",
+                  fontSize: "15px",
                   fontWeight: 700,
                   color: "#ffffff",
                   margin: 0,
-                  letterSpacing: "-0.02em",
+                  letterSpacing: "-0.01em",
                 }}
               >
                 Gerador de Capas LinkedIn
               </h1>
               <p
                 style={{
-                  fontSize: "12px",
-                  color: "rgba(255,255,255,0.5)",
+                  fontSize: "11px",
+                  color: "rgba(255,255,255,0.45)",
                   margin: 0,
-                  marginTop: 2,
+                  marginTop: 1,
                   fontWeight: 500,
+                  letterSpacing: "0.02em",
                 }}
               >
                 Parcele Aqui · Parcele News
@@ -212,16 +213,28 @@ function NavButton({
         display: "flex",
         alignItems: "center",
         gap: 8,
-        height: 38,
-        padding: "0 16px",
-        backgroundColor: active ? "#FFC528" : "rgba(255,255,255,0.05)",
-        color: active ? "#000000" : "#ffffff",
-        border: "none",
-        borderRadius: "8px",
-        fontSize: "13px",
+        height: 34,
+        padding: "0 14px",
+        backgroundColor: active ? "rgba(255, 197, 40, 0.15)" : "transparent",
+        color: active ? "#FFC528" : "rgba(255,255,255,0.6)",
+        border: `1px solid ${active ? "#FFC52844" : "rgba(255,255,255,0.1)"}`,
+        borderRadius: "6px",
+        fontSize: "12px",
         fontWeight: 600,
         cursor: "pointer",
-        transition: "all 0.2s ease",
+        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)";
+          e.currentTarget.style.color = "#ffffff";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.backgroundColor = "transparent";
+          e.currentTarget.style.color = "rgba(255,255,255,0.6)";
+        }
       }}
     >
       {icone}

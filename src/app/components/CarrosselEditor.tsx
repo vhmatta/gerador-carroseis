@@ -265,25 +265,28 @@ export default function CarrosselEditor() {
 
   return (
     <div className="w-full min-h-screen bg-[#050505] text-white/90 font-sans">
-      {/* Header / Top Bar - Simplificado para sumir com o App.tsx Header */}
-      <header className="sticky top-0 z-[100] bg-[#050505]/80 backdrop-blur-md border-b border-white/5 px-6 py-4">
+      {/* Toolbar de Ações do Carrossel */}
+      <div className="sticky top-0 z-[100] bg-[#050505]/60 backdrop-blur-md border-b border-white/5 px-6 py-3">
         <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
-          {/* Logo / Brand Input */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-6 bg-[#FFC528] rounded-full" />
-              <h1 className="text-lg font-bold tracking-tight font-['Archivo']">Editor de Carrossel</h1>
-            </div>
-            <div className="h-6 w-[1px] bg-white/10" />
+          <div className="flex items-center gap-4">
             <div className="relative group">
               <input
                 type="text"
                 value={marca}
                 onChange={(e) => setMarca(e.target.value)}
-                className="bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-[#FFC528] w-64 transition-all"
+                className="bg-white/[0.03] border border-white/10 rounded-lg px-3 py-1.5 text-[11px] focus:outline-none focus:border-[#FFC528] w-56 transition-all"
                 placeholder="SUA MARCA AQUI"
               />
-              <span className="absolute -top-2 left-3 bg-[#050505] px-1 text-[9px] font-bold text-white/20 uppercase tracking-widest">Branding Principal</span>
+              <span className="absolute -top-1.5 left-2 bg-[#050505] px-1 text-[8px] font-bold text-white/20 uppercase tracking-widest">Branding</span>
+            </div>
+            <div className="h-4 w-[1px] bg-white/10 mx-1" />
+            <div className="flex items-center gap-0.5 bg-white/[0.02] p-0.5 rounded-lg border border-white/5">
+              <HeaderActionBtn onClick={undo} disabled={!canUndo} title="Desfazer (Ctrl+Z)">
+                <Undo2 size={14} />
+              </HeaderActionBtn>
+              <HeaderActionBtn onClick={redo} disabled={!canRedo} title="Refazer (Ctrl+Y)">
+                <Redo2 size={14} />
+              </HeaderActionBtn>
             </div>
           </div>
 
@@ -327,18 +330,18 @@ export default function CarrosselEditor() {
             <button
               onClick={exportarTudo}
               disabled={exportando}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black bg-[#FFC528] text-black hover:bg-[#ffd55a] transition-all disabled:opacity-30 shadow-[0_10px_20px_rgba(255,197,40,0.1)]"
+              className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-bold bg-[#FFC528] text-black hover:bg-[#ffd55a] transition-all disabled:opacity-30 shadow-[0_4px_12px_rgba(255,197,40,0.1)]"
             >
               {exportando ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={13} className="animate-spin" />
               ) : (
-                <Download size={14} />
+                <Download size={13} />
               )}
-              EXPORTAR TUDO (ZIP)
+              EXPORTAR TUDO
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content Area */}
       <main className="max-w-[1800px] mx-auto px-6 py-8 h-[calc(100vh-76px)] overflow-hidden">

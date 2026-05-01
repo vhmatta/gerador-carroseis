@@ -42,7 +42,7 @@ export function Button({
       color: theme.text.inverse,
       border: `1px solid ${theme.accent.primary}`,
       fontWeight: FONT_WEIGHT.bold,
-      boxShadow: SHADOW.yellow,
+      boxShadow: SHADOW.md,
     },
     secondary: {
       backgroundColor: theme.bg.sunken,
