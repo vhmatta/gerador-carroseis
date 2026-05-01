@@ -136,7 +136,7 @@ export default function LinkedInCover({
 
       <div
         className="absolute"
-        style={{ height: "85px", left: "34px", top: "34px", width: "420px" }}
+        style={{ height: "110px", left: "34px", top: "30px", width: "540px" }}
       >
         <img
           alt="Parcele Aqui"
