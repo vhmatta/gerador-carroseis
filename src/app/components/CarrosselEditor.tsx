@@ -11,7 +11,8 @@ import {
   Redo2,
   Keyboard,
   Info,
-  Loader2
+  Loader2,
+  Zap
 } from "lucide-react";
 import { toast } from "sonner";
 
