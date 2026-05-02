@@ -42,7 +42,7 @@ export function Button({
       color: theme.text.inverse,
       border: `1px solid ${theme.accent.primary}`,
       fontWeight: FONT_WEIGHT.bold,
-      boxShadow: SHADOW.md,
+      boxShadow: SHADOW.yellow,
     },
     secondary: {
       backgroundColor: theme.bg.sunken,
@@ -222,7 +222,7 @@ export function Input({ icon, error, style, ...rest }: InputProps) {
         }}
         onFocus={(e) => {
           e.currentTarget.style.borderColor = theme.accent.primary;
-          e.currentTarget.style.boxShadow = `0 0 0 3px ${theme.accent.glow}`;
+          e.currentTarget.style.boxShadow = `0 0 0 1px rgba(255, 255, 255, 0.12)`;
         }}
         onBlur={(e) => {
           e.currentTarget.style.borderColor = error ? "#EF4444" : theme.border.default;
@@ -264,7 +264,7 @@ export function Textarea({ error, style, ...rest }: TextareaProps) {
       }}
       onFocus={(e) => {
         e.currentTarget.style.borderColor = theme.accent.primary;
-        e.currentTarget.style.boxShadow = `0 0 0 3px ${theme.accent.glow}`;
+        e.currentTarget.style.boxShadow = `0 0 0 1px rgba(255, 255, 255, 0.12)`;
       }}
       onBlur={(e) => {
         e.currentTarget.style.borderColor = error ? "#EF4444" : theme.border.default;
@@ -307,7 +307,7 @@ export function Select({ children, style, ...rest }: SelectProps) {
       }}
       onFocus={(e) => {
         e.currentTarget.style.borderColor = theme.accent.primary;
-        e.currentTarget.style.boxShadow = `0 0 0 3px ${theme.accent.glow}`;
+        e.currentTarget.style.boxShadow = `0 0 0 1px rgba(255, 255, 255, 0.12)`;
       }}
       onBlur={(e) => {
         e.currentTarget.style.borderColor = theme.border.default;

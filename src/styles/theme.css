@@ -2,19 +2,19 @@
 
 /* ===== V6 Design Tokens ===== */
 :root {
-  /* Dark mode (default) */
+  /* Dark mode (default) — Black Aesthetic v7.4 */
   --v6-bg-base: #050505;
-  --v6-bg-raised: #0F0F0F;
-  --v6-bg-elevated: #141414;
-  --v6-bg-sunken: #1A1A1A;
-  --v6-border: #262626;
-  --v6-border-muted: #1F1F1F;
+  --v6-bg-raised: #050505;
+  --v6-bg-elevated: #0A0A0A;
+  --v6-bg-sunken: #0A0A0A;
+  --v6-border: rgba(255, 255, 255, 0.08);
+  --v6-border-muted: rgba(255, 255, 255, 0.04);
   --v6-text-primary: #FFFFFF;
   --v6-text-secondary: #A1A1A1;
   --v6-text-muted: #6B6B6B;
   --v6-accent: #FFC528;
   --v6-accent-hover: #FFD960;
-  --v6-accent-glow: rgba(255, 197, 40, 0.2);
+  --v6-accent-glow: rgba(255, 197, 40, 0.0); /* glow desativado */
 }
 
 [data-theme="light"] {
@@ -105,7 +105,7 @@ main .text-gray-600 { color: var(--v6-text-muted) !important; }
 }
 
 .dark {
-  --background: #050505;
+  --background: #252525;
   --foreground: #fafafa;
   --card: #252525;
   --card-foreground: #fafafa;

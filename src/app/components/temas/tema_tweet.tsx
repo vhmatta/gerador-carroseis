@@ -1,5 +1,5 @@
 import type { TemaConfig, LayoutRenderProps } from "./tipos";
-import { criarSlideVazio, resolverFonteHeadline } from "./tipos";
+import { criarSlideVazio, resolverFonteHeadline, aplicarTipoElemento } from "./tipos";
 import { FotoOuPlaceholder, Pill } from "./primitivos";
 
 // ============================================================
@@ -10,7 +10,7 @@ import { FotoOuPlaceholder, Pill } from "./primitivos";
 // ============================================================
 
 const CORES = {
-  preto: "#050505",
+  preto: "#0a0a0a",
   branco: "#ffffff",
   bege: "#F4F1EA",
   amarelo: "#FFC528",
@@ -170,7 +170,8 @@ function LayoutTweetTexto({ slide, marca, numero }: LayoutRenderProps) {
               marginBottom: 18,
               fontWeight: 500,
               letterSpacing: "-0.3px",
-            }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 34, peso: 500 as any, tracking: -0.3 })
+        }}
           >
             {slide.headline}
           </div>
@@ -185,7 +186,8 @@ function LayoutTweetTexto({ slide, marca, numero }: LayoutRenderProps) {
               color: CORES.cinzaTexto,
               whiteSpace: "pre-line",
               marginBottom: 24,
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 26, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -202,7 +204,8 @@ function LayoutTweetTexto({ slide, marca, numero }: LayoutRenderProps) {
                 color: CORES.preto,
                 fontWeight: 700,
                 whiteSpace: "pre-line",
-              }}
+          ...aplicarTipoElemento(slide, "destaque", { tamanho: 28, peso: 700 as any, tracking: 0 })
+        }}
             >
               {slide.destaque}
             </div>
@@ -251,7 +254,8 @@ function LayoutTweetImagem({ slide, marca, numero }: LayoutRenderProps) {
               marginBottom: 20,
               fontWeight: 500,
               letterSpacing: "-0.3px",
-            }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 30, peso: 500 as any, tracking: -0.3 })
+        }}
           >
             {slide.headline}
           </div>
@@ -283,7 +287,8 @@ function LayoutTweetImagem({ slide, marca, numero }: LayoutRenderProps) {
                 textDecorationColor: CORES.amarelo,
                 textDecorationThickness: 3,
                 textUnderlineOffset: 4,
-              }}
+          ...aplicarTipoElemento(slide, "destaque", { tamanho: 26, peso: 700 as any, tracking: 0 })
+        }}
             >
               {slide.destaque}
             </div>
@@ -298,7 +303,8 @@ function LayoutTweetImagem({ slide, marca, numero }: LayoutRenderProps) {
               color: CORES.cinzaTexto,
               whiteSpace: "pre-line",
               marginTop: slide.destaque ? 14 : 0,
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 22, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -344,7 +350,8 @@ function LayoutTweetNumero({ slide, marca, numero }: LayoutRenderProps) {
               textTransform: "uppercase",
               color: "#666",
               marginBottom: 14,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 16, peso: 700 as any, tracking: 2.5 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -378,7 +385,8 @@ function LayoutTweetNumero({ slide, marca, numero }: LayoutRenderProps) {
               fontWeight: 600,
               marginBottom: 16,
               letterSpacing: "-0.3px",
-            }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 30, peso: 600 as any, tracking: -0.3 })
+        }}
           >
             {slide.headline}
           </div>
@@ -391,7 +399,8 @@ function LayoutTweetNumero({ slide, marca, numero }: LayoutRenderProps) {
               lineHeight: 1.4,
               color: CORES.cinzaTexto,
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 22, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -486,7 +495,8 @@ function LayoutTweetFinal({ slide, marca, numero }: LayoutRenderProps) {
               fontWeight: 800,
               marginBottom: 30,
               letterSpacing: "-1.5px",
-            }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 60, peso: 800 as any, tracking: -1.5 })
+        }}
           >
             {slide.headline}
           </div>
@@ -499,7 +509,8 @@ function LayoutTweetFinal({ slide, marca, numero }: LayoutRenderProps) {
               lineHeight: 1.45,
               color: "#ccc",
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 22, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -516,9 +527,252 @@ function LayoutTweetFinal({ slide, marca, numero }: LayoutRenderProps) {
               color: CORES.amarelo,
               whiteSpace: "pre-line",
               borderTop: `1px solid #333`,
+          ...aplicarTipoElemento(slide, "destaque", { tamanho: 20, peso: 700 as any, tracking: 0 })
+        }}
+          >
+            {slide.destaque}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// LAYOUT E (NOVO v7.2) — Tweet · Editorial Longo
+// Headline (pergunta/afirmação curta) + corpo (1-2 parágrafos) +
+// foto média + destaque sublinhado
+// Inspirado no slide 1, 4, 7 do mosaico de referência
+// ============================================================
+function LayoutTweetEditorialLongo({ slide, marca, numero }: LayoutRenderProps) {
+  const handle = slide.textoPill || undefined;
+  return (
+    <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
+      <NumeroPagina numero={numero} />
+
+      <div
+        style={{
+          position: "absolute",
+          top: 80,
+          left: 40,
+          right: 40,
+          bottom: 80,
+          backgroundColor: CORES.branco,
+          borderRadius: 28,
+          padding: "52px 56px",
+          fontFamily: FONTE_PADRAO,
+          color: CORES.preto,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        <TweetHeader marca={marca} corPrimaria={CORES.amarelo} handle={handle} />
+
+        {/* Headline (pergunta ou afirmação curta) */}
+        {slide.headline && (
+          <div
+            style={{
+              fontSize: 32,
+              lineHeight: 1.3,
+              color: CORES.preto,
+              whiteSpace: "pre-line",
+              marginBottom: 16,
+              fontWeight: 500,
+              letterSpacing: "-0.3px",
+              ...aplicarTipoElemento(slide, "headline", { tamanho: 32, peso: 500 as any, tracking: -0.3 }),
+            }}
+          >
+            {slide.headline}
+          </div>
+        )}
+
+        {/* Corpo (1-2 parágrafos, parte densa do tweet) */}
+        {slide.corpo && (
+          <div
+            style={{
+              fontSize: 24,
+              lineHeight: 1.45,
+              color: CORES.cinzaTexto,
+              whiteSpace: "pre-line",
+              marginBottom: 22,
+              ...aplicarTipoElemento(slide, "corpo", { tamanho: 24, peso: 400 as any, tracking: 0 }),
+            }}
+          >
+            {slide.corpo}
+          </div>
+        )}
+
+        {/* Foto média no meio */}
+        <div style={{ marginBottom: 22, flex: 1, minHeight: 0, maxHeight: 360 }}>
+          <FotoOuPlaceholder
+            url={slide.fotoUrl}
+            largura={904}
+            altura={340}
+            accent={CORES.amarelo}
+            borderRadius={16}
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 16 }}
+          />
+        </div>
+
+        {/* Destaque sublinhado (frase de remate) */}
+        {slide.destaque && (
+          <div
+            style={{
+              fontSize: 26,
+              lineHeight: 1.35,
+              color: CORES.preto,
+              fontWeight: 700,
+              whiteSpace: "pre-line",
+              textDecoration: "underline",
+              textDecorationColor: CORES.amarelo,
+              textDecorationThickness: 3,
+              textUnderlineOffset: 4,
+              ...aplicarTipoElemento(slide, "destaque", { tamanho: 26, peso: 700 as any, tracking: 0 }),
             }}
           >
             {slide.destaque}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// LAYOUT F (NOVO v7.2) — Tweet · Foto Sandwich
+// Corpo curto + foto + corpo longo (parágrafos depois da foto)
+// Inspirado no slide 3 do mosaico de referência
+// ============================================================
+function LayoutTweetFotoSandwich({ slide, marca, numero }: LayoutRenderProps) {
+  const handle = slide.textoPill || undefined;
+  // Divide o corpo em "antes" e "depois" da foto.
+  // Convenção: se houver "---" no corpo, parte de cima vai antes, parte de baixo vai depois.
+  // Caso contrário, divide em metades por parágrafo.
+  const { corpoAntes, corpoDepois } = (() => {
+    const c = slide.corpo || "";
+    if (!c.trim()) return { corpoAntes: "", corpoDepois: "" };
+    if (c.includes("---")) {
+      const partes = c.split("---");
+      return {
+        corpoAntes: partes[0].trim(),
+        corpoDepois: partes.slice(1).join("---").trim(),
+      };
+    }
+    // Divide por parágrafos: primeiro parágrafo antes, resto depois
+    const paragrafos = c.split(/\n\s*\n/).filter((p) => p.trim());
+    if (paragrafos.length <= 1) {
+      return { corpoAntes: c, corpoDepois: "" };
+    }
+    return {
+      corpoAntes: paragrafos[0],
+      corpoDepois: paragrafos.slice(1).join("\n\n"),
+    };
+  })();
+
+  return (
+    <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
+      <NumeroPagina numero={numero} />
+
+      <div
+        style={{
+          position: "absolute",
+          top: 80,
+          left: 40,
+          right: 40,
+          bottom: 80,
+          backgroundColor: CORES.branco,
+          borderRadius: 28,
+          padding: "52px 56px",
+          fontFamily: FONTE_PADRAO,
+          color: CORES.preto,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        <TweetHeader marca={marca} corPrimaria={CORES.amarelo} handle={handle} />
+
+        {/* Headline curto opcional (pergunta/afirmação) */}
+        {slide.headline && (
+          <div
+            style={{
+              fontSize: 28,
+              lineHeight: 1.3,
+              color: CORES.preto,
+              whiteSpace: "pre-line",
+              marginBottom: 16,
+              fontWeight: 500,
+              letterSpacing: "-0.3px",
+              ...aplicarTipoElemento(slide, "headline", { tamanho: 28, peso: 500 as any, tracking: -0.3 }),
+            }}
+          >
+            {slide.headline}
+          </div>
+        )}
+
+        {/* Corpo ANTES da foto (1 parágrafo curto) */}
+        {corpoAntes && (
+          <div
+            style={{
+              fontSize: 24,
+              lineHeight: 1.45,
+              color: CORES.cinzaTexto,
+              whiteSpace: "pre-line",
+              marginBottom: 18,
+              ...aplicarTipoElemento(slide, "corpo", { tamanho: 24, peso: 400 as any, tracking: 0 }),
+            }}
+          >
+            {corpoAntes}
+          </div>
+        )}
+
+        {/* Foto */}
+        <div style={{ marginBottom: 18, maxHeight: 290, height: 290 }}>
+          <FotoOuPlaceholder
+            url={slide.fotoUrl}
+            largura={904}
+            altura={290}
+            accent={CORES.amarelo}
+            borderRadius={16}
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 16 }}
+          />
+        </div>
+
+        {/* Destaque sublinhado opcional */}
+        {slide.destaque && (
+          <div
+            style={{
+              fontSize: 22,
+              lineHeight: 1.35,
+              color: CORES.preto,
+              fontWeight: 700,
+              whiteSpace: "pre-line",
+              textDecoration: "underline",
+              textDecorationColor: CORES.amarelo,
+              textDecorationThickness: 3,
+              textUnderlineOffset: 4,
+              marginBottom: 14,
+              ...aplicarTipoElemento(slide, "destaque", { tamanho: 22, peso: 700 as any, tracking: 0 }),
+            }}
+          >
+            {slide.destaque}
+          </div>
+        )}
+
+        {/* Corpo DEPOIS da foto (parágrafos longos) */}
+        {corpoDepois && (
+          <div
+            style={{
+              fontSize: 22,
+              lineHeight: 1.45,
+              color: CORES.cinzaTexto,
+              whiteSpace: "pre-line",
+              flex: 1,
+              ...aplicarTipoElemento(slide, "corpo", { tamanho: 22, peso: 400 as any, tracking: 0 }),
+            }}
+          >
+            {corpoDepois}
           </div>
         )}
       </div>
@@ -554,6 +808,20 @@ export const TEMA_TWEET_STYLE: TemaConfig = {
       descricao: "Texto + imagem/meme no meio + destaque sublinhado",
       usaFoto: true,
       render: (p) => <LayoutTweetImagem {...p} />,
+    },
+    {
+      id: "tweet_editorial",
+      nome: "Tweet · Editorial Longo",
+      descricao: "Headline curto + 1-2 parágrafos + foto + remate sublinhado",
+      usaFoto: true,
+      render: (p) => <LayoutTweetEditorialLongo {...p} />,
+    },
+    {
+      id: "tweet_sandwich",
+      nome: "Tweet · Foto Sandwich",
+      descricao: "Texto curto + foto + parágrafos longos depois (use --- pra dividir)",
+      usaFoto: true,
+      render: (p) => <LayoutTweetFotoSandwich {...p} />,
     },
     {
       id: "tweet_numero",

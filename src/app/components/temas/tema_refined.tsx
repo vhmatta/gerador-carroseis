@@ -1,5 +1,5 @@
 import type { TemaConfig, LayoutRenderProps } from "./tipos";
-import { criarSlideVazio, resolverFonteHeadline } from "./tipos";
+import { criarSlideVazio, resolverFonteHeadline, aplicarTipoElemento } from "./tipos";
 import {
   Topbar,
   Kicker,
@@ -17,7 +17,7 @@ import {
 // ============================================================
 
 const CORES = {
-  preto: "#050505",
+  preto: "#0a0a0a",
   branco: "#ffffff",
   bege: "#F4F1EA",
   amarelo: "#FFC528",
@@ -66,7 +66,8 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas }: Layo
             fontWeight: 800,
             letterSpacing: "2px",
             textTransform: "uppercase",
-          }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 12, peso: 800 as any, tracking: 2 })
+        }}
         >
           {slide.kicker}
         </div>
@@ -116,7 +117,8 @@ function LayoutTextoTopoFotoEmbaixo({ slide, tema, marca, numero, coresResolvida
               textTransform: "uppercase",
               color: slide.corKicker || CORES.preto,
               marginBottom: 16,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 13, peso: 800 as any, tracking: 2.5 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -172,7 +174,8 @@ function LayoutTextoTopoFotoEmbaixoBege({ slide, tema, marca, numero, coresResol
               textTransform: "uppercase",
               color: slide.corKicker || CORES.preto,
               marginBottom: 14,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 13, peso: 800 as any, tracking: 2.5 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -209,7 +212,8 @@ function LayoutTextoTopoFotoEmbaixoBege({ slide, tema, marca, numero, coresResol
               textDecorationColor: CORES.amarelo,
               textDecorationThickness: "3px",
               textUnderlineOffset: "4px",
-            }}
+          ...aplicarTipoElemento(slide, "destaque", { tamanho: 20, peso: 700 as any, tracking: 0 })
+        }}
           >
             {slide.destaque}
           </div>
@@ -249,7 +253,8 @@ function LayoutSerifCentral({ slide, tema, marca, numero, coresResolvidas }: Lay
               textTransform: "uppercase",
               color: slide.corKicker || CORES.preto,
               marginBottom: 30,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 14, peso: 800 as any, tracking: 3 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -305,7 +310,8 @@ function LayoutHeadlineAmarelaPreta({ slide, tema, marca, numero, coresResolvida
               textTransform: "uppercase",
               color: slide.corKicker || CORES.amarelo,
               marginBottom: 20,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 13, peso: 800 as any, tracking: 2.5 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -394,7 +400,7 @@ function LayoutFotoFullCTA({ slide, tema, marca, numero, coresResolvidas }: Layo
         )}
         {slide.mostrarPill && slide.textoPill && (
           <div style={{ marginTop: 22 }}>
-            <Pill texto={slide.textoPill} corFundo={CORES.amarelo} corTexto={CORES.preto} />
+            <Pill texto={slide.textoPill} corFundo={CORES.amarelo} corTexto={CORES.preto} slide={slide} />
           </div>
         )}
       </div>

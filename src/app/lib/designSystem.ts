@@ -15,7 +15,7 @@ export const COLORS = {
     soft: "#FFD960",      // Hover states, highlights
     deep: "#E5AC14",      // Pressed states
     cream: "#FFF4C2",     // Backgrounds claros com accent
-    glow: "#FFC52814",    // 8% opacity para focus rings sutis
+    glow: "#FFC52833",    // 20% opacity para glows/focus rings
   },
 
   // Grafites (dark mode base)
@@ -130,8 +130,8 @@ export const SHADOW = {
   md: "0 4px 16px rgba(0, 0, 0, 0.35)",
   lg: "0 8px 32px rgba(0, 0, 0, 0.40)",
   xl: "0 16px 48px rgba(0, 0, 0, 0.50)",
-  yellow: "none",
-  yellowGlow: "none",
+  yellow: "0 1px 3px rgba(0, 0, 0, 0.4)",
+  yellowGlow: "0 0 0 1px rgba(255, 255, 255, 0.06)",
 } as const;
 
 // ============================================================

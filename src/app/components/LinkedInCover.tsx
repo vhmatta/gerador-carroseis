@@ -55,8 +55,8 @@ function resolveFotoUrl(url?: string): string {
 }
 
 export default function LinkedInCover({
-  numero = "46",
-  titulo = "Mercado B2B: flexibilidade financeira na cadeia de suprimentos",
+  numero = "49",
+  titulo = "Mercado B2C: o uso estratégico e consciente do parcelamento",
   legendaLinha1 = "Tecnologia que destrava",
   legendaLinha2 = "o seu dia a dia financeiro.",
   fotoUrl = FOTO_PADRAO,
@@ -69,7 +69,7 @@ export default function LinkedInCover({
 
   return (
     <div
-      className="bg-white relative overflow-hidden"
+      className="bg-white relative"
       style={{ width: `${WIDTH}px`, height: `${HEIGHT}px` }}
     >
       {/* Shape amarelo */}
@@ -77,53 +77,67 @@ export default function LinkedInCover({
         className="absolute"
         style={{
           backgroundColor: "#ffcb31",
-          height: "580px",
-          left: "30px",
-          right: "30px",
-          top: "110px",
-          borderBottomLeftRadius: "40px",
-          borderBottomRightRadius: "40px",
-          borderTopLeftRadius: "40px",
-          borderTopRightRadius: "320px",
+          height: "575px",
+          left: "34px",
+          right: "34px",
+          top: "111px",
+          borderBottomLeftRadius: "34px",
+          borderBottomRightRadius: "34px",
+          borderTopLeftRadius: "34px",
+          borderTopRightRadius: "341px",
         }}
       />
 
       {/* Container da foto */}
-      <div className="absolute" style={{ right: "30px", bottom: "30px" }}>
+      <div className="absolute" style={{ right: "34px", bottom: "34px" }}>
         <div
-          className="relative overflow-hidden bg-gray-200"
+          className="relative overflow-hidden bg-gradient-to-br from-gray-300 to-gray-400"
           style={{
-            height: "510px",
-            width: "550px",
-            borderBottomLeftRadius: "40px",
-            borderBottomRightRadius: "40px",
-            borderTopLeftRadius: "220px",
-            borderTopRightRadius: "40px",
+            height: "501px",
+            width: "533px",
+            borderBottomLeftRadius: "34px",
+            borderBottomRightRadius: "34px",
+            borderTopLeftRadius: "213px",
+            borderTopRightRadius: "34px",
           }}
         >
-          {fotoResolvida && (
+          {fotoResolvida ? (
             <img
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute object-cover"
               src={fotoResolvida}
+              // data URLs (upload local) não precisam de crossOrigin; externas precisam
               {...(isDataUrl ? {} : { crossOrigin: "anonymous" as const })}
+              style={{ width: "100%", height: "100%" }}
             />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg className="w-24 h-24 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
           )}
 
-          {/* Gradiente sobre a foto para legenda */}
+          {/* Gradiente sobre a foto */}
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.7) 100%)",
+              background:
+                "linear-gradient(to bottom, rgba(0,0,0,0) 32.867%, rgba(0,0,0,0.8) 95.333%)",
             }}
           />
         </div>
       </div>
 
-      {/* Logo no topo esquerdo */}
+      {/* Logo parcele aqui */}
       <div
         className="absolute"
-        style={{ height: "110px", left: "30px", top: "25px", width: "540px" }}
+        style={{ height: "78px", left: "34px", top: "34px", width: "380px" }}
       >
         <img
           alt="Parcele Aqui"
@@ -138,89 +152,93 @@ export default function LinkedInCover({
         />
       </div>
 
-      {/* Header Info (Parcele News + Número) */}
-      <div className="absolute" style={{ right: "45px", top: "40px", textAlign: "right" }}>
-        <p
-          className="font-['Kufam',sans-serif]"
-          style={{
-            color: "#371b01",
-            fontSize: "20px",
-            fontWeight: 500,
-            margin: 0,
-            lineHeight: 1,
-          }}
-        >
-          Parcele News
-        </p>
-        <p
-          className="font-['Kufam',sans-serif]"
-          style={{
-            color: "#371b01",
-            fontSize: "70px",
-            fontWeight: 800,
-            margin: "5px 0 0 0",
-            lineHeight: 0.9,
-          }}
-        >
-          #{numero}
-        </p>
-      </div>
+      {/* Parcele News */}
+      <p
+        className="absolute font-['Kufam',sans-serif] text-right"
+        style={{
+          color: "#371b01",
+          fontSize: "18px",
+          fontWeight: 700,
+          right: "34px",
+          letterSpacing: "-0.02em",
+          lineHeight: "1.2",
+          top: "43px",
+          margin: 0,
+        }}
+      >
+        Parcele News
+      </p>
+
+      {/* Número */}
+      <p
+        className="absolute font-['Kufam',sans-serif] text-right"
+        style={{
+          color: "#371b01",
+          fontSize: "53px",
+          fontWeight: 700,
+          right: "34px",
+          letterSpacing: "-0.02em",
+          lineHeight: "1",
+          top: "82px",
+          margin: 0,
+        }}
+      >
+        #{numero}
+      </p>
 
       {/* Card do ícone */}
       <div
-        className="absolute flex items-center justify-center"
+        className="absolute rounded-[13px]"
         style={{
           backgroundColor: "#ffe8a4",
-          height: "90px",
-          left: "70px",
-          top: "320px",
-          width: "90px",
-          borderRadius: "15px",
+          height: "85px",
+          left: "77px",
+          top: "301px",
+          width: "85px",
         }}
-      >
-        {IconeCustomizado ? <IconeCustomizado /> : (
-          <span style={{ fontSize: "50px", color: "#371b01", fontWeight: 300 }}>$</span>
-        )}
-      </div>
+      />
+
+      {/* Ícone */}
+      {IconeCustomizado ? <IconeCustomizado /> : <IconePadrao />}
 
       {/* Título */}
       <h1
         className="absolute font-['Kufam',sans-serif]"
         style={{
-          color: "#371b01",
-          fontSize: "48px",
-          fontWeight: 800,
-          left: "70px",
-          top: "450px",
-          width: "600px",
-          lineHeight: "1.1",
+          color: "#1a1a1a",
+          fontSize: "45px",
+          fontWeight: 700,
+          left: "77px",
+          letterSpacing: "-0.02em",
+          lineHeight: "1.15",
+          top: "425px",
+          width: "603px",
           margin: 0,
-          letterSpacing: "-0.01em",
         }}
       >
         {titulo}
       </h1>
 
-      {/* Legenda na foto */}
+      {/* Legenda sobre a foto */}
       {(usarLegenda1 || usarSubtitulo) && (
         <div
           className="absolute font-['Kufam',sans-serif] text-white"
           style={{
-            right: "75px",
-            bottom: "70px",
-            width: "460px",
-            textAlign: "left",
+            left: `calc(${WIDTH}px - 34px - 533px + 47px)`,
+            bottom: "47px",
+            right: "calc(34px + 47px)",
+            textShadow: "0 2px 12px rgba(0,0,0,0.6)",
           }}
         >
           {usarLegenda1 && (
-            <div style={{ fontSize: "24px", fontWeight: 400, opacity: 0.9 }}>
+            <p style={{ fontSize: "21px", fontWeight: 400, lineHeight: "1.3", margin: 0 }}>
               {legendaLinha1}
-            </div>
+            </p>
           )}
           {usarSubtitulo && (
-            <div style={{ fontSize: "24px", fontWeight: 700, marginTop: "2px" }}>
+            <p style={{ fontSize: "21px", fontWeight: 700, lineHeight: "1.3", margin: 0 }}>
               {legendaLinha2}
-            </div>
+            </p>
           )}
         </div>
       )}

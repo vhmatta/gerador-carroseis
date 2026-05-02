@@ -133,6 +133,8 @@ export interface SlideData {
   tipoDestaque?: TipografiaOverride;
   /** Override tipográfico do BIG NUMBER */
   tipoNumero?: TipografiaOverride;
+  /** Override tipográfico do PILL/CTA */
+  tipoPill?: TipografiaOverride;
 }
 
 /** Cria um novo slide vazio com valores default. */
@@ -180,6 +182,8 @@ export interface LayoutRenderProps {
   marca: string;
   numero: string; // "01 / 12"
   coresResolvidas: CoresResolvidas;
+  /** Se este é o último slide do carrossel (pra esconder seta indicativa) */
+  ehUltimo?: boolean;
 }
 
 /** Cores efetivas usadas no slide (slide > tema). */
@@ -293,7 +297,7 @@ export function resolverTamanhoHeadline(slide: SlideData, tamanhoBase: number): 
 // ============================================================
 
 /** Identificadores de elementos tipográficos. */
-export type ElementoTipo = "kicker" | "headline" | "corpo" | "destaque" | "numero";
+export type ElementoTipo = "kicker" | "headline" | "corpo" | "destaque" | "numero" | "pill";
 
 /** Mapa elemento → campo do SlideData onde fica o override. */
 const CAMPO_OVERRIDE_POR_ELEMENTO: Record<ElementoTipo, keyof SlideData> = {
@@ -302,6 +306,7 @@ const CAMPO_OVERRIDE_POR_ELEMENTO: Record<ElementoTipo, keyof SlideData> = {
   corpo: "tipoCorpo",
   destaque: "tipoDestaque",
   numero: "tipoNumero",
+  pill: "tipoPill",
 };
 
 /** Estilo CSS resolvido pra aplicar num elemento. */
@@ -406,4 +411,19 @@ export function estiloParaCss(estilo: EstiloElemento): React.CSSProperties {
     letterSpacing: estilo.letterSpacing,
     textTransform: estilo.textTransform,
   };
+}
+
+/**
+ * Helper conveniente: resolve estilo de um elemento e retorna direto como CSSProperties.
+ * Use em divs inline dos temas Tweet/Keynote pra aplicar overrides do slide automaticamente.
+ *
+ * Ex:
+ *   <div style={{ ...aplicarTipoElemento(slide, "headline", { tamanho: 34, peso: 500 }), color: "red" }}>
+ */
+export function aplicarTipoElemento(
+  slide: SlideData,
+  elemento: ElementoTipo,
+  base: ConfigBaseElemento
+): React.CSSProperties {
+  return estiloParaCss(resolverEstiloElemento(slide, elemento, base));
 }

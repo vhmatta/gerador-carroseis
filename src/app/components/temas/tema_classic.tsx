@@ -1,5 +1,5 @@
 import type { TemaConfig, LayoutRenderProps, SlideData } from "./tipos";
-import { criarSlideVazio, resolverFonteHeadline } from "./tipos";
+import { criarSlideVazio, resolverFonteHeadline, aplicarTipoElemento } from "./tipos";
 import {
   Topbar,
   Kicker,
@@ -18,7 +18,7 @@ import {
 // ============================================================
 
 const CORES = {
-  preto: "#050505",
+  preto: "#0a0a0a",
   branco: "#ffffff",
   bege: "#F4F1EA",
   amarelo: "#FFC528",
@@ -60,7 +60,7 @@ function LayoutFotoCheia({ slide, tema, marca, numero, coresResolvidas }: Layout
         )}
         {slide.mostrarPill && slide.textoPill && (
           <div style={{ marginTop: 26 }}>
-            <Pill texto={slide.textoPill} corFundo={CORES.amarelo} corTexto={CORES.preto} />
+            <Pill texto={slide.textoPill} corFundo={CORES.amarelo} corTexto={CORES.preto} slide={slide} />
           </div>
         )}
       </div>
@@ -199,7 +199,8 @@ function LayoutDuplaFoto({ slide, tema, marca, numero, coresResolvidas }: Layout
               textTransform: "uppercase",
               color: slide.corKicker || CORES.amarelo,
               marginBottom: 10,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 13, peso: 800 as any, tracking: 3 })
+        }}
           >
             {slide.kicker}
           </div>

@@ -1,5 +1,5 @@
 import type { TemaConfig, LayoutRenderProps } from "./tipos";
-import { criarSlideVazio, resolverFonteHeadline } from "./tipos";
+import { criarSlideVazio, resolverFonteHeadline, aplicarTipoElemento } from "./tipos";
 import { FotoOuPlaceholder, Pill } from "./primitivos";
 
 // ============================================================
@@ -10,7 +10,7 @@ import { FotoOuPlaceholder, Pill } from "./primitivos";
 // ============================================================
 
 const CORES = {
-  preto: "#050505",      // Absolute Black premium
+  preto: "#1a1a1a",      // um pouco menos escuro que o Classic (mais cinza)
   branco: "#ffffff",
   bege: "#EEEAE1",       // bege levemente mais quente
   amarelo: "#FFC528",
@@ -167,7 +167,8 @@ function LayoutFotoRetrato({ slide, tema, marca, numero }: LayoutRenderProps) {
             letterSpacing: "-1.5px",
             color: slide.corHeadline || CORES.amarelo,
             whiteSpace: "pre-line",
-          }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 60, peso: 700 as any, tracking: -1.5 })
+        }}
         >
           {slide.headline}
         </div>
@@ -179,7 +180,8 @@ function LayoutFotoRetrato({ slide, tema, marca, numero }: LayoutRenderProps) {
               color: CORES.cinzaTexto,
               marginTop: 14,
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 18, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -212,7 +214,8 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderPro
               color: slide.corKicker || CORES.amarelo,
               marginBottom: 24,
               fontFamily: FONTE_PADRAO,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 12, peso: 700 as any, tracking: 2.5 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -227,7 +230,8 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderPro
             letterSpacing: "-2px",
             color: slide.corHeadline || CORES.amarelo,
             whiteSpace: "pre-line",
-          }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 72, peso: 700 as any, tracking: -2 })
+        }}
         >
           {slide.headline}
         </div>
@@ -242,7 +246,8 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderPro
               marginTop: 32,
               whiteSpace: "pre-line",
               maxWidth: "85%",
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 20, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -258,7 +263,8 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderPro
               color: slide.corDestaque || CORES.branco,
               marginTop: 28,
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "destaque", { tamanho: 22, peso: 700 as any, tracking: 0 })
+        }}
           >
             {slide.destaque}
           </div>
@@ -315,7 +321,8 @@ function LayoutDuplaFotoKeynote({ slide, tema, marca, numero }: LayoutRenderProp
               letterSpacing: "-0.5px",
               color: slide.corHeadline || CORES.amarelo,
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 32, peso: 700 as any, tracking: -0.5 })
+        }}
           >
             {slide.headline}
           </div>
@@ -346,7 +353,8 @@ function LayoutSilhuetaClaro({ slide, tema, marca, numero }: LayoutRenderProps) 
             letterSpacing: "-1.2px",
             color: slide.corHeadline || CORES.preto,
             whiteSpace: "pre-line",
-          }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 46, peso: 700 as any, tracking: -1.2 })
+        }}
         >
           {slide.headline}
         </div>
@@ -360,7 +368,8 @@ function LayoutSilhuetaClaro({ slide, tema, marca, numero }: LayoutRenderProps) 
               color: "#555",
               marginTop: 24,
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 18, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>
@@ -461,7 +470,8 @@ function LayoutFotoLateral({ slide, tema, marca, numero }: LayoutRenderProps) {
               color: slide.corKicker || CORES.amarelo,
               marginBottom: 22,
               fontFamily: FONTE_PADRAO,
-            }}
+          ...aplicarTipoElemento(slide, "kicker", { tamanho: 12, peso: 700 as any, tracking: 2.5 })
+        }}
           >
             {slide.kicker}
           </div>
@@ -476,7 +486,8 @@ function LayoutFotoLateral({ slide, tema, marca, numero }: LayoutRenderProps) {
             letterSpacing: "-1.5px",
             color: slide.corHeadline || CORES.amarelo,
             whiteSpace: "pre-line",
-          }}
+          ...aplicarTipoElemento(slide, "headline", { tamanho: 52, peso: 700 as any, tracking: -1.5 })
+        }}
         >
           {slide.headline}
         </div>
@@ -490,7 +501,8 @@ function LayoutFotoLateral({ slide, tema, marca, numero }: LayoutRenderProps) {
               color: CORES.cinzaTexto,
               marginTop: 24,
               whiteSpace: "pre-line",
-            }}
+          ...aplicarTipoElemento(slide, "corpo", { tamanho: 18, peso: 400 as any, tracking: 0 })
+        }}
           >
             {slide.corpo}
           </div>

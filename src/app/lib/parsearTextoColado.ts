@@ -69,10 +69,12 @@ const LAYOUTS_VALIDOS: LayoutId[] = [
   "headline_amarela_preto",
   "foto_full_cta",
   // Tweet
-  "tweet_com_foto",
-  "tweet_so_texto",
-  "tweet_foto_topo",
-  "tweet_fechamento",
+  "tweet_texto",
+  "tweet_imagem",
+  "tweet_numero",
+  "tweet_final",
+  "tweet_editorial",
+  "tweet_sandwich",
   // Keynote
   "keynote_foto_full",
   "keynote_headline_gigante",

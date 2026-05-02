@@ -66,29 +66,29 @@ export default function CoverEditorAvancado() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#050505]">
-      <div className="max-w-[1400px] mx-auto px-6 py-12 space-y-8">
+    <div className="w-full min-h-screen bg-[#0f0f0f]">
+      <div className="max-w-[1400px] mx-auto px-6 py-8 space-y-6">
         {/* Preview da Capa */}
         <section
           aria-label="Preview da capa"
-          className="bg-[#0a0a0a] rounded-2xl border border-white/5 p-8 overflow-hidden shadow-2xl"
+          className="bg-[#141414] rounded-xl border border-gray-800 p-6 overflow-hidden"
         >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest font-['Archivo',sans-serif]">
-              Preview da Capa
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white font-['Archivo',sans-serif]">
+              Preview
             </h2>
-            <span className="text-[10px] text-white/20 font-mono tracking-tighter">1280 × 720 PX · PNG EXPORT</span>
+            <span className="text-xs text-gray-500 font-mono">Saída: 1280 × 720 px</span>
           </div>
           <div className="flex justify-center overflow-hidden">
             <div
               style={{
-                transform: "scale(0.55)",
+                transform: "scale(0.5)",
                 transformOrigin: "top center",
                 width: "1280px",
-                height: "400px",
+                height: "360px",
               }}
             >
-              <div ref={capaRef} className="shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+              <div ref={capaRef}>
                 <LinkedInCover
                   numero={numero}
                   titulo={titulo}
@@ -107,33 +107,35 @@ export default function CoverEditorAvancado() {
         {/* Form em 2 colunas */}
         <section
           aria-label="Configuração da capa"
-          className="bg-[#0a0a0a] rounded-2xl border border-white/5 p-8"
+          className="bg-[#141414] rounded-xl border border-gray-800 p-6"
         >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1.5 h-6 bg-[#FFC528] rounded-full" />
-            <h2 className="text-xl font-bold text-white font-['Archivo',sans-serif] tracking-tight">
-              Parâmetros de Edição
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-[#FFC528] flex items-center justify-center">
+              <LucideIcons.Settings size={16} className="text-black" />
+            </div>
+            <h2 className="text-xl font-semibold text-white font-['Archivo',sans-serif]">
+              Configuração
             </h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8">
             {/* Coluna esquerda */}
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Número e Ícone */}
               <div className="grid grid-cols-2 gap-4">
-                <FieldWrapper label="Edição #" htmlFor="numero">
+                <FieldWrapper label="Número da edição" htmlFor="numero">
                   <input
                     id="numero"
                     type="text"
                     value={numero}
                     onChange={(e) => setNumero(e.target.value.replace(/[^\d]/g, ""))}
                     className="input-base"
-                    placeholder="46"
+                    placeholder="49"
                     maxLength={4}
                   />
                 </FieldWrapper>
 
-                <FieldWrapper label="Símbolo" htmlFor="icone">
+                <FieldWrapper label="Ícone" htmlFor="icone">
                   <SelectIconeComPreview
                     id="icone"
                     valor={iconeEscolhido}
@@ -144,11 +146,11 @@ export default function CoverEditorAvancado() {
 
               {/* Título */}
               <FieldWrapper
-                label="Título da Newsletter"
+                label="Título principal"
                 htmlFor="titulo"
                 hint={
-                  <span className={tituloLongo ? "text-amber-400" : "text-white/20"}>
-                    {caracteresTitulo} caracteres {tituloLongo && " (Limite visual sugerido: 80)"}
+                  <span className={tituloLongo ? "text-amber-400" : "text-gray-500"}>
+                    {caracteresTitulo} caracteres {tituloLongo && " — pode quebrar visualmente acima de 80"}
                   </span>
                 }
               >
@@ -158,17 +160,17 @@ export default function CoverEditorAvancado() {
                   onChange={(e) => setTitulo(e.target.value)}
                   rows={3}
                   className="input-base resize-none"
-                  placeholder="Mercado B2B: flexibilidade financeira na cadeia de suprimentos"
+                  placeholder="Ex: Mercado B2C: o uso estratégico e consciente do parcelamento"
                 />
               </FieldWrapper>
 
               {/* Legendas */}
-              <div className="space-y-4 bg-white/[0.02] rounded-xl p-5 border border-white/5">
-                <h3 className="text-xs font-bold text-white/30 uppercase tracking-wider">Legendas (Sobre a Foto)</h3>
+              <div className="space-y-4 bg-[#0f0f0f] rounded-lg p-4 border border-gray-800">
+                <h3 className="text-sm font-semibold text-gray-300">Legendas sobre a foto</h3>
 
                 <ToggleField
                   id="usarLegenda1"
-                  label="Linha 1 (Suave)"
+                  label="Linha 1 (texto leve)"
                   checked={usarLegenda1}
                   onChange={setUsarLegenda1}
                 >
@@ -184,7 +186,7 @@ export default function CoverEditorAvancado() {
 
                 <ToggleField
                   id="usarSubtitulo"
-                  label="Linha 2 (Destaque)"
+                  label="Linha 2 (negrito, destaque)"
                   checked={usarSubtitulo}
                   onChange={setUsarSubtitulo}
                 >
@@ -201,11 +203,11 @@ export default function CoverEditorAvancado() {
             </div>
 
             {/* Coluna direita - Foto */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               <FieldWrapper
-                label="Fonte da Imagem"
+                label="URL da foto"
                 htmlFor="foto"
-                hint="URL direta ou assets locais"
+                hint="Cole URL externa (Unsplash) ou caminho /assets/..."
               >
                 <input
                   id="foto"
@@ -217,34 +219,32 @@ export default function CoverEditorAvancado() {
                 />
               </FieldWrapper>
 
-              <div className="pt-2">
-                <UnsplashSearch
-                  onSelectImage={(url) => setFotoUrl(url)}
-                  grupoIndex={0}
-                  valorAtual={fotoUrl}
-                />
-              </div>
+              <UnsplashSearch
+                onSelectImage={(url) => setFotoUrl(url)}
+                grupoIndex={0}
+                valorAtual={fotoUrl}
+              />
             </div>
           </div>
 
           {/* Barra de ação */}
-          <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between gap-4 flex-wrap">
+          <div className="mt-6 pt-6 border-t border-gray-800 flex items-center justify-between gap-4 flex-wrap">
             <StatusBadge status={status} />
 
             <button
               onClick={gerarImagem}
               disabled={status.tipo === "gerando" || !titulo.trim()}
-              className="px-8 py-4 bg-[#FFC528] text-black rounded-xl hover:bg-[#FFD04F] active:scale-95 transition-all font-bold shadow-[0_10px_20px_rgba(255,197,40,0.2)] flex items-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-[#FFC528] text-black rounded-lg hover:bg-[#FFD04F] active:bg-[#E8B320] transition-colors font-bold shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {status.tipo === "gerando" ? (
                 <>
                   <Spinner />
-                  Gerando PNG...
+                  Gerando imagem...
                 </>
               ) : (
                 <>
-                  <LucideIcons.Download size={20} />
-                  Exportar Capa Final
+                  <LucideIcons.Download size={18} />
+                  Baixar PNG
                 </>
               )}
             </button>
@@ -271,12 +271,12 @@ function FieldWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <label htmlFor={htmlFor} className="block text-xs font-bold text-white/40 uppercase tracking-wide">
+    <div className="space-y-1.5">
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-gray-300">
         {label}
       </label>
       {children}
-      {hint && <div className="text-[11px]">{hint}</div>}
+      {hint && <div className="text-xs">{hint}</div>}
     </div>
   );
 }
@@ -295,15 +295,16 @@ function ToggleField({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-3">
-      <label className="flex items-center gap-2 cursor-pointer select-none group">
-        <div 
-          className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${checked ? 'bg-[#FFC528] border-[#FFC528]' : 'bg-transparent border-white/20 group-hover:border-white/40'}`}
-          onClick={(e) => { e.preventDefault(); onChange(!checked); }}
-        >
-          {checked && <LucideIcons.Check size={12} className="text-black" />}
-        </div>
-        <span className="text-[13px] font-medium text-white/60 group-hover:text-white transition-colors">{label}</span>
+    <div className="space-y-2">
+      <label className="flex items-center gap-2 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          id={id}
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="w-4 h-4 accent-[#FFC528] rounded"
+        />
+        <span className="text-sm text-gray-300">{label}</span>
       </label>
       {children}
     </div>
@@ -312,27 +313,27 @@ function ToggleField({
 
 function StatusBadge({ status }: { status: Status }) {
   if (status.tipo === "idle") {
-    return <span className="text-xs text-white/20 font-medium">Sistema ocioso</span>;
+    return <span className="text-xs text-gray-500">Pronto para gerar</span>;
   }
   if (status.tipo === "gerando") {
     return (
-      <span className="flex items-center gap-2 text-xs text-[#FFC528] font-bold">
-        <Spinner size={12} /> Renderizando…
+      <span className="flex items-center gap-2 text-xs text-[#FFC528]">
+        <Spinner size={12} /> Processando imagem…
       </span>
     );
   }
   if (status.tipo === "sucesso") {
     return (
-      <span className="flex items-center gap-2 text-xs text-emerald-400 font-bold">
-        <LucideIcons.CheckCircle2 size={16} /> Exportação concluída
+      <span className="flex items-center gap-2 text-xs text-emerald-400">
+        <LucideIcons.CheckCircle2 size={14} /> Imagem baixada com sucesso!
       </span>
     );
   }
   return (
-    <span className="flex items-start gap-2 text-xs text-red-400 max-w-md font-medium">
-      <LucideIcons.AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+    <span className="flex items-start gap-2 text-xs text-red-400 max-w-md">
+      <LucideIcons.AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
       <span>
-        Erro: {status.msg}
+        <strong>Erro:</strong> {status.msg}
       </span>
     </span>
   );
@@ -362,27 +363,23 @@ function GlobalStyles() {
     <style>{`
       .input-base {
         width: 100%;
-        padding: 12px 16px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 10px 12px;
+        background: #1f1f1f;
+        border: 1px solid #333;
         color: white;
-        border-radius: 12px;
+        border-radius: 8px;
         font-size: 14px;
-        transition: all 0.2s ease;
+        transition: border-color 0.15s, background 0.15s;
       }
       .input-base:focus {
         outline: none;
         border-color: #FFC528;
-        background: rgba(255, 255, 255, 0.06);
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+        background: #242424;
       }
       .input-base:disabled {
-        opacity: 0.3;
+        background: #141414;
+        color: #555;
         cursor: not-allowed;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
       }
     `}</style>
   );

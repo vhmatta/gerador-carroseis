@@ -62,11 +62,13 @@ export default function App() {
 
 function AppShell() {
   const [modo, setModo] = useState<Modo>("editor");
-  const { theme } = useTheme();
+  const { theme, mode, toggle } = useTheme();
 
   useEffect(() => {
-    document.title = "Gerador de Capas LinkedIn — Parcele Aqui";
+    document.title = "Gerador Potencial — Conteúdo LinkedIn & Instagram";
   }, []);
+
+  const modoAtual = MODOS.find((m) => m.id === modo)!;
 
   return (
     <div
@@ -74,9 +76,10 @@ function AppShell() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#050505",
-        color: "#ffffff",
-        fontFamily: "'Archivo', sans-serif",
+        backgroundColor: theme.bg.base,
+        color: theme.text.primary,
+        fontFamily: "'Poppins', sans-serif",
+        transition: "background-color 250ms ease, color 250ms ease",
       }}
     >
       {/* ================ HEADER ================ */}
@@ -85,83 +88,151 @@ function AppShell() {
           position: "sticky",
           top: 0,
           zIndex: 50,
-          backgroundColor: "rgba(5, 5, 5, 0.8)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          height: 70,
+          backgroundColor: theme.mode === "dark" ? "rgba(5, 5, 5, 0.8)" : "rgba(250, 250, 248, 0.8)",
+          backdropFilter: "blur(16px) saturate(180%)",
+          WebkitBackdropFilter: "blur(16px) saturate(180%)",
+          borderBottom: `1px solid ${theme.border.default}`,
         }}
       >
         <div
           style={{
-            maxWidth: 1400,
+            maxWidth: 1600,
             margin: "0 auto",
-            padding: "14px 32px",
+            padding: `0 ${SPACING[6]}`,
+            height: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: SPACING[4],
           }}
         >
           {/* Logo + título */}
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: SPACING[4] }}>
             <img
               src={imgLogoGrupo}
               alt="Grupo Potencial"
-              style={{ height: 32 }}
+              style={{
+                height: 30,
+                filter: mode === "light" ? "invert(1) brightness(0.3)" : "none",
+                transition: TRANSITION.base,
+              }}
             />
-            <div style={{ height: 24, width: 1, backgroundColor: "rgba(255,255,255,0.15)" }} />
+            <div
+              style={{
+                height: 32,
+                width: 1,
+                backgroundColor: theme.border.default,
+              }}
+            />
             <div>
               <h1
                 style={{
-                  fontSize: "15px",
-                  fontWeight: 700,
-                  color: "#ffffff",
-                  margin: 0,
+                  fontSize: FONT_SIZE.md,
+                  fontWeight: FONT_WEIGHT.bold,
+                  color: theme.text.primary,
                   letterSpacing: "-0.01em",
+                  lineHeight: 1.2,
+                  margin: 0,
                 }}
               >
-                Gerador de Capas LinkedIn
+                Gerador Potencial
               </h1>
               <p
                 style={{
-                  fontSize: "11px",
-                  color: "rgba(255,255,255,0.45)",
+                  fontSize: FONT_SIZE.xs,
+                  color: theme.text.muted,
                   margin: 0,
-                  marginTop: 1,
-                  fontWeight: 500,
+                  marginTop: 2,
                   letterSpacing: "0.02em",
                 }}
               >
-                Parcele Aqui · Parcele News
+                Conteúdo · LinkedIn · Instagram
               </p>
             </div>
           </div>
 
-          {/* Navegação Direta */}
-          <nav style={{ display: "flex", gap: 12 }}>
-            <NavButton
-              active={modo === "editor"}
-              onClick={() => setModo("editor")}
-              label="Editor Capa"
-              icone={<LayoutDashboard size={16} />}
+          {/* Navegação + theme toggle */}
+          <nav style={{ display: "flex", alignItems: "center", gap: SPACING[2] }}>
+            <PlatformDropdown
+              icone={<Linkedin size={16} strokeWidth={1.75} />}
+              label="LinkedIn"
+              modos={MODOS.filter((m) => m.categoria === "linkedin")}
+              modoAtivo={modo}
+              onSelect={setModo}
             />
-            <NavButton
-              active={modo === "lote"}
-              onClick={() => setModo("lote")}
-              label="Lote de Capas"
-              icone={<Layers size={16} />}
+            <PlatformDropdown
+              icone={<Instagram size={16} strokeWidth={1.75} />}
+              label="Instagram"
+              modos={MODOS.filter((m) => m.categoria === "instagram")}
+              modoAtivo={modo}
+              onSelect={setModo}
             />
-            <NavButton
-              active={modo === "carrossel"}
-              onClick={() => setModo("carrossel")}
-              label="Carrossel Instagram"
-              icone={<GalleryHorizontal size={16} />}
-            />
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: SPACING[2],
+                padding: `${SPACING[2]} ${SPACING[3]}`,
+                backgroundColor: theme.bg.sunken,
+                borderRadius: RADIUS.md,
+                border: `1px solid ${theme.border.default}`,
+                fontSize: FONT_SIZE.sm,
+              }}
+            >
+              <span style={{ color: theme.text.muted, fontWeight: FONT_WEIGHT.medium }}>
+                Ativo:
+              </span>
+              <span
+                style={{
+                  color: theme.accent.primary,
+                  fontWeight: FONT_WEIGHT.bold,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                {modoAtual.icone}
+                {modoAtual.label}
+              </span>
+            </div>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggle}
+              title={`Mudar para modo ${mode === "dark" ? "claro" : "escuro"}`}
+              style={{
+                width: 36,
+                height: 36,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: theme.bg.sunken,
+                border: `1px solid ${theme.border.default}`,
+                borderRadius: RADIUS.md,
+                color: theme.text.secondary,
+                cursor: "pointer",
+                transition: TRANSITION.fast,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = theme.accent.primary;
+                e.currentTarget.style.color = theme.accent.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = theme.border.default;
+                e.currentTarget.style.color = theme.text.secondary;
+              }}
+            >
+              {mode === "dark" ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} />}
+            </button>
           </nav>
         </div>
       </header>
 
       {/* ================ MAIN ================ */}
-      <main style={{ flex: 1, backgroundColor: "#050505" }}>
+      <main style={{ flex: 1 }}>
         {modo === "editor" && <CoverEditorAvancado />}
         {modo === "lote" && <GeradorLote />}
         {modo === "carrossel" && <CarrosselEditor />}
@@ -170,75 +241,207 @@ function AppShell() {
       {/* ================ FOOTER ================ */}
       <footer
         style={{
-          padding: "40px 0",
-          backgroundColor: "#050505",
-          borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+          backgroundColor: theme.bg.raised,
+          borderTop: `1px solid ${theme.border.default}`,
         }}
       >
         <div
           style={{
-            maxWidth: 1400,
+            maxWidth: 1600,
             margin: "0 auto",
-            padding: "0 32px",
+            padding: `${SPACING[6]} ${SPACING[6]}`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 16,
+            gap: SPACING[4],
+            flexWrap: "wrap",
           }}
         >
-          <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "13px" }}>
-            Potencial Tecnologia © {new Date().getFullYear()}
+          <span style={{ color: theme.text.muted, fontSize: FONT_SIZE.sm }}>
+            Desenvolvido por
           </span>
+          <img
+            src={imgLogoPotencialFooter}
+            alt="Potencial Tecnologia"
+            style={{
+              height: 60,
+              opacity: 0.9,
+              filter: mode === "light" ? "invert(1) brightness(0.3)" : "none",
+              transition: TRANSITION.base,
+            }}
+          />
+          <Badge variant="muted">v{__APP_VERSION__} · {new Date().getFullYear()}</Badge>
         </div>
       </footer>
     </div>
   );
 }
 
-function NavButton({
-  active,
-  onClick,
-  label,
+// ============================================================
+// PLATFORM DROPDOWN (refatorado com sistema de tema)
+// ============================================================
+
+function PlatformDropdown({
   icone,
+  label,
+  modos,
+  modoAtivo,
+  onSelect,
 }: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
   icone: React.ReactNode;
+  label: string;
+  modos: ModoDef[];
+  modoAtivo: Modo;
+  onSelect: (id: Modo) => void;
 }) {
+  const { theme } = useTheme();
+  const [aberto, setAberto] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!aberto) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setAberto(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [aberto]);
+
+  const temAtivo = modos.some((m) => m.id === modoAtivo);
+
   return (
-    <button
-      onClick={onClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        height: 34,
-        padding: "0 14px",
-        backgroundColor: active ? "rgba(255, 197, 40, 0.15)" : "transparent",
-        color: active ? "#FFC528" : "rgba(255,255,255,0.6)",
-        border: `1px solid ${active ? "#FFC52844" : "rgba(255,255,255,0.1)"}`,
-        borderRadius: "6px",
-        fontSize: "12px",
-        fontWeight: 600,
-        cursor: "pointer",
-        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-      }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)";
-          e.currentTarget.style.color = "#ffffff";
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          e.currentTarget.style.backgroundColor = "transparent";
-          e.currentTarget.style.color = "rgba(255,255,255,0.6)";
-        }
-      }}
-    >
-      {icone}
-      {label}
-    </button>
+    <div style={{ position: "relative" }} ref={ref}>
+      <button
+        onClick={() => setAberto((v) => !v)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: SPACING[2],
+          height: 36,
+          padding: `0 ${SPACING[4]}`,
+          backgroundColor: temAtivo ? theme.accent.primary : theme.bg.sunken,
+          color: temAtivo ? theme.text.inverse : theme.text.secondary,
+          border: `1px solid ${temAtivo ? theme.accent.primary : theme.border.default}`,
+          borderRadius: RADIUS.md,
+          fontSize: FONT_SIZE.sm,
+          fontWeight: FONT_WEIGHT.bold,
+          fontFamily: "'Poppins', sans-serif",
+          cursor: "pointer",
+          transition: TRANSITION.fast,
+          boxShadow: temAtivo ? "0 1px 3px rgba(0, 0, 0, 0.4)" : "none",
+        }}
+        onMouseEnter={(e) => {
+          if (!temAtivo) {
+            e.currentTarget.style.borderColor = theme.accent.primary;
+            e.currentTarget.style.color = theme.text.primary;
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!temAtivo) {
+            e.currentTarget.style.borderColor = theme.border.default;
+            e.currentTarget.style.color = theme.text.secondary;
+          }
+        }}
+      >
+        {icone}
+        {label}
+        <ChevronDown
+          size={14}
+          strokeWidth={2}
+          style={{
+            transition: TRANSITION.fast,
+            transform: aberto ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      </button>
+
+      {aberto && (
+        <div
+          role="menu"
+          style={{
+            position: "absolute",
+            right: 0,
+            top: "calc(100% + 8px)",
+            width: 280,
+            backgroundColor: theme.bg.elevated,
+            border: `1px solid ${theme.border.default}`,
+            borderRadius: RADIUS.lg,
+            boxShadow: SHADOW.xl,
+            overflow: "hidden",
+            zIndex: 100,
+            animation: "fadeIn 150ms ease-out",
+          }}
+        >
+          {modos.map((m, idx) => {
+            const ativo = m.id === modoAtivo;
+            return (
+              <button
+                key={m.id}
+                role="menuitem"
+                onClick={() => {
+                  onSelect(m.id);
+                  setAberto(false);
+                }}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  padding: `${SPACING[3]} ${SPACING[4]}`,
+                  backgroundColor: ativo ? `${theme.accent.primary}1A` : "transparent",
+                  color: ativo ? theme.accent.primary : theme.text.secondary,
+                  border: "none",
+                  borderBottom:
+                    idx < modos.length - 1 ? `1px solid ${theme.border.muted}` : "none",
+                  cursor: "pointer",
+                  transition: TRANSITION.fast,
+                  fontFamily: "'Poppins', sans-serif",
+                }}
+                onMouseEnter={(e) => {
+                  if (!ativo) {
+                    e.currentTarget.style.backgroundColor = theme.bg.sunken;
+                    e.currentTarget.style.color = theme.text.primary;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!ativo) {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = theme.text.secondary;
+                  }
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: SPACING[2],
+                    fontSize: FONT_SIZE.base,
+                    fontWeight: FONT_WEIGHT.bold,
+                  }}
+                >
+                  {m.icone}
+                  {m.label}
+                  {ativo && (
+                    <span style={{ marginLeft: "auto" }}>
+                      <Badge variant="accent">ATIVO</Badge>
+                    </span>
+                  )}
+                </div>
+                <div
+                  style={{
+                    fontSize: FONT_SIZE.xs,
+                    color: theme.text.muted,
+                    marginTop: SPACING[1],
+                    fontWeight: FONT_WEIGHT.regular,
+                  }}
+                >
+                  {m.descricao}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

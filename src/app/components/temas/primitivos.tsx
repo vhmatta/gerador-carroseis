@@ -300,24 +300,49 @@ export function Pill({
   texto,
   corFundo,
   corTexto,
+  slide,
+  tamanho = 14,
+  peso = 900,
+  tracking = 2,
+  caps = true,
+  borderRadius = 16,
 }: {
   texto: string;
   corFundo: string;
   corTexto: string;
+  slide?: SlideData;
+  tamanho?: number;
+  peso?: number;
+  tracking?: number;
+  caps?: boolean;
+  borderRadius?: number;
 }) {
   if (!texto) return null;
+
+  const estilo = slide
+    ? resolverEstiloElemento(slide, "pill" as any, {
+        tamanho,
+        peso: peso as any,
+        caps,
+        tracking,
+      })
+    : {
+        fontSize: tamanho,
+        fontFamily: "'Poppins', sans-serif",
+        fontWeight: peso,
+        letterSpacing: `${tracking}px`,
+        textTransform: caps ? ("uppercase" as const) : ("none" as const),
+      };
+
   return (
     <div
       style={{
+        ...estilo,
         display: "inline-block",
         backgroundColor: corFundo,
         color: corTexto,
         padding: "12px 24px",
-        borderRadius: 999,
-        fontSize: 14,
-        fontWeight: 900,
-        letterSpacing: "2px",
-        textTransform: "uppercase",
+        borderRadius: borderRadius,
       }}
     >
       {texto}
