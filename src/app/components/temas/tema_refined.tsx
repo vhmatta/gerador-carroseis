@@ -50,7 +50,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas }: Layo
             "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.95) 80%)",
         }}
       />
-      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
 
       {/* Tag amarela no meio com kicker */}
       {slide.kicker && (
@@ -104,7 +104,7 @@ function LayoutTextoTopoFotoEmbaixo({ slide, tema, marca, numero, coresResolvida
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.amarelo }}>
-      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
 
       {/* Headline em cima */}
       <div style={{ position: "absolute", top: 130, left: 56, right: 56, color: CORES.preto }}>
@@ -162,7 +162,7 @@ function LayoutTextoTopoFotoEmbaixoBege({ slide, tema, marca, numero, coresResol
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.bege }}>
-      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
 
       <div style={{ position: "absolute", top: 120, left: 56, right: 56, color: CORES.preto }}>
         {slide.kicker && (
@@ -230,7 +230,7 @@ function LayoutTextoTopoFotoEmbaixoBege({ slide, tema, marca, numero, coresResol
 function LayoutSerifCentral({ slide, tema, marca, numero, coresResolvidas }: LayoutRenderProps) {
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.bege }}>
-      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
 
       {/* Headline serif grande centralizado */}
       <div
@@ -298,7 +298,7 @@ function LayoutHeadlineAmarelaPreta({ slide, tema, marca, numero, coresResolvida
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.preto }}>
-      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
 
       <div style={{ position: "absolute", top: 140, left: 56, right: 56, color: CORES.branco }}>
         {slide.kicker && (
@@ -369,7 +369,7 @@ function LayoutFotoFullCTA({ slide, tema, marca, numero, coresResolvidas }: Layo
             "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.95) 88%)",
         }}
       />
-      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
 
       <div style={{ position: "absolute", bottom: 110, left: 56, right: 56, color: CORES.branco }}>
         {/* Pequeno ícone amarelo decorativo (triângulo/seta) */}

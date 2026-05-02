@@ -30,13 +30,17 @@ function TopbarKeynote({
   marca,
   numero,
   corNumero,
+  mostrar = true,
 }: {
   corTexto: string;
   marca: string;
   numero: string;
   /** v7.5: cor independente da numeração (se omitida, usa corTexto) */
   corNumero?: string;
+  /** v7.6: se false, não renderiza nada. Default true. */
+  mostrar?: boolean;
 }) {
+  if (!mostrar) return null;
   return (
     <div
       style={{
@@ -66,7 +70,17 @@ function TopbarKeynote({
   );
 }
 
-function FooterKeynote({ corTexto, corAccent }: { corTexto: string; corAccent: string }) {
+function FooterKeynote({
+  corTexto,
+  corAccent,
+  mostrar = true,
+}: {
+  corTexto: string;
+  corAccent: string;
+  /** v7.6: se false, não renderiza nada. Default true. */
+  mostrar?: boolean;
+}) {
+  if (!mostrar) return null;
   return (
     <div
       style={{
@@ -160,7 +174,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas }: Layo
             "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.92) 90%)",
         }}
       />
-      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />
 
       <div style={{ position: "absolute", bottom: 90, left: 48, right: 48 }}>
         <div
@@ -193,7 +207,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas }: Layo
         )}
       </div>
 
-      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} mostrar={slide.mostrarRodape !== false} />
     </CardKeynote>
   );
 }
@@ -206,7 +220,7 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero, coresResolvidas }
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
-      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />
 
       <div style={{ position: "absolute", top: 130, left: 48, right: 48 }}>
         {slide.kicker && (
@@ -276,7 +290,7 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero, coresResolvidas }
         )}
       </div>
 
-      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} mostrar={slide.mostrarRodape !== false} />
     </CardKeynote>
   );
 }
@@ -288,7 +302,7 @@ function LayoutDuplaFotoKeynote({ slide, tema, marca, numero, coresResolvidas }:
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
-      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />
 
       {/* Foto 1 (topo) */}
       <div style={{ position: "absolute", top: 100, left: 48, right: 48 }}>
@@ -334,7 +348,7 @@ function LayoutDuplaFotoKeynote({ slide, tema, marca, numero, coresResolvidas }:
         </div>
       )}
 
-      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} mostrar={slide.mostrarRodape !== false} />
     </CardKeynote>
   );
 }
@@ -346,7 +360,7 @@ function LayoutSilhuetaClaro({ slide, tema, marca, numero, coresResolvidas }: La
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.branco}>
-      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />
 
       <div style={{ position: "absolute", top: 130, left: 48, right: 48, maxWidth: "55%" }}>
         <div
@@ -419,7 +433,7 @@ function LayoutSilhuetaClaro({ slide, tema, marca, numero, coresResolvidas }: La
         />
       </div>
 
-      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} mostrar={slide.mostrarRodape !== false} />
     </CardKeynote>
   );
 }
@@ -431,7 +445,7 @@ function LayoutFotoLateral({ slide, tema, marca, numero, coresResolvidas }: Layo
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
-      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />
 
       {/* Foto à direita ocupando metade */}
       <div
@@ -514,7 +528,7 @@ function LayoutFotoLateral({ slide, tema, marca, numero, coresResolvidas }: Layo
         )}
       </div>
 
-      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} mostrar={slide.mostrarRodape !== false} />
     </CardKeynote>
   );
 }

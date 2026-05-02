@@ -121,6 +121,14 @@ export interface SlideData {
   /** v7.5: cor da numeração do slide ("01 / 06") */
   corNumero?: string;
   fonteHeadline?: FonteHeadline;
+
+  // ============ VISIBILIDADE DE ELEMENTOS (v7.6) ============
+  /** Mostrar setinha indicativa de "deslize" (default true). */
+  mostrarSetinha?: boolean;
+  /** Mostrar Topbar (marca + numeração no topo). Default true. */
+  mostrarTopbar?: boolean;
+  /** Mostrar rodapé (texto inferior, ex. "▶ BRANDS PAGE 5/000"). Default true. */
+  mostrarRodape?: boolean;
   /** Override: forçar CAPS (true) ou minúsculas (false). undefined = usa default do layout */
   headlineCaps?: boolean;
   /** Override: multiplicador do tamanho default do layout (1 = padrão, 1.2 = +20%, 0.8 = -20%) */

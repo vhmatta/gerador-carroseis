@@ -112,7 +112,17 @@ function TweetDivisor() {
   );
 }
 
-function NumeroPagina({ numero, cor }: { numero: string; cor?: string }) {
+function NumeroPagina({
+  numero,
+  cor,
+  mostrar = true,
+}: {
+  numero: string;
+  cor?: string;
+  /** v7.6: se false, não renderiza nada. Default true. */
+  mostrar?: boolean;
+}) {
+  if (!mostrar) return null;
   return (
     <div
       style={{
@@ -138,7 +148,7 @@ function LayoutTweetTexto({ slide, marca, numero, coresResolvidas }: LayoutRende
   const handle = slide.textoPill || undefined; // reusa textoPill pra @handle opcional
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} cor={slide.corNumero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} mostrar={slide.mostrarTopbar !== false} />
 
       {/* Card branco */}
       <div
@@ -223,7 +233,7 @@ function LayoutTweetImagem({ slide, marca, numero, coresResolvidas }: LayoutRend
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} cor={slide.corNumero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} mostrar={slide.mostrarTopbar !== false} />
 
       <div
         style={{
@@ -321,7 +331,7 @@ function LayoutTweetNumero({ slide, marca, numero, coresResolvidas }: LayoutRend
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} cor={slide.corNumero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} mostrar={slide.mostrarTopbar !== false} />
 
       <div
         style={{
@@ -417,7 +427,7 @@ function LayoutTweetFinal({ slide, marca, numero, coresResolvidas }: LayoutRende
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} cor={slide.corNumero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} mostrar={slide.mostrarTopbar !== false} />
 
       <div
         style={{
@@ -548,7 +558,7 @@ function LayoutTweetEditorialLongo({ slide, marca, numero, coresResolvidas }: La
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} cor={slide.corNumero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} mostrar={slide.mostrarTopbar !== false} />
 
       <div
         style={{
@@ -672,7 +682,7 @@ function LayoutTweetFotoSandwich({ slide, marca, numero, coresResolvidas }: Layo
 
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} cor={slide.corNumero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} mostrar={slide.mostrarTopbar !== false} />
 
       <div
         style={{

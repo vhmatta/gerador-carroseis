@@ -54,7 +54,7 @@ const CarrosselSlide = forwardRef<HTMLDivElement, Props>(function CarrosselSlide
       })}
 
       {/* Seta indicativa "deslize" no canto inferior direito (todos exceto último) */}
-      {!ehUltimo && (
+      {!ehUltimo && slide.mostrarSetinha !== false && (
         <SetaDeslizar accent={coresResolvidas.accent} />
       )}
     </div>

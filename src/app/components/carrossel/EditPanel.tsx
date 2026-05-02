@@ -7,6 +7,7 @@ import {
   RotateCcw,
   Sparkles,
   ChevronRight,
+  Eye,
 } from "lucide-react";
 import UnsplashSearch from "../UnsplashSearch";
 import { TEMAS_DISPONIVEIS, obterTema } from "../temas";
@@ -304,6 +305,46 @@ export default function EditPanel({
         </p>
       </div>
 
+      {/* v7.6: Elementos do slide (mostrar/esconder Topbar, Rodapé, Setinha) */}
+      <div className="space-y-2 pt-2 border-t border-gray-800">
+        <div className="flex items-center justify-between">
+          <Label icone={<Eye size={12} />}>Elementos do slide</Label>
+          <button
+            onClick={() =>
+              onChange({
+                mostrarTopbar: undefined,
+                mostrarRodape: undefined,
+                mostrarSetinha: undefined,
+              })
+            }
+            className="text-[10px] text-gray-500 hover:text-[#FFC528] flex items-center gap-1"
+            title="Voltar todos os elementos ao padrão (visíveis)"
+          >
+            <RotateCcw size={10} />
+            Resetar
+          </button>
+        </div>
+
+        <ToggleElemento
+          label="Topbar"
+          dica="Marca + numeração no topo"
+          ativo={slide.mostrarTopbar !== false}
+          onChange={(v) => onChange({ mostrarTopbar: v ? undefined : false })}
+        />
+        <ToggleElemento
+          label="Rodapé"
+          dica='Texto inferior (ex: "▶ BRANDS PAGE 5/000")'
+          ativo={slide.mostrarRodape !== false}
+          onChange={(v) => onChange({ mostrarRodape: v ? undefined : false })}
+        />
+        <ToggleElemento
+          label="Setinha"
+          dica="Indicador de deslize no canto inferior direito"
+          ativo={slide.mostrarSetinha !== false}
+          onChange={(v) => onChange({ mostrarSetinha: v ? undefined : false })}
+        />
+      </div>
+
       {/* Pill de CTA */}
       <div className="space-y-2 pt-2 border-t border-gray-800">
         <label className="flex items-center gap-2 text-xs text-gray-300">
@@ -415,6 +456,40 @@ function Label({ children, icone }: { children: React.ReactNode; icone?: React.R
       {icone}
       {children}
     </div>
+  );
+}
+
+// ============================================================
+// TOGGLE ELEMENTO — switch on/off pra elementos visuais do slide
+// ============================================================
+function ToggleElemento({
+  label,
+  dica,
+  ativo,
+  onChange,
+}: {
+  label: string;
+  dica?: string;
+  ativo: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center justify-between gap-3 px-3 py-2 rounded-md bg-[#0f0f0f] border border-gray-800 hover:border-gray-700 cursor-pointer transition-colors">
+      <div className="flex-1 min-w-0">
+        <div className="text-[11px] font-semibold text-gray-300">{label}</div>
+        {dica && <div className="text-[10px] text-gray-600 mt-0.5">{dica}</div>}
+      </div>
+      <div className="relative shrink-0">
+        <input
+          type="checkbox"
+          checked={ativo}
+          onChange={(e) => onChange(e.target.checked)}
+          className="sr-only peer"
+        />
+        <div className="w-9 h-5 bg-gray-800 peer-checked:bg-[#FFC528] rounded-full transition-colors" />
+        <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white peer-checked:translate-x-4 rounded-full transition-transform shadow-sm" />
+      </div>
+    </label>
   );
 }
 

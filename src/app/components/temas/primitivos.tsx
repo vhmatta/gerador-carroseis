@@ -14,6 +14,7 @@ export function Topbar({
   numero,
   estilo = "padrao",
   corNumero,
+  mostrar = true,
 }: {
   cor: string;
   marca: string;
@@ -21,7 +22,10 @@ export function Topbar({
   estilo?: "padrao" | "refined";
   /** v7.5: cor independente da numeração (se omitida, usa `cor`) */
   corNumero?: string;
+  /** v7.6: se false, não renderiza nada. Default true. */
+  mostrar?: boolean;
 }) {
+  if (!mostrar) return null;
   const tamanho = estilo === "refined" ? 12 : 14;
   const tracking = estilo === "refined" ? "1.5px" : "2px";
   return (
