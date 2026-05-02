@@ -29,10 +29,13 @@ function TopbarKeynote({
   corTexto,
   marca,
   numero,
+  corNumero,
 }: {
   corTexto: string;
   marca: string;
   numero: string;
+  /** v7.5: cor independente da numeração (se omitida, usa corTexto) */
+  corNumero?: string;
 }) {
   return (
     <div
@@ -56,7 +59,9 @@ function TopbarKeynote({
     >
       <span>BRANDS DECODED</span>
       <span style={{ fontSize: 10 }}>{marca}</span>
-      <span style={{ fontSize: 10 }}>CONTEÚDO MOSTRA {numero.split(" / ")[0]}</span>
+      <span style={{ fontSize: 10, color: corNumero || corTexto }}>
+        CONTEÚDO MOSTRA {numero.split(" / ")[0]}
+      </span>
     </div>
   );
 }
@@ -135,7 +140,7 @@ function CardKeynote({
 // ============================================================
 // LAYOUT A — Foto retrato + título amarelo embaixo (Steve Jobs style)
 // ============================================================
-function LayoutFotoRetrato({ slide, tema, marca, numero }: LayoutRenderProps) {
+function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
@@ -155,7 +160,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero }: LayoutRenderProps) {
             "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.92) 90%)",
         }}
       />
-      <TopbarKeynote corTexto={CORES.branco} marca={marca} numero={numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
 
       <div style={{ position: "absolute", bottom: 90, left: 48, right: 48 }}>
         <div
@@ -188,7 +193,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero }: LayoutRenderProps) {
         )}
       </div>
 
-      <FooterKeynote corTexto={CORES.branco} corAccent={CORES.amarelo} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
     </CardKeynote>
   );
 }
@@ -197,11 +202,11 @@ function LayoutFotoRetrato({ slide, tema, marca, numero }: LayoutRenderProps) {
 // LAYOUT B — Tipografia pura (headline amarelo + lorem ipsum)
 // Fundo preto
 // ============================================================
-function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderProps) {
+function LayoutTipografiaKeynote({ slide, tema, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
-      <TopbarKeynote corTexto={CORES.branco} marca={marca} numero={numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
 
       <div style={{ position: "absolute", top: 130, left: 48, right: 48 }}>
         {slide.kicker && (
@@ -271,7 +276,7 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderPro
         )}
       </div>
 
-      <FooterKeynote corTexto={CORES.branco} corAccent={CORES.amarelo} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
     </CardKeynote>
   );
 }
@@ -279,11 +284,11 @@ function LayoutTipografiaKeynote({ slide, tema, marca, numero }: LayoutRenderPro
 // ============================================================
 // LAYOUT C — Dupla foto (split horizontal)
 // ============================================================
-function LayoutDuplaFotoKeynote({ slide, tema, marca, numero }: LayoutRenderProps) {
+function LayoutDuplaFotoKeynote({ slide, tema, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
-      <TopbarKeynote corTexto={CORES.branco} marca={marca} numero={numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
 
       {/* Foto 1 (topo) */}
       <div style={{ position: "absolute", top: 100, left: 48, right: 48 }}>
@@ -329,7 +334,7 @@ function LayoutDuplaFotoKeynote({ slide, tema, marca, numero }: LayoutRenderProp
         </div>
       )}
 
-      <FooterKeynote corTexto={CORES.branco} corAccent={CORES.amarelo} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
     </CardKeynote>
   );
 }
@@ -337,11 +342,11 @@ function LayoutDuplaFotoKeynote({ slide, tema, marca, numero }: LayoutRenderProp
 // ============================================================
 // LAYOUT D — Fundo claro com silhueta (slide 35 do print estilo)
 // ============================================================
-function LayoutSilhuetaClaro({ slide, tema, marca, numero }: LayoutRenderProps) {
+function LayoutSilhuetaClaro({ slide, tema, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.branco}>
-      <TopbarKeynote corTexto={CORES.preto} marca={marca} numero={numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
 
       <div style={{ position: "absolute", top: 130, left: 48, right: 48, maxWidth: "55%" }}>
         <div
@@ -414,7 +419,7 @@ function LayoutSilhuetaClaro({ slide, tema, marca, numero }: LayoutRenderProps) 
         />
       </div>
 
-      <FooterKeynote corTexto={CORES.preto} corAccent={CORES.amarelo} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
     </CardKeynote>
   );
 }
@@ -422,11 +427,11 @@ function LayoutSilhuetaClaro({ slide, tema, marca, numero }: LayoutRenderProps) 
 // ============================================================
 // LAYOUT E — Foto + título amarelo ao lado (título maior, fundo preto)
 // ============================================================
-function LayoutFotoLateral({ slide, tema, marca, numero }: LayoutRenderProps) {
+function LayoutFotoLateral({ slide, tema, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const fonteHeadline = resolverFonteHeadline(slide, tema);
   return (
     <CardKeynote fundo={CORES.preto}>
-      <TopbarKeynote corTexto={CORES.branco} marca={marca} numero={numero} />
+      <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
 
       {/* Foto à direita ocupando metade */}
       <div
@@ -509,7 +514,7 @@ function LayoutFotoLateral({ slide, tema, marca, numero }: LayoutRenderProps) {
         )}
       </div>
 
-      <FooterKeynote corTexto={CORES.branco} corAccent={CORES.amarelo} />
+      <FooterKeynote corTexto={coresResolvidas.rodape} corAccent={coresResolvidas.accent} />
     </CardKeynote>
   );
 }

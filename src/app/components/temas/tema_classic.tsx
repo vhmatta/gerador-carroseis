@@ -47,7 +47,7 @@ function LayoutFotoCheia({ slide, tema, marca, numero, coresResolvidas }: Layout
             "linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.96) 100%)",
         }}
       />
-      <Topbar cor={CORES.amarelo} marca={marca} numero={numero} />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
       <div style={{ position: "absolute", bottom: 90, left: 56, right: 56, color: CORES.branco }}>
         <Kicker texto={slide.kicker} cor={coresResolvidas.kicker} accent={CORES.amarelo} slide={slide}/>
         <Headline texto={slide.headline} cor={coresResolvidas.headline} tamanho={98} fontFamily={fonteHeadline}
@@ -79,7 +79,7 @@ function LayoutSplitHorizontal({ slide, tema, marca, numero, coresResolvidas }: 
         accent={CORES.amarelo}
         style={{ position: "absolute", top: 0, left: 0 }}
       />
-      <Topbar cor={CORES.amarelo} marca={marca} numero={numero} />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
       <div
         style={{
           position: "absolute",
@@ -125,7 +125,7 @@ function LayoutSplitInvertido({ slide, tema, marca, numero, coresResolvidas }: L
         accent={CORES.amarelo}
         style={{ position: "absolute", bottom: 0, left: 0 }}
       />
-      <Topbar cor={textoClaro} marca={marca} numero={numero} />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
       <div style={{ position: "absolute", top: 120, left: 56, right: 56, color: textoClaro }}>
         <Kicker texto={slide.kicker} cor={slide.corKicker || textoClaro} accent={CORES.preto} slide={slide}/>
         <Headline texto={slide.headline} cor={slide.corHeadline || textoClaro} tamanho={70} fontFamily={fonteHeadline}
@@ -152,7 +152,7 @@ function LayoutTipografiaPura({ slide, tema, marca, numero, coresResolvidas }: L
 
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: fundo }}>
-      <Topbar cor={cor} marca={marca} numero={numero} />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
       <div style={{ position: "absolute", top: 130, left: 56, right: 56, color: cor }}>
         <Kicker texto={slide.kicker} cor={slide.corKicker || cor} accent={accentDivider} slide={slide}/>
         {!temBigNumber && (
@@ -188,7 +188,7 @@ function LayoutDuplaFoto({ slide, tema, marca, numero, coresResolvidas }: Layout
       <div style={{ position: "absolute", top: 560, left: 56 }}>
         <FotoOuPlaceholder url={slide.fotoUrl2} largura={968} altura={360} accent={CORES.amarelo} borderRadius={4} />
       </div>
-      <Topbar cor={CORES.amarelo} marca={marca} numero={numero} />
+      <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} />
       <div style={{ position: "absolute", bottom: 70, left: 56, right: 56, color: CORES.branco }}>
         {slide.kicker && (
           <div

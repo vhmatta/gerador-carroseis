@@ -112,7 +112,7 @@ function TweetDivisor() {
   );
 }
 
-function NumeroPagina({ numero }: { numero: string }) {
+function NumeroPagina({ numero, cor }: { numero: string; cor?: string }) {
   return (
     <div
       style={{
@@ -121,7 +121,7 @@ function NumeroPagina({ numero }: { numero: string }) {
         left: 36,
         fontSize: 14,
         fontWeight: 600,
-        color: "rgba(255,255,255,0.5)",
+        color: cor || "rgba(255,255,255,0.5)",
         fontFamily: FONTE_PADRAO,
         letterSpacing: "0.5px",
       }}
@@ -134,11 +134,11 @@ function NumeroPagina({ numero }: { numero: string }) {
 // ============================================================
 // LAYOUT A — Tweet com texto (sem imagem)
 // ============================================================
-function LayoutTweetTexto({ slide, marca, numero }: LayoutRenderProps) {
+function LayoutTweetTexto({ slide, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const handle = slide.textoPill || undefined; // reusa textoPill pra @handle opcional
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} />
 
       {/* Card branco */}
       <div
@@ -219,11 +219,11 @@ function LayoutTweetTexto({ slide, marca, numero }: LayoutRenderProps) {
 // ============================================================
 // LAYOUT B — Tweet com imagem
 // ============================================================
-function LayoutTweetImagem({ slide, marca, numero }: LayoutRenderProps) {
+function LayoutTweetImagem({ slide, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} />
 
       <div
         style={{
@@ -317,11 +317,11 @@ function LayoutTweetImagem({ slide, marca, numero }: LayoutRenderProps) {
 // ============================================================
 // LAYOUT C — Tweet com BIG número (dado estatístico)
 // ============================================================
-function LayoutTweetNumero({ slide, marca, numero }: LayoutRenderProps) {
+function LayoutTweetNumero({ slide, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} />
 
       <div
         style={{
@@ -413,11 +413,11 @@ function LayoutTweetNumero({ slide, marca, numero }: LayoutRenderProps) {
 // ============================================================
 // LAYOUT D — Final escuro (post de assinatura / "feito com IA")
 // ============================================================
-function LayoutTweetFinal({ slide, marca, numero }: LayoutRenderProps) {
+function LayoutTweetFinal({ slide, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} />
 
       <div
         style={{
@@ -544,11 +544,11 @@ function LayoutTweetFinal({ slide, marca, numero }: LayoutRenderProps) {
 // foto média + destaque sublinhado
 // Inspirado no slide 1, 4, 7 do mosaico de referência
 // ============================================================
-function LayoutTweetEditorialLongo({ slide, marca, numero }: LayoutRenderProps) {
+function LayoutTweetEditorialLongo({ slide, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const handle = slide.textoPill || undefined;
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} />
 
       <div
         style={{
@@ -644,7 +644,7 @@ function LayoutTweetEditorialLongo({ slide, marca, numero }: LayoutRenderProps) 
 // Corpo curto + foto + corpo longo (parágrafos depois da foto)
 // Inspirado no slide 3 do mosaico de referência
 // ============================================================
-function LayoutTweetFotoSandwich({ slide, marca, numero }: LayoutRenderProps) {
+function LayoutTweetFotoSandwich({ slide, marca, numero, coresResolvidas }: LayoutRenderProps) {
   const handle = slide.textoPill || undefined;
   // Divide o corpo em "antes" e "depois" da foto.
   // Convenção: se houver "---" no corpo, parte de cima vai antes, parte de baixo vai depois.
@@ -672,7 +672,7 @@ function LayoutTweetFotoSandwich({ slide, marca, numero }: LayoutRenderProps) {
 
   return (
     <div style={{ position: "absolute", inset: 0, backgroundColor: CORES.fundoPalco }}>
-      <NumeroPagina numero={numero} />
+      <NumeroPagina numero={numero} cor={slide.corNumero} />
 
       <div
         style={{

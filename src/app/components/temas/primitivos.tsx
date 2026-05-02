@@ -13,11 +13,14 @@ export function Topbar({
   marca,
   numero,
   estilo = "padrao",
+  corNumero,
 }: {
   cor: string;
   marca: string;
   numero: string;
   estilo?: "padrao" | "refined";
+  /** v7.5: cor independente da numeração (se omitida, usa `cor`) */
+  corNumero?: string;
 }) {
   const tamanho = estilo === "refined" ? 12 : 14;
   const tracking = estilo === "refined" ? "1.5px" : "2px";
@@ -41,7 +44,7 @@ export function Topbar({
       }}
     >
       <span>{marca}</span>
-      <span>{numero}</span>
+      <span style={{ color: corNumero || cor }}>{numero}</span>
     </div>
   );
 }

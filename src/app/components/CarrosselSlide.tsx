@@ -64,6 +64,11 @@ const CarrosselSlide = forwardRef<HTMLDivElement, Props>(function CarrosselSlide
 /**
  * Seta indicativa de deslizar — aparece em todos os slides menos o último.
  * Posicionada no canto inferior direito do slide.
+ *
+ * v7.5: Estilo outline — só contorno do círculo (sem fundo sólido) + seta
+ * na mesma cor do contorno. Funciona em qualquer fundo: o accent já
+ * resolve o contraste (em fundo amarelo, accent vira preto; em fundo
+ * preto, accent fica amarelo).
  */
 function SetaDeslizar({ accent }: { accent: string }) {
   return (
@@ -75,21 +80,22 @@ function SetaDeslizar({ accent }: { accent: string }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: 56,
-        height: 56,
+        width: 48,
+        height: 48,
         borderRadius: "50%",
-        backgroundColor: accent,
-        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        backgroundColor: "transparent",
+        border: `2px solid ${accent}`,
+        opacity: 0.75,
         zIndex: 10,
       }}
     >
       <svg
-        width="22"
-        height="22"
+        width="18"
+        height="18"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#0a0a0a"
-        strokeWidth="3"
+        stroke={accent}
+        strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       >

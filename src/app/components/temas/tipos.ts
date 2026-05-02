@@ -114,6 +114,12 @@ export interface SlideData {
   corKicker?: string;
   corHeadline?: string;
   corDestaque?: string;
+  /** v7.5: cor dos textos da Topbar (marca + textos do topo) */
+  corTopbar?: string;
+  /** v7.5: cor do texto/rodapé inferior (ex: "▶ BRANDS PAGE 5/000") */
+  corRodape?: string;
+  /** v7.5: cor da numeração do slide ("01 / 06") */
+  corNumero?: string;
   fonteHeadline?: FonteHeadline;
   /** Override: forçar CAPS (true) ou minúsculas (false). undefined = usa default do layout */
   headlineCaps?: boolean;
@@ -196,6 +202,10 @@ export interface CoresResolvidas {
   destaque: string;
   corpo: string;
   topbar: string;
+  /** v7.5: cor do rodapé (texto inferior, ex: "▶ BRANDS PAGE 5/000") */
+  rodape: string;
+  /** v7.5: cor da numeração ("01 / 06") */
+  numero: string;
 }
 
 /** Config de um tema completo. */
@@ -255,11 +265,16 @@ export function resolverCores(slide: SlideData, tema: TemaConfig): CoresResolvid
   // Accent: em fundo amarelo, o accent vira preto (senão ficaria invisível)
   const accentEfetivo = slide.corFundo === "amarelo" ? cores.preto : cores.amarelo;
 
+  // Cor padrão da Topbar/rodapé/numeração — segue contraste mas pode ser sobrescrita
+  const topbarPadrao = fundoEscuro ? cores.amarelo : cores.preto;
+
   return {
     fundo,
     texto: textoPadrao,
     accent: accentEfetivo,
-    topbar: fundoEscuro ? cores.amarelo : cores.preto,
+    topbar: slide.corTopbar || topbarPadrao,
+    rodape: slide.corRodape || textoPadrao,
+    numero: slide.corNumero || slide.corTopbar || topbarPadrao,
     kicker: slide.corKicker || (fundoEscuro ? cores.amarelo : cores.preto),
     headline: slide.corHeadline || (fundoEscuro ? cores.amarelo : cores.preto),
     destaque: slide.corDestaque || accentEfetivo,
