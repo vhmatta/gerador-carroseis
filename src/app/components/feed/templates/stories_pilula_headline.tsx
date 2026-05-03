@@ -10,13 +10,9 @@ import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
 
 /**
- * Template "Pílula + Headline grande" — Stories 1080×1920 (v7.7.6)
+ * Template "Pílula + Headline grande" — Stories 1080×1920 (v7.7.7)
  *
- * Versão 9:16 do `feed_pilula_headline`. Foto vertical, headline na faixa
- * central baixa, mais respiro acima.
- *
- * v7.7.6: SVG do footer creme + LogoParceleAqui programático substituídos
- * pelo PNG `/rodapes/rodape_02_stories.png`. Tipo de rodapé escolhível.
+ * v7.7.7: foto cobre 100% da peça (vai atrás do rodapé via alpha).
  */
 export default function TemplateStoriesPilulaHeadline({
   slide,
@@ -34,17 +30,14 @@ export default function TemplateStoriesPilulaHeadline({
 
   const escalaGeral = slide.escalaGeral ?? 1;
 
-  // ===== Rodapé =====
   const tipoRodape: TipoRodape = slide.tipoRodape ?? "rodape_02";
   const alturaRodape = obterAlturaRodape(tipoRodape, "stories");
   const alturaUtil = 1920 - alturaRodape;
 
-  // ===== Textura =====
   const mostrarTextura = slide.mostrarTextura !== false;
   const opacidadeTextura = slide.opacidadeTextura ?? 0.75;
   const modoTextura = slide.modoTextura ?? "overlay";
 
-  // ===== Gradiente de leitura =====
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
@@ -59,7 +52,7 @@ export default function TemplateStoriesPilulaHeadline({
         overflow: "hidden",
       }}
     >
-      {/* FOTO DE FUNDO (cobre área útil) */}
+      {/* FOTO 100% (atrás do rodapé) */}
       {slide.fotoUrl ? (
         <img
           src={slide.fotoUrl}
@@ -70,7 +63,7 @@ export default function TemplateStoriesPilulaHeadline({
             left: 0,
             top: 0,
             width: e(1080),
-            height: e(alturaUtil),
+            height: e(1920),
             objectFit: "cover",
             objectPosition: slide.fotoPosicao || "center",
           }}
@@ -82,7 +75,7 @@ export default function TemplateStoriesPilulaHeadline({
             left: 0,
             top: 0,
             width: e(1080),
-            height: e(alturaUtil),
+            height: e(1920),
             background: "linear-gradient(135deg, #2a2a2a, #0a0a0a)",
             display: "flex",
             alignItems: "center",
@@ -95,7 +88,6 @@ export default function TemplateStoriesPilulaHeadline({
         </div>
       )}
 
-      {/* TEXTURA */}
       <TexturaOverlay
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
@@ -104,7 +96,6 @@ export default function TemplateStoriesPilulaHeadline({
         escala={escala}
       />
 
-      {/* GRADIENTE DE LEITURA */}
       <GradienteLeitura
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
@@ -112,7 +103,6 @@ export default function TemplateStoriesPilulaHeadline({
         escala={escala}
       />
 
-      {/* PÍLULA */}
       {slide.mostrarPilula !== false && slide.pilula && (
         <div
           style={{
@@ -142,7 +132,6 @@ export default function TemplateStoriesPilulaHeadline({
         </div>
       )}
 
-      {/* HEADLINE */}
       {slide.headline && (
         <div
           style={{
@@ -162,7 +151,6 @@ export default function TemplateStoriesPilulaHeadline({
         </div>
       )}
 
-      {/* SUBHEAD */}
       {slide.subhead && (
         <div
           style={{
@@ -184,7 +172,6 @@ export default function TemplateStoriesPilulaHeadline({
         </div>
       )}
 
-      {/* TAGLINE */}
       {slide.tagline && (
         <div
           style={{
@@ -204,7 +191,6 @@ export default function TemplateStoriesPilulaHeadline({
         </div>
       )}
 
-      {/* RODAPÉ PNG */}
       {slide.mostrarFooter !== false && (
         <RodapePNG tipo={tipoRodape} formato="stories" escala={escala} />
       )}

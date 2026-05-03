@@ -10,18 +10,20 @@ import GradienteLeitura from "../components/GradienteLeitura";
 import { RefreshCcw } from "lucide-react";
 
 /**
- * Template "Ícone + CTA outline" — Stories 1080×1920 (v7.7.6).
+ * Template "Ícone + CTA outline" — Stories 1080×1920 (v7.7.7)
  *
- * Mesmo padrão do feed_icone_cta, em proporção 9:16. Espaçamentos do cliente:
+ * v7.7.7:
+ *  - Foto cobre 100% da peça (vai atrás do rodapé via alpha).
+ *  - Bloco de texto coeso, ancorado pelo BOTTOM do CTA (= alturaRodape + 72).
+ *  - CTA fixo a 72px do rodapé independente do tipo escolhido.
+ *
+ * Espaçamentos:
  *   Ícone → Headline: 24px
  *   Headline → Subhead: 32px
- *   Subhead → CTA: 40px
- *   CTA → Rodapé: 72px
- *
- * Ícone começa em y=560 (mais abaixo que no feed pra acomodar a altura maior
- * disponível e dar respiro ao topo da peça).
+ *   Subhead → CTA: 40px (com tagline: 24+24)
+ *   CTA → Rodapé: 72px (FIXO)
  */
-export default function TemplateRotativoStories({
+export default function TemplateStoriesIconeCta({
   slide,
   escala = 1,
 }: {
@@ -30,7 +32,6 @@ export default function TemplateRotativoStories({
 }) {
   const e = (n: number) => `${n * escala}px`;
 
-  // ===== Cores =====
   const corHeadline = slide.corHeadline || "#FFFFFF";
   const corSubhead = slide.corSubhead || "#FFFFFF";
   const corCTA = slide.corCTA || "#FFFFFF";
@@ -38,7 +39,6 @@ export default function TemplateRotativoStories({
 
   const escalaGeral = slide.escalaGeral ?? 1;
 
-  // ===== Tipografia (defaults equivalentes ao Feed, levemente maiores) =====
   const tamIcone = slide.tamIcone ?? 130;
   const espessuraIcone = slide.espessuraIcone ?? 2;
   const pesoHeadline = slide.pesoHeadline ?? 600;
@@ -54,26 +54,33 @@ export default function TemplateRotativoStories({
   const tamCTA = slide.tamCTA ?? 36;
   const italicCTA = slide.italicCTA ?? false;
 
-  // ===== Rodapé =====
   const tipoRodape: TipoRodape = slide.tipoRodape ?? "rodape_01";
   const alturaRodape = obterAlturaRodape(tipoRodape, "stories");
   const alturaUtil = 1920 - alturaRodape;
 
-  // ===== Textura =====
   const mostrarTextura = slide.mostrarTextura !== false;
   const opacidadeTextura = slide.opacidadeTextura ?? 0.75;
   const modoTextura = slide.modoTextura ?? "overlay";
 
-  // ===== Gradiente =====
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
-  // ===== Posições Y =====
-  const yIcone = 560;
-  const yHeadline = yIcone + tamIcone + 24;
-  const ySubhead = yHeadline + tamHeadline * escalaGeral + 32;
-  const yTagline = ySubhead + tamSubhead * escalaGeral + 28;
+  // Layout do bloco coeso (ancorado pelo CTA)
   const ctaBottom = alturaRodape + 72;
+  const alturaCTA = tamCTA * escalaGeral + 22 + 20 + 6;
+  const yCTA = 1920 - ctaBottom - alturaCTA;
+
+  const temTagline = !!slide.tagline;
+  const gapSubheadCTA = 40;
+  const gapHeadlineSubhead = 32;
+  const gapIconeHeadline = 24;
+
+  const yTagline = temTagline ? yCTA - 24 - tamTagline * escalaGeral : null;
+  const ySubhead = temTagline
+    ? (yTagline as number) - 24 - tamSubhead * escalaGeral
+    : yCTA - gapSubheadCTA - tamSubhead * escalaGeral;
+  const yHeadline = ySubhead - gapHeadlineSubhead - tamHeadline * escalaGeral;
+  const yIcone = yHeadline - gapIconeHeadline - tamIcone;
 
   return (
     <div
@@ -86,14 +93,14 @@ export default function TemplateRotativoStories({
         overflow: "hidden",
       }}
     >
-      {/* FOTO */}
+      {/* FOTO 100% (atrás do rodapé) */}
       <div
         style={{
           position: "absolute",
           left: 0,
           top: 0,
           width: e(1080),
-          height: e(alturaUtil),
+          height: e(1920),
           overflow: "hidden",
         }}
       >
@@ -127,7 +134,6 @@ export default function TemplateRotativoStories({
         )}
       </div>
 
-      {/* TEXTURA */}
       <TexturaOverlay
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
@@ -136,7 +142,6 @@ export default function TemplateRotativoStories({
         escala={escala}
       />
 
-      {/* GRADIENTE DE LEITURA */}
       <GradienteLeitura
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
@@ -144,7 +149,6 @@ export default function TemplateRotativoStories({
         escala={escala}
       />
 
-      {/* ÍCONE */}
       {slide.mostrarIcone !== false && (
         <div
           style={{
@@ -159,7 +163,6 @@ export default function TemplateRotativoStories({
         </div>
       )}
 
-      {/* HEADLINE */}
       {slide.headline && (
         <div
           style={{
@@ -180,7 +183,6 @@ export default function TemplateRotativoStories({
         </div>
       )}
 
-      {/* SUBHEAD */}
       {slide.subhead && (
         <div
           style={{
@@ -201,8 +203,7 @@ export default function TemplateRotativoStories({
         </div>
       )}
 
-      {/* TAGLINE */}
-      {slide.tagline && (
+      {temTagline && yTagline !== null && (
         <div
           style={{
             position: "absolute",
@@ -222,7 +223,6 @@ export default function TemplateRotativoStories({
         </div>
       )}
 
-      {/* CTA */}
       {slide.mostrarCTA !== false && slide.cta && (
         <div
           style={{
@@ -250,7 +250,6 @@ export default function TemplateRotativoStories({
         </div>
       )}
 
-      {/* RODAPÉ PNG */}
       {slide.mostrarFooter !== false && (
         <RodapePNG tipo={tipoRodape} formato="stories" escala={escala} />
       )}

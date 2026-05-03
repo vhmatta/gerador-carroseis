@@ -10,23 +10,12 @@ import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
 
 /**
- * Template "Pílula + Headline grande" — Feed 1080×1350 (v7.7.6)
+ * Template "Pílula + Headline grande" — Feed 1080×1350 (v7.7.7)
  *
- * Estrutura visual (NÃO descreve conteúdo — esses textos são editáveis e
- * podem ser usados pra qualquer assunto, não só IPVA/IPTU):
- *  - Foto de fundo cobrindo área útil (até o início do rodapé)
- *  - Pílula creme superior pequena
- *  - Headline grande amarelo
- *  - Subhead alinhado à direita
- *  - Tagline complementar
- *  - Rodapé como PNG (default rodape_02 = creme com curva amarela)
- *
- * v7.7.6:
- *  - SVG do footer creme + LogoParceleAqui programático foram substituídos
- *    pelo PNG `/rodapes/rodape_02_feed.png` (já contém URL + logo).
- *  - Cliente pode trocar pra `rodape_01` (amarelo cheio) via toggle no painel.
- *  - Textura overlay nunca invade o rodapé (`alturaUtil` clipa).
- *  - Gradiente de leitura opcional (toggle + slider de opacidade).
+ * v7.7.7:
+ *  - Foto cobre 100% da peça (vai atrás do rodapé via alpha) — elimina faixa
+ *    preta lateral que aparecia com rodape_01 amarelo.
+ *  - Textos com posições absolutas (layout fixo do Figma) preservados.
  */
 export default function TemplateFeedPilulaHeadline({
   slide,
@@ -44,17 +33,14 @@ export default function TemplateFeedPilulaHeadline({
 
   const escalaGeral = slide.escalaGeral ?? 1;
 
-  // ===== Rodapé (default 02 — creme curvo, equivalente ao SVG antigo) =====
   const tipoRodape: TipoRodape = slide.tipoRodape ?? "rodape_02";
   const alturaRodape = obterAlturaRodape(tipoRodape, "feed");
   const alturaUtil = 1350 - alturaRodape;
 
-  // ===== Textura =====
   const mostrarTextura = slide.mostrarTextura !== false;
   const opacidadeTextura = slide.opacidadeTextura ?? 0.75;
   const modoTextura = slide.modoTextura ?? "overlay";
 
-  // ===== Gradiente de leitura =====
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
@@ -69,7 +55,7 @@ export default function TemplateFeedPilulaHeadline({
         overflow: "hidden",
       }}
     >
-      {/* ============ FOTO DE FUNDO (cobre toda a área útil) ============ */}
+      {/* FOTO 100% (vai atrás do rodapé) */}
       {slide.fotoUrl ? (
         <img
           src={slide.fotoUrl}
@@ -80,7 +66,7 @@ export default function TemplateFeedPilulaHeadline({
             left: 0,
             top: 0,
             width: e(1080),
-            height: e(alturaUtil),
+            height: e(1350),
             objectFit: "cover",
             objectPosition: slide.fotoPosicao || "center",
           }}
@@ -92,7 +78,7 @@ export default function TemplateFeedPilulaHeadline({
             left: 0,
             top: 0,
             width: e(1080),
-            height: e(alturaUtil),
+            height: e(1350),
             background:
               "linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%)",
             display: "flex",
@@ -107,7 +93,7 @@ export default function TemplateFeedPilulaHeadline({
         </div>
       )}
 
-      {/* ============ TEXTURA (clipada acima do rodapé) ============ */}
+      {/* TEXTURA (clipada acima do rodapé) */}
       <TexturaOverlay
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
@@ -116,7 +102,7 @@ export default function TemplateFeedPilulaHeadline({
         escala={escala}
       />
 
-      {/* ============ GRADIENTE DE LEITURA ============ */}
+      {/* GRADIENTE DE LEITURA */}
       <GradienteLeitura
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
@@ -124,7 +110,7 @@ export default function TemplateFeedPilulaHeadline({
         escala={escala}
       />
 
-      {/* ============ PÍLULA SUPERIOR ============ */}
+      {/* PÍLULA */}
       {slide.mostrarPilula !== false && slide.pilula && (
         <div
           style={{
@@ -154,7 +140,7 @@ export default function TemplateFeedPilulaHeadline({
         </div>
       )}
 
-      {/* ============ HEADLINE GRANDE ============ */}
+      {/* HEADLINE */}
       {slide.headline && (
         <div
           style={{
@@ -174,7 +160,7 @@ export default function TemplateFeedPilulaHeadline({
         </div>
       )}
 
-      {/* ============ SUBHEAD (alinhado à direita) ============ */}
+      {/* SUBHEAD */}
       {slide.subhead && (
         <div
           style={{
@@ -195,7 +181,7 @@ export default function TemplateFeedPilulaHeadline({
         </div>
       )}
 
-      {/* ============ TAGLINE ============ */}
+      {/* TAGLINE */}
       {slide.tagline && (
         <div
           style={{
@@ -215,7 +201,7 @@ export default function TemplateFeedPilulaHeadline({
         </div>
       )}
 
-      {/* ============ RODAPÉ PNG ============ */}
+      {/* RODAPÉ PNG */}
       {slide.mostrarFooter !== false && (
         <RodapePNG tipo={tipoRodape} formato="feed" escala={escala} />
       )}

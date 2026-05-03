@@ -10,21 +10,25 @@ import GradienteLeitura from "../components/GradienteLeitura";
 import { RefreshCcw } from "lucide-react";
 
 /**
- * Template "Ícone + CTA outline" — Feed 1080×1350
+ * Template "Ícone + CTA outline" — Feed 1080×1350 (v7.7.7)
  *
- * v7.7.6:
- *  - Rodapé como PNG (escolhível: 01 amarelo cheio | 02 creme curva)
- *  - Textura nunca invade rodapé (alturaUtil dinâmico)
- *  - Gradiente sutil de leitura opcional (toggle + opacidade)
- *  - Espaçamentos pedidos pelo cliente:
- *      Ícone → Headline: 24px
- *      Headline → Subhead: 32px
- *      Subhead → CTA: 40px
- *      CTA → Rodapé: 72px
+ * v7.7.7:
+ *  - Foto cobre 100% da peça (vai atrás do rodapé via alpha) — elimina faixa
+ *    preta lateral que aparecia com rodape_01 amarelo.
+ *  - Bloco de texto (ícone + headline + subhead + tagline + CTA) é COESO:
+ *    todos os gaps fixos, CTA sempre colado no fim do bloco.
+ *  - O bloco é ancorado pelo BOTTOM do CTA (= alturaRodape + 72), e os
+ *    elementos fluem pra cima a partir dele. Assim o CTA fica fixo a 72px
+ *    do rodapé independente do tipo de rodapé escolhido.
  *
- * Default tipoRodape = "rodape_01" (amarelo — visual original do template).
+ * Espaçamentos pedidos pelo cliente (mantidos):
+ *   Ícone → Headline: 24px
+ *   Headline → Subhead: 32px
+ *   Subhead → CTA: 40px        (Tagline fica entre subhead e CTA, com gaps
+ *                                proporcionais quando presente)
+ *   CTA → Rodapé: 72px (FIXO)
  */
-export default function TemplateRotativoFeed({
+export default function TemplateFeedIconeCta({
   slide,
   escala = 1,
 }: {
@@ -57,7 +61,7 @@ export default function TemplateRotativoFeed({
   const tamCTA = slide.tamCTA ?? 32;
   const italicCTA = slide.italicCTA ?? false;
 
-  // ===== Rodapé (v7.7.6) =====
+  // ===== Rodapé =====
   const tipoRodape: TipoRodape = slide.tipoRodape ?? "rodape_01";
   const alturaRodape = obterAlturaRodape(tipoRodape, "feed");
   const alturaUtil = 1350 - alturaRodape;
@@ -67,18 +71,48 @@ export default function TemplateRotativoFeed({
   const opacidadeTextura = slide.opacidadeTextura ?? 0.75;
   const modoTextura = slide.modoTextura ?? "overlay";
 
-  // ===== Gradiente de leitura =====
+  // ===== Gradiente =====
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
-  // ===== Posições Y dos textos (espaçamentos do cliente) =====
-  // Ícone fica em y=320 (topo absoluto, posicionamento legado mantido).
-  const yIcone = 320;
-  const yHeadline = yIcone + tamIcone + 24; // gap 24
-  const ySubhead = yHeadline + tamHeadline * escalaGeral + 32; // gap 32
-  const yTagline = ySubhead + tamSubhead * escalaGeral + 28; // gap natural ~28 (tagline é elemento extra)
-  // CTA: ancorado por bottom = alturaRodape + 72
+  // ===== Layout do bloco coeso (ancorado pelo CTA) =====
+  // CTA bottom fixo a 72px do rodapé.
   const ctaBottom = alturaRodape + 72;
+
+  // Altura efetiva do CTA (pílula com paddings 22 top + 20 bottom + tamCTA)
+  const alturaCTA = tamCTA * escalaGeral + 22 + 20 + 6; // +6 buffer borda
+  const yCTA = 1350 - ctaBottom - alturaCTA;
+
+  // Tagline (se houver) fica entre subhead e CTA. Quando há tagline, gap
+  // subhead→tagline=24 e tagline→CTA=24 (ainda totalizando 40 + tamTagline).
+  // Quando não há tagline, gap direto subhead→CTA=40.
+  const temTagline = !!slide.tagline;
+  const gapSubheadCTA = 40;
+  const gapHeadlineSubhead = 32;
+  const gapIconeHeadline = 24;
+
+  // Calcula bottom-up:
+  // yCTA já calculado.
+  // Tagline (se houver):
+  //   yTagline = yCTA - 24 (gap até CTA) - tamTagline
+  // Subhead:
+  //   yTagline ? ySubhead = yTagline - 24 (gap subhead-tagline) - tamSubhead
+  //   senão     ySubhead = yCTA - gapSubheadCTA - tamSubhead
+  // Headline:
+  //   yHeadline = ySubhead - gapHeadlineSubhead - tamHeadline
+  // Ícone:
+  //   yIcone = yHeadline - gapIconeHeadline - tamIcone
+
+  const yTagline = temTagline
+    ? yCTA - 24 - tamTagline * escalaGeral
+    : null;
+
+  const ySubhead = temTagline
+    ? (yTagline as number) - 24 - tamSubhead * escalaGeral
+    : yCTA - gapSubheadCTA - tamSubhead * escalaGeral;
+
+  const yHeadline = ySubhead - gapHeadlineSubhead - tamHeadline * escalaGeral;
+  const yIcone = yHeadline - gapIconeHeadline - tamIcone;
 
   return (
     <div
@@ -91,14 +125,14 @@ export default function TemplateRotativoFeed({
         overflow: "hidden",
       }}
     >
-      {/* ============ FOTO de fundo (ocupa só área útil) ============ */}
+      {/* ============ FOTO de fundo (100% da peça — vai atrás do rodapé) ============ */}
       <div
         style={{
           position: "absolute",
           left: 0,
           top: 0,
           width: e(1080),
-          height: e(alturaUtil),
+          height: e(1350),
           overflow: "hidden",
         }}
       >
@@ -206,8 +240,8 @@ export default function TemplateRotativoFeed({
         </div>
       )}
 
-      {/* ============ TAGLINE ============ */}
-      {slide.tagline && (
+      {/* ============ TAGLINE (entre subhead e CTA quando presente) ============ */}
+      {temTagline && yTagline !== null && (
         <div
           style={{
             position: "absolute",
@@ -227,7 +261,7 @@ export default function TemplateRotativoFeed({
         </div>
       )}
 
-      {/* ============ CTA — 72px acima do rodapé ============ */}
+      {/* ============ CTA — 72px fixo do rodapé ============ */}
       {slide.mostrarCTA !== false && slide.cta && (
         <div
           style={{
@@ -255,7 +289,7 @@ export default function TemplateRotativoFeed({
         </div>
       )}
 
-      {/* ============ RODAPÉ PNG (sempre topo da pilha) ============ */}
+      {/* ============ RODAPÉ PNG ============ */}
       {slide.mostrarFooter !== false && (
         <RodapePNG tipo={tipoRodape} formato="feed" escala={escala} />
       )}
