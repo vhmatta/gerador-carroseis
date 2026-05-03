@@ -71,6 +71,9 @@ export default function GeradorLote() {
   const [numeroInicial, setNumeroInicial] = useState("1");
   const [titulos, setTitulos] = useState("");
   const [quantidadePorVez, setQuantidadePorVez] = useState(10);
+  // v7.7.5: textura overlay aplicada em todas as capas geradas em lote
+  const [mostrarTextura, setMostrarTextura] = useState(false);
+  const [opacidadeTextura, setOpacidadeTextura] = useState(0.75);
   const capaRef = useRef<HTMLDivElement>(null);
 
   /** Array de blocos (1 config por grupo de N capas) */
@@ -267,6 +270,8 @@ export default function GeradorLote() {
                     fotoUrl={capaAtual.fotoUrl}
                     usarLegenda1={capaAtual.usarLegenda1}
                     usarSubtitulo={capaAtual.usarSubtitulo}
+                    mostrarTextura={mostrarTextura}
+                    opacidadeTextura={opacidadeTextura}
                     IconeCustomizado={() => <IconeCustomizado IconeComponente={IconeComponente} />}
                   />
                 </div>
@@ -376,6 +381,39 @@ export default function GeradorLote() {
                   <option value={60}>60 capas por grupo</option>
                 </select>
               </FieldWrapper>
+
+              {/* v7.7.5: Textura granulada global - aplicada em todas as capas do lote */}
+              <div className="bg-[#0f0f0f] rounded-lg p-4 border border-gray-800 space-y-3">
+                <ToggleField
+                  id="lote-textura"
+                  label="Textura granulada (overlay)"
+                  checked={mostrarTextura}
+                  onChange={setMostrarTextura}
+                >
+                  <div className="space-y-1">
+                    <label
+                      htmlFor="lote-opacidade"
+                      className="text-xs text-gray-500"
+                    >
+                      Opacidade: {Math.round(opacidadeTextura * 100)}%
+                    </label>
+                    <input
+                      id="lote-opacidade"
+                      type="range"
+                      min={0.1}
+                      max={1}
+                      step={0.05}
+                      value={opacidadeTextura}
+                      onChange={(e) => setOpacidadeTextura(parseFloat(e.target.value))}
+                      disabled={!mostrarTextura}
+                      className="w-full accent-[#FFC528]"
+                    />
+                  </div>
+                </ToggleField>
+                <p className="text-[11px] text-gray-500 leading-relaxed">
+                  Aplica a mesma textura overlay (igual Feed/Stories) em <strong className="text-gray-400">todas as capas</strong> geradas no lote.
+                </p>
+              </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
