@@ -1,8 +1,18 @@
 import { toPng } from "html-to-image";
 import JSZip from "jszip";
 
-const BASE_WIDTH = 1080;
-const BASE_HEIGHT = 1350;
+/**
+ * v7.7.11: dimensões agora são DETECTADAS dinamicamente do elemento,
+ * em vez de hardcoded 1080x1350. Isso corrige o bug de Stories cortado
+ * no export — antes, qualquer slide (incluindo 1080x1920) era capturado
+ * como 1080x1350 e o resultado saía cortado embaixo.
+ *
+ * Como funciona:
+ *  - Lê `getBoundingClientRect()` do elemento renderizado
+ *  - Aplica pixelRatio pra ter resolução final em 1080×altura
+ *  - Funciona pra Feed (1080x1350), Stories (1080x1920), ou qualquer
+ *    futuro formato sem precisar tocar nesse arquivo.
+ */
 
 /** Pré-carrega uma imagem forçando CORS anônimo. */
 function preloadImage(src: string): Promise<void> {
@@ -25,17 +35,36 @@ async function preloadAllImages(container: HTMLElement): Promise<void> {
   await Promise.all(urls.map(preloadImage));
 }
 
-/** Gera o dataURL PNG de um único slide. */
+/**
+ * Gera o dataURL PNG de um único slide com dimensões dinâmicas.
+ *
+ * v7.7.11: detecta as dimensões REAIS do elemento renderizado em vez de
+ * usar 1080x1350 fixo. Multiplica pelo pixelRatio pra exportar sempre
+ * em 1080 de largura (e altura proporcional, ex: 1350 feed, 1920 stories).
+ */
 async function gerarSlideDataURL(elemento: HTMLElement): Promise<string> {
   await document.fonts.ready;
   await preloadAllImages(elemento);
   await new Promise((resolve) => requestAnimationFrame(resolve));
 
+  // Dimensões REAIS do elemento renderizado (em px de tela, com escala aplicada)
+  const rect = elemento.getBoundingClientRect();
+  const larguraTela = rect.width;
+  const alturaTela = rect.height;
+
+  // O preview costuma estar em escala (ex: 50%) pra caber na UI.
+  // Pra exportar em 1080 de largura, calculo o pixelRatio necessário:
+  const LARGURA_FINAL = 1080;
+  const pixelRatio = LARGURA_FINAL / larguraTela;
+  const alturaFinal = Math.round(alturaTela * pixelRatio);
+
   const dataUrl = await toPng(elemento, {
     cacheBust: true,
-    pixelRatio: 1,
-    width: BASE_WIDTH,
-    height: BASE_HEIGHT,
+    pixelRatio,
+    width: larguraTela,
+    height: alturaTela,
+    canvasWidth: LARGURA_FINAL,
+    canvasHeight: alturaFinal,
     backgroundColor: "#0a0a0a",
     skipFonts: false,
     fetchRequestInit: {
@@ -87,6 +116,7 @@ export interface GerarCarrosselOpcoes {
 
 /**
  * Gera PNG de um único slide e dispara download.
+ * Usado pelo botão "Baixar este slide" no card individual (v7.7.11).
  */
 export async function baixarSlideUnico(
   elemento: HTMLElement,
