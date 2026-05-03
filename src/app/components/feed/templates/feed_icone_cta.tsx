@@ -75,43 +75,48 @@ export default function TemplateFeedIconeCta({
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
+  // ===== Entrelinhas (line-height) por elemento — v7.7.9 =====
+  const lhHeadline = slide.lineHeightHeadline ?? 1.0;
+  const lhSubhead = slide.lineHeightSubhead ?? 1.0;
+  const lhTagline = slide.lineHeightTagline ?? 1.2;
+  const lhCTA = slide.lineHeightCTA ?? 1.0;
+
+  // ===== Espaçamentos do bloco (8pt grid, customizáveis) — v7.7.9 =====
+  const gapIconeHeadline = slide.gapIconeHeadline ?? 24;
+  const gapHeadlineSubhead = slide.gapHeadlineSubhead ?? 32;
+  const gapSubheadCTA = slide.gapSubheadCTA ?? 64;
+  const gapCTARodape = slide.gapCTARodape ?? 72;
+
   // ===== Layout do bloco coeso (ancorado pelo CTA) =====
-  // CTA bottom fixo a 72px do rodapé.
-  const ctaBottom = alturaRodape + 72;
+  const ctaBottom = alturaRodape + gapCTARodape;
 
   // Altura efetiva do CTA (pílula com paddings 22 top + 20 bottom + tamCTA)
-  const alturaCTA = tamCTA * escalaGeral + 22 + 20 + 6; // +6 buffer borda
+  const alturaCTA = tamCTA * escalaGeral * lhCTA + 22 + 20 + 6;
   const yCTA = 1350 - ctaBottom - alturaCTA;
 
-  // Tagline (se houver) fica entre subhead e CTA. Quando há tagline, gap
-  // subhead→tagline=24 e tagline→CTA=24 (ainda totalizando 40 + tamTagline).
-  // Quando não há tagline, gap direto subhead→CTA=40.
+  // Quando há tagline: distribui o gap "subhead → CTA" em 60% pro 1º gap
+  // (subhead → tagline) e 40% pro 2º gap (tagline → CTA), ambos snap a 8pt
+  // pra manter o 8-point grid.
   const temTagline = !!slide.tagline;
-  const gapSubheadCTA = 40;
-  const gapHeadlineSubhead = 32;
-  const gapIconeHeadline = 24;
+  const snap8 = (n: number) => Math.round(n / 8) * 8;
+  const gapSubheadTagline = temTagline ? Math.max(8, snap8(gapSubheadCTA * 0.6)) : 0;
+  const gapTaglineCTA = temTagline ? Math.max(8, snap8(gapSubheadCTA * 0.4)) : 0;
 
-  // Calcula bottom-up:
-  // yCTA já calculado.
-  // Tagline (se houver):
-  //   yTagline = yCTA - 24 (gap até CTA) - tamTagline
-  // Subhead:
-  //   yTagline ? ySubhead = yTagline - 24 (gap subhead-tagline) - tamSubhead
-  //   senão     ySubhead = yCTA - gapSubheadCTA - tamSubhead
-  // Headline:
-  //   yHeadline = ySubhead - gapHeadlineSubhead - tamHeadline
-  // Ícone:
-  //   yIcone = yHeadline - gapIconeHeadline - tamIcone
+  // Posições calculadas bottom-up, considerando line-height na altura efetiva
+  // dos textos (texto com lh > 1 ocupa mais vertical).
+  const alturaHeadline = tamHeadline * escalaGeral * lhHeadline;
+  const alturaSubhead = tamSubhead * escalaGeral * lhSubhead;
+  const alturaTagline = tamTagline * escalaGeral * lhTagline;
 
   const yTagline = temTagline
-    ? yCTA - 24 - tamTagline * escalaGeral
+    ? yCTA - gapTaglineCTA - alturaTagline
     : null;
 
   const ySubhead = temTagline
-    ? (yTagline as number) - 24 - tamSubhead * escalaGeral
-    : yCTA - gapSubheadCTA - tamSubhead * escalaGeral;
+    ? (yTagline as number) - gapSubheadTagline - alturaSubhead
+    : yCTA - gapSubheadCTA - alturaSubhead;
 
-  const yHeadline = ySubhead - gapHeadlineSubhead - tamHeadline * escalaGeral;
+  const yHeadline = ySubhead - gapHeadlineSubhead - alturaHeadline;
   const yIcone = yHeadline - gapIconeHeadline - tamIcone;
 
   return (
@@ -166,20 +171,21 @@ export default function TemplateFeedIconeCta({
         )}
       </div>
 
-      {/* ============ TEXTURA (clipada acima do rodapé) ============ */}
+      {/* ============ TEXTURA (cobre 100% — fica encoberta pelo rodapé opaco) ============ */}
       <TexturaOverlay
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
         modo={modoTextura}
-        alturaUtil={alturaUtil}
+        alturaUtil={1350}
         escala={escala}
       />
 
-      {/* ============ GRADIENTE DE LEITURA ============ */}
+      {/* ============ GRADIENTE DE LEITURA (cobre 100%, pico em alturaUtil) ============ */}
       <GradienteLeitura
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
         alturaUtil={alturaUtil}
+        alturaTotal={1350}
         escala={escala}
       />
 
@@ -210,7 +216,7 @@ export default function TemplateFeedIconeCta({
             fontSize: e(tamHeadline * escalaGeral),
             fontWeight: pesoHeadline,
             fontStyle: italicHeadline ? "italic" : "normal",
-            lineHeight: 1.0,
+            lineHeight: lhHeadline,
             letterSpacing: "-0.02em",
             whiteSpace: "pre-line",
           }}
@@ -231,7 +237,7 @@ export default function TemplateFeedIconeCta({
             fontSize: e(tamSubhead * escalaGeral),
             fontWeight: pesoSubhead,
             fontStyle: italicSubhead ? "italic" : "normal",
-            lineHeight: 1.0,
+            lineHeight: lhSubhead,
             letterSpacing: "-0.025em",
             whiteSpace: "pre-line",
           }}
@@ -252,7 +258,7 @@ export default function TemplateFeedIconeCta({
             fontSize: e(tamTagline * escalaGeral),
             fontWeight: pesoTagline,
             fontStyle: italicTagline ? "italic" : "normal",
-            lineHeight: 1.2,
+            lineHeight: lhTagline,
             letterSpacing: "-0.005em",
             whiteSpace: "pre-line",
           }}
@@ -280,7 +286,7 @@ export default function TemplateFeedIconeCta({
             paddingBottom: e(20),
             paddingLeft: e(48),
             paddingRight: e(48),
-            lineHeight: 1,
+            lineHeight: lhCTA,
             display: "inline-block",
             boxSizing: "border-box",
           }}

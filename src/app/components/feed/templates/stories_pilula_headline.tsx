@@ -41,6 +41,11 @@ export default function TemplateStoriesPilulaHeadline({
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
+  // Entrelinhas — v7.7.9
+  const lhHeadline = slide.lineHeightHeadline ?? 0.92;
+  const lhSubhead = slide.lineHeightSubhead ?? 1.0;
+  const lhTagline = slide.lineHeightTagline ?? 1.2;
+
   return (
     <div
       style={{
@@ -92,7 +97,7 @@ export default function TemplateStoriesPilulaHeadline({
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
         modo={modoTextura}
-        alturaUtil={alturaUtil}
+        alturaUtil={1920}
         escala={escala}
       />
 
@@ -100,6 +105,7 @@ export default function TemplateStoriesPilulaHeadline({
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
         alturaUtil={alturaUtil}
+        alturaTotal={1920}
         escala={escala}
       />
 
@@ -142,7 +148,7 @@ export default function TemplateStoriesPilulaHeadline({
             color: corHeadline,
             fontSize: e(180 * escalaGeral),
             fontWeight: 900,
-            lineHeight: 0.92,
+            lineHeight: lhHeadline,
             letterSpacing: "-0.045em",
             whiteSpace: "pre-line",
           }}
@@ -162,7 +168,7 @@ export default function TemplateStoriesPilulaHeadline({
             fontSize: e(76 * escalaGeral),
             fontWeight: 700,
             fontStyle: "italic",
-            lineHeight: 1.0,
+            lineHeight: lhSubhead,
             letterSpacing: "-0.025em",
             whiteSpace: "pre-line",
             textAlign: "right",
@@ -182,7 +188,7 @@ export default function TemplateStoriesPilulaHeadline({
             color: corSubhead,
             fontSize: e(40 * escalaGeral),
             fontWeight: 700,
-            lineHeight: 1.2,
+            lineHeight: lhTagline,
             letterSpacing: "-0.005em",
             whiteSpace: "pre-line",
           }}

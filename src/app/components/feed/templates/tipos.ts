@@ -117,6 +117,34 @@ export interface FeedSlideData {
   /** v7.7.2: Espessura do traço do ícone (lucide strokeWidth). 0.5-3, default 2. */
   espessuraIcone?: number;
 
+  // ============ ENTRELINHAS (line-height) — v7.7.9 ============
+  /**
+   * Line-height por elemento (controle deslizante 0.8 a 1.4 no painel).
+   * Quando undefined, usa o default do template (variando por elemento).
+   */
+  lineHeightHeadline?: number;
+  lineHeightSubhead?: number;
+  lineHeightTagline?: number;
+  lineHeightCTA?: number;
+
+  // ============ ESPAÇAMENTOS (gaps verticais, 8pt grid) — v7.7.9 ============
+  /**
+   * Gaps verticais entre elementos do bloco de texto (templates _icone_cta).
+   * Valores em px no espaço da peça (1080×1350/1920). Step 8 (8-point grid).
+   * Quando undefined, usa default abaixo. Templates _pilula_headline têm
+   * layout fixo por coordenadas absolutas — gaps não se aplicam a eles.
+   *
+   * Defaults:
+   *  - gapIconeHeadline: 24
+   *  - gapHeadlineSubhead: 32
+   *  - gapSubheadCTA: 64 (sem tagline) | distribuído 60/40 com tagline
+   *  - gapCTARodape: 72
+   */
+  gapIconeHeadline?: number;
+  gapHeadlineSubhead?: number;
+  gapSubheadCTA?: number;
+  gapCTARodape?: number;
+
   // ============ TEXTURA OVERLAY — v7.7.2 ============
   /** Mostrar textura granulada por cima da peça (default true). */
   mostrarTextura?: boolean;

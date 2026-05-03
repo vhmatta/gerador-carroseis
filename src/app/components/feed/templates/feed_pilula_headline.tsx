@@ -44,6 +44,11 @@ export default function TemplateFeedPilulaHeadline({
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
+  // Entrelinhas — v7.7.9 (defaults preservam visual original do template)
+  const lhHeadline = slide.lineHeightHeadline ?? 0.95;
+  const lhSubhead = slide.lineHeightSubhead ?? 1.0;
+  const lhTagline = slide.lineHeightTagline ?? 1.2;
+
   return (
     <div
       style={{
@@ -93,20 +98,21 @@ export default function TemplateFeedPilulaHeadline({
         </div>
       )}
 
-      {/* TEXTURA (clipada acima do rodapé) */}
+      {/* TEXTURA (cobre 100% — fica encoberta pelo rodapé opaco) */}
       <TexturaOverlay
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
         modo={modoTextura}
-        alturaUtil={alturaUtil}
+        alturaUtil={1350}
         escala={escala}
       />
 
-      {/* GRADIENTE DE LEITURA */}
+      {/* GRADIENTE DE LEITURA (cobre 100%, pico em alturaUtil) */}
       <GradienteLeitura
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
         alturaUtil={alturaUtil}
+        alturaTotal={1350}
         escala={escala}
       />
 
@@ -151,7 +157,7 @@ export default function TemplateFeedPilulaHeadline({
             color: corHeadline,
             fontSize: e(165 * escalaGeral),
             fontWeight: 800,
-            lineHeight: 0.95,
+            lineHeight: lhHeadline,
             letterSpacing: "-0.04em",
             whiteSpace: "pre-line",
           }}
@@ -171,7 +177,7 @@ export default function TemplateFeedPilulaHeadline({
             color: corSubhead,
             fontSize: e(72 * escalaGeral),
             fontWeight: 500,
-            lineHeight: 1.0,
+            lineHeight: lhSubhead,
             letterSpacing: "-0.02em",
             whiteSpace: "pre-line",
             textAlign: "right",
@@ -192,7 +198,7 @@ export default function TemplateFeedPilulaHeadline({
             color: corSubhead,
             fontSize: e(38 * escalaGeral),
             fontWeight: 600,
-            lineHeight: 1.2,
+            lineHeight: lhTagline,
             letterSpacing: "-0.01em",
             whiteSpace: "pre-line",
           }}

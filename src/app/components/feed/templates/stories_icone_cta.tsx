@@ -65,21 +65,37 @@ export default function TemplateStoriesIconeCta({
   const mostrarGradiente = slide.mostrarGradienteLeitura ?? true;
   const opacidadeGradiente = slide.opacidadeGradienteLeitura ?? 0.5;
 
+  // Entrelinhas (line-height) por elemento — v7.7.9
+  const lhHeadline = slide.lineHeightHeadline ?? 1.0;
+  const lhSubhead = slide.lineHeightSubhead ?? 1.0;
+  const lhTagline = slide.lineHeightTagline ?? 1.2;
+  const lhCTA = slide.lineHeightCTA ?? 1.0;
+
+  // Espaçamentos do bloco (8pt grid, customizáveis) — v7.7.9
+  const gapIconeHeadline = slide.gapIconeHeadline ?? 24;
+  const gapHeadlineSubhead = slide.gapHeadlineSubhead ?? 32;
+  const gapSubheadCTA = slide.gapSubheadCTA ?? 64;
+  const gapCTARodape = slide.gapCTARodape ?? 72;
+
   // Layout do bloco coeso (ancorado pelo CTA)
-  const ctaBottom = alturaRodape + 72;
-  const alturaCTA = tamCTA * escalaGeral + 22 + 20 + 6;
+  const ctaBottom = alturaRodape + gapCTARodape;
+  const alturaCTA = tamCTA * escalaGeral * lhCTA + 22 + 20 + 6;
   const yCTA = 1920 - ctaBottom - alturaCTA;
 
   const temTagline = !!slide.tagline;
-  const gapSubheadCTA = 40;
-  const gapHeadlineSubhead = 32;
-  const gapIconeHeadline = 24;
+  const snap8 = (n: number) => Math.round(n / 8) * 8;
+  const gapSubheadTagline = temTagline ? Math.max(8, snap8(gapSubheadCTA * 0.6)) : 0;
+  const gapTaglineCTA = temTagline ? Math.max(8, snap8(gapSubheadCTA * 0.4)) : 0;
 
-  const yTagline = temTagline ? yCTA - 24 - tamTagline * escalaGeral : null;
+  const alturaHeadline = tamHeadline * escalaGeral * lhHeadline;
+  const alturaSubhead = tamSubhead * escalaGeral * lhSubhead;
+  const alturaTagline = tamTagline * escalaGeral * lhTagline;
+
+  const yTagline = temTagline ? yCTA - gapTaglineCTA - alturaTagline : null;
   const ySubhead = temTagline
-    ? (yTagline as number) - 24 - tamSubhead * escalaGeral
-    : yCTA - gapSubheadCTA - tamSubhead * escalaGeral;
-  const yHeadline = ySubhead - gapHeadlineSubhead - tamHeadline * escalaGeral;
+    ? (yTagline as number) - gapSubheadTagline - alturaSubhead
+    : yCTA - gapSubheadCTA - alturaSubhead;
+  const yHeadline = ySubhead - gapHeadlineSubhead - alturaHeadline;
   const yIcone = yHeadline - gapIconeHeadline - tamIcone;
 
   return (
@@ -138,7 +154,7 @@ export default function TemplateStoriesIconeCta({
         visivel={mostrarTextura}
         opacity={opacidadeTextura}
         modo={modoTextura}
-        alturaUtil={alturaUtil}
+        alturaUtil={1920}
         escala={escala}
       />
 
@@ -146,6 +162,7 @@ export default function TemplateStoriesIconeCta({
         visivel={mostrarGradiente}
         opacidade={opacidadeGradiente}
         alturaUtil={alturaUtil}
+        alturaTotal={1920}
         escala={escala}
       />
 
@@ -174,7 +191,7 @@ export default function TemplateStoriesIconeCta({
             fontSize: e(tamHeadline * escalaGeral),
             fontWeight: pesoHeadline,
             fontStyle: italicHeadline ? "italic" : "normal",
-            lineHeight: 1.0,
+            lineHeight: lhHeadline,
             letterSpacing: "-0.02em",
             whiteSpace: "pre-line",
           }}
@@ -194,7 +211,7 @@ export default function TemplateStoriesIconeCta({
             fontSize: e(tamSubhead * escalaGeral),
             fontWeight: pesoSubhead,
             fontStyle: italicSubhead ? "italic" : "normal",
-            lineHeight: 1.0,
+            lineHeight: lhSubhead,
             letterSpacing: "-0.025em",
             whiteSpace: "pre-line",
           }}
@@ -214,7 +231,7 @@ export default function TemplateStoriesIconeCta({
             fontSize: e(tamTagline * escalaGeral),
             fontWeight: pesoTagline,
             fontStyle: italicTagline ? "italic" : "normal",
-            lineHeight: 1.2,
+            lineHeight: lhTagline,
             letterSpacing: "-0.005em",
             whiteSpace: "pre-line",
           }}
@@ -241,7 +258,7 @@ export default function TemplateStoriesIconeCta({
             paddingBottom: e(20),
             paddingLeft: e(48),
             paddingRight: e(48),
-            lineHeight: 1,
+            lineHeight: lhCTA,
             display: "inline-block",
             boxSizing: "border-box",
           }}

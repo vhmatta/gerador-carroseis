@@ -775,7 +775,11 @@ function PainelEdicao({
       {/* TIPOGRAFIA AVANÇADA (recolhível) */}
       <TipografiaAvancada slide={slide} onChange={onChange} camposUsados={camposUsados} />
 
-      {/* ÍCONE (só pra templates que usam ícone, ex: Rotativo) */}
+      {/* ESPAÇAMENTOS (recolhível, só pra templates _icone_cta com bloco coeso) — v7.7.9 */}
+      {slide.templateId.endsWith("_icone_cta") && (
+        <EspacamentosBloco slide={slide} onChange={onChange} />
+      )}
+
       {/* ÍCONE — só pra templates que usam ícone (feed_icone_cta / stories_icone_cta) */}
       {slide.templateId.endsWith("_icone_cta") && (
         <Secao titulo="Ícone" icone={<RefreshCcw size={12} />}>
@@ -1439,6 +1443,183 @@ function Toggle({
 }
 
 // ============================================================
+// ESPAÇAMENTOS DO BLOCO — v7.7.9
+// Sliders pros 4 gaps verticais entre elementos no template _icone_cta.
+// Step 8 (8-point grid). Recolhível por padrão.
+// ============================================================
+function EspacamentosBloco({
+  slide,
+  onChange,
+}: {
+  slide: FeedSlideData;
+  onChange: (patch: Partial<FeedSlideData>) => void;
+}) {
+  const [aberto, setAberto] = useState(false);
+
+  // Defaults da v7.7.9 (8pt grid)
+  const DEF_ICONE_HEAD = 24;
+  const DEF_HEAD_SUB = 32;
+  const DEF_SUB_CTA = 64;
+  const DEF_CTA_ROD = 72;
+
+  return (
+    <div
+      style={{
+        borderRadius: 8,
+        border: "1px solid #2a2a2a",
+        overflow: "hidden",
+      }}
+    >
+      <button
+        onClick={() => setAberto(!aberto)}
+        style={{
+          width: "100%",
+          padding: "10px 12px",
+          backgroundColor: aberto ? "#1a1a1a" : "transparent",
+          border: "none",
+          color: "#ddd",
+          fontSize: 11,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          fontFamily: "Poppins, sans-serif",
+        }}
+      >
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <Layers size={12} /> Espaçamentos
+        </span>
+        {aberto ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+      </button>
+
+      {aberto && (
+        <div
+          style={{
+            padding: 12,
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            backgroundColor: "#0f0f0f",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 10,
+              color: "#666",
+              lineHeight: 1.4,
+              margin: 0,
+              fontFamily: "Poppins, sans-serif",
+            }}
+          >
+            8-point grid (múltiplos de 8). Quando há tagline, o gap subhead → CTA é
+            distribuído automaticamente entre subhead → tagline e tagline → CTA.
+          </p>
+
+          <SliderGap
+            titulo="Ícone → Headline"
+            valor={slide.gapIconeHeadline}
+            defaultValor={DEF_ICONE_HEAD}
+            min={16}
+            max={64}
+            onChange={(v) => onChange({ gapIconeHeadline: v })}
+          />
+          <SliderGap
+            titulo="Headline → Subhead"
+            valor={slide.gapHeadlineSubhead}
+            defaultValor={DEF_HEAD_SUB}
+            min={16}
+            max={80}
+            onChange={(v) => onChange({ gapHeadlineSubhead: v })}
+          />
+          <SliderGap
+            titulo="Subhead → CTA"
+            valor={slide.gapSubheadCTA}
+            defaultValor={DEF_SUB_CTA}
+            min={24}
+            max={96}
+            onChange={(v) => onChange({ gapSubheadCTA: v })}
+          />
+          <SliderGap
+            titulo="CTA → Rodapé"
+            valor={slide.gapCTARodape}
+            defaultValor={DEF_CTA_ROD}
+            min={48}
+            max={120}
+            onChange={(v) => onChange({ gapCTARodape: v })}
+          />
+
+          <button
+            onClick={() =>
+              onChange({
+                gapIconeHeadline: undefined,
+                gapHeadlineSubhead: undefined,
+                gapSubheadCTA: undefined,
+                gapCTARodape: undefined,
+              })
+            }
+            style={{
+              fontSize: 10,
+              color: "#888",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              alignSelf: "flex-start",
+            }}
+          >
+            <RotateCcw size={10} /> Resetar espaçamentos
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Slider individual de um gap (step 8 = 8-point grid)
+function SliderGap({
+  titulo,
+  valor,
+  defaultValor,
+  min,
+  max,
+  onChange,
+}: {
+  titulo: string;
+  valor?: number;
+  defaultValor: number;
+  min: number;
+  max: number;
+  onChange: (v: number | undefined) => void;
+}) {
+  const valorEfetivo = valor ?? defaultValor;
+  const ehDefault = valor === undefined;
+  return (
+    <div>
+      <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 2 }}>
+        {titulo}: <span style={{ color: ehDefault ? "#888" : "#FFC528", fontWeight: 700 }}>
+          {valorEfetivo}px
+        </span>
+        {ehDefault && <span style={{ color: "#666" }}> (padrão)</span>}
+      </label>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={8}
+        value={valorEfetivo}
+        onChange={(e) => onChange(parseInt(e.target.value, 10))}
+        style={{ width: "100%", accentColor: "#FFC528" }}
+      />
+    </div>
+  );
+}
+
+// ============================================================
 // TIPOGRAFIA AVANÇADA — controles por elemento (v7.7.1)
 // Recolhida por padrão pra não poluir UI.
 // ============================================================
@@ -1507,11 +1688,14 @@ function TipografiaAvancada({
               peso={slide.pesoHeadline}
               tamanho={slide.tamHeadline}
               italic={slide.italicHeadline}
+              lineHeight={slide.lineHeightHeadline}
               onPesoChange={(v) => onChange({ pesoHeadline: v })}
               onTamanhoChange={(v) => onChange({ tamHeadline: v })}
               onItalicChange={(v) => onChange({ italicHeadline: v })}
+              onLineHeightChange={(v) => onChange({ lineHeightHeadline: v })}
               tamMin={40}
               tamMax={250}
+              lhDefault={1.0}
             />
           )}
           {usaSubhead && (
@@ -1520,11 +1704,14 @@ function TipografiaAvancada({
               peso={slide.pesoSubhead}
               tamanho={slide.tamSubhead}
               italic={slide.italicSubhead}
+              lineHeight={slide.lineHeightSubhead}
               onPesoChange={(v) => onChange({ pesoSubhead: v })}
               onTamanhoChange={(v) => onChange({ tamSubhead: v })}
               onItalicChange={(v) => onChange({ italicSubhead: v })}
+              onLineHeightChange={(v) => onChange({ lineHeightSubhead: v })}
               tamMin={30}
               tamMax={180}
+              lhDefault={1.0}
             />
           )}
           {usaTagline && (
@@ -1533,11 +1720,14 @@ function TipografiaAvancada({
               peso={slide.pesoTagline}
               tamanho={slide.tamTagline}
               italic={slide.italicTagline}
+              lineHeight={slide.lineHeightTagline}
               onPesoChange={(v) => onChange({ pesoTagline: v })}
               onTamanhoChange={(v) => onChange({ tamTagline: v })}
               onItalicChange={(v) => onChange({ italicTagline: v })}
+              onLineHeightChange={(v) => onChange({ lineHeightTagline: v })}
               tamMin={20}
               tamMax={80}
+              lhDefault={1.2}
             />
           )}
           {usaCTA && (
@@ -1547,11 +1737,14 @@ function TipografiaAvancada({
                 peso={slide.pesoCTA}
                 tamanho={slide.tamCTA}
                 italic={slide.italicCTA}
+                lineHeight={slide.lineHeightCTA}
                 onPesoChange={(v) => onChange({ pesoCTA: v })}
                 onTamanhoChange={(v) => onChange({ tamCTA: v })}
                 onItalicChange={(v) => onChange({ italicCTA: v })}
+                onLineHeightChange={(v) => onChange({ lineHeightCTA: v })}
                 tamMin={18}
                 tamMax={60}
+                lhDefault={1.0}
               />
               <CorPicker
                 label="Cor do CTA"
@@ -1567,15 +1760,19 @@ function TipografiaAvancada({
                 pesoHeadline: undefined,
                 tamHeadline: undefined,
                 italicHeadline: undefined,
+                lineHeightHeadline: undefined,
                 pesoSubhead: undefined,
                 tamSubhead: undefined,
                 italicSubhead: undefined,
+                lineHeightSubhead: undefined,
                 pesoTagline: undefined,
                 tamTagline: undefined,
                 italicTagline: undefined,
+                lineHeightTagline: undefined,
                 pesoCTA: undefined,
                 tamCTA: undefined,
                 italicCTA: undefined,
+                lineHeightCTA: undefined,
                 corCTA: undefined,
               })
             }
@@ -1599,27 +1796,34 @@ function TipografiaAvancada({
   );
 }
 
-// Controles de peso/tamanho/italic pra um elemento (Headline, Subhead, etc)
+// Controles de peso/tamanho/entrelinhas/italic pra um elemento (Headline, Subhead, etc)
 function ControlesElemento({
   titulo,
   peso,
   tamanho,
   italic,
+  lineHeight,
   onPesoChange,
   onTamanhoChange,
   onItalicChange,
+  onLineHeightChange,
   tamMin,
   tamMax,
+  lhDefault,
 }: {
   titulo: string;
   peso?: number;
   tamanho?: number;
   italic?: boolean;
+  lineHeight?: number;
   onPesoChange: (v: number | undefined) => void;
   onTamanhoChange: (v: number | undefined) => void;
   onItalicChange: (v: boolean | undefined) => void;
+  onLineHeightChange?: (v: number | undefined) => void;
   tamMin: number;
   tamMax: number;
+  /** Default de line-height do template (mostrado quando o usuário não customizou). */
+  lhDefault?: number;
 }) {
   const PESOS_KUFAM = [
     { v: 400, l: "Regular" },
@@ -1680,6 +1884,24 @@ function ControlesElemento({
           style={{ width: "100%", accentColor: "#FFC528" }}
         />
       </div>
+
+      {/* Entrelinhas (line-height) — v7.7.9 */}
+      {onLineHeightChange && (
+        <div>
+          <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 2 }}>
+            Entrelinhas: {lineHeight !== undefined ? lineHeight.toFixed(2) : `(padrão ${lhDefault?.toFixed(2) ?? "—"})`}
+          </label>
+          <input
+            type="range"
+            min={0.8}
+            max={1.4}
+            step={0.05}
+            value={lineHeight ?? lhDefault ?? 1.0}
+            onChange={(e) => onLineHeightChange(parseFloat(e.target.value))}
+            style={{ width: "100%", accentColor: "#FFC528" }}
+          />
+        </div>
+      )}
 
       {/* Italic */}
       <label
