@@ -127,6 +127,57 @@ export interface FeedSlideData {
   lineHeightTagline?: number;
   lineHeightCTA?: number;
 
+  // ============ CONTROLES TIPOGRÁFICOS PROFISSIONAIS — v7.7.10 ============
+  /**
+   * Letter-spacing (tracking) por elemento, em "em".
+   * Range -0.05 a 0.1, step 0.005. Default depende do template.
+   */
+  letterSpacingPilula?: number;
+  letterSpacingHeadline?: number;
+  letterSpacingSubhead?: number;
+  letterSpacingTagline?: number;
+  letterSpacingCTA?: number;
+
+  /** Alinhamento horizontal por elemento. Default depende do template. */
+  alignPilula?: "left" | "center" | "right";
+  alignHeadline?: "left" | "center" | "right";
+  alignSubhead?: "left" | "center" | "right";
+  alignTagline?: "left" | "center" | "right";
+  alignCTA?: "left" | "center" | "right";
+
+  /** Text-transform por elemento. */
+  transformPilula?: "none" | "uppercase" | "lowercase" | "capitalize";
+  transformHeadline?: "none" | "uppercase" | "lowercase" | "capitalize";
+  transformSubhead?: "none" | "uppercase" | "lowercase" | "capitalize";
+  transformTagline?: "none" | "uppercase" | "lowercase" | "capitalize";
+  transformCTA?: "none" | "uppercase" | "lowercase" | "capitalize";
+
+  /**
+   * Margem inferior individual em px (empurra só este elemento pra baixo).
+   * Step 8 (8-point grid). Default 0. Aplica nos templates _icone_cta como
+   * espaço extra ABAIXO do elemento — útil pra ajuste fino sem mexer nos
+   * gaps gerais.
+   */
+  mbPilula?: number;
+  mbHeadline?: number;
+  mbSubhead?: number;
+  mbTagline?: number;
+  mbCTA?: number;
+
+  // ============ PÍLULA (KICKER) — v7.7.10: agora com tipografia ============
+  /** Tamanho fonte da pílula em px. Default depende do template (24 feed, 32 stories). */
+  tamPilula?: number;
+  /** Peso fonte da pílula. Default 700. */
+  pesoPilula?: number;
+  /** Italic na pílula. */
+  italicPilula?: boolean;
+  /** Line-height da pílula. Default 1.0. */
+  lineHeightPilula?: number;
+  /** Cor de texto da pílula (sobrepõe default marrom). */
+  corPilula?: string;
+  /** Cor de fundo da pílula (sobrepõe default creme). */
+  corPilulaFundo?: string;
+
   // ============ ESPAÇAMENTOS (gaps verticais, 8pt grid) — v7.7.9 ============
   /**
    * Gaps verticais entre elementos do bloco de texto (templates _icone_cta).

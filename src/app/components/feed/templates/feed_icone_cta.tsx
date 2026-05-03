@@ -84,8 +84,15 @@ export default function TemplateFeedIconeCta({
   // ===== Espaçamentos do bloco (8pt grid, customizáveis) — v7.7.9 =====
   const gapIconeHeadline = slide.gapIconeHeadline ?? 24;
   const gapHeadlineSubhead = slide.gapHeadlineSubhead ?? 32;
-  const gapSubheadCTA = slide.gapSubheadCTA ?? 64;
+  const gapSubheadCTA = slide.gapSubheadCTA ?? 80;
   const gapCTARodape = slide.gapCTARodape ?? 72;
+
+  // ===== Margens inferiores individuais por elemento (v7.7.10) =====
+  // Empurra o elemento ABAIXO dele pra baixo (= adiciona ao gap acima do próximo).
+  const mbIcone = 0; // ícone não tem mb (não tem campo)
+  const mbHeadline = slide.mbHeadline ?? 0;
+  const mbSubhead = slide.mbSubhead ?? 0;
+  const mbTagline = slide.mbTagline ?? 0;
 
   // ===== Layout do bloco coeso (ancorado pelo CTA) =====
   const ctaBottom = alturaRodape + gapCTARodape;
@@ -109,15 +116,15 @@ export default function TemplateFeedIconeCta({
   const alturaTagline = tamTagline * escalaGeral * lhTagline;
 
   const yTagline = temTagline
-    ? yCTA - gapTaglineCTA - alturaTagline
+    ? yCTA - gapTaglineCTA - mbTagline - alturaTagline
     : null;
 
   const ySubhead = temTagline
     ? (yTagline as number) - gapSubheadTagline - alturaSubhead
-    : yCTA - gapSubheadCTA - alturaSubhead;
+    : yCTA - gapSubheadCTA - mbSubhead - alturaSubhead;
 
-  const yHeadline = ySubhead - gapHeadlineSubhead - alturaHeadline;
-  const yIcone = yHeadline - gapIconeHeadline - tamIcone;
+  const yHeadline = ySubhead - gapHeadlineSubhead - mbHeadline - alturaHeadline;
+  const yIcone = yHeadline - gapIconeHeadline - mbIcone - tamIcone;
 
   return (
     <div
@@ -217,7 +224,9 @@ export default function TemplateFeedIconeCta({
             fontWeight: pesoHeadline,
             fontStyle: italicHeadline ? "italic" : "normal",
             lineHeight: lhHeadline,
-            letterSpacing: "-0.02em",
+            letterSpacing: `${slide.letterSpacingHeadline ?? -0.02}em`,
+            textTransform: slide.transformHeadline ?? "none",
+            textAlign: slide.alignHeadline ?? "left",
             whiteSpace: "pre-line",
           }}
         >
@@ -238,7 +247,9 @@ export default function TemplateFeedIconeCta({
             fontWeight: pesoSubhead,
             fontStyle: italicSubhead ? "italic" : "normal",
             lineHeight: lhSubhead,
-            letterSpacing: "-0.025em",
+            letterSpacing: `${slide.letterSpacingSubhead ?? -0.025}em`,
+            textTransform: slide.transformSubhead ?? "none",
+            textAlign: slide.alignSubhead ?? "left",
             whiteSpace: "pre-line",
           }}
         >
@@ -259,7 +270,9 @@ export default function TemplateFeedIconeCta({
             fontWeight: pesoTagline,
             fontStyle: italicTagline ? "italic" : "normal",
             lineHeight: lhTagline,
-            letterSpacing: "-0.005em",
+            letterSpacing: `${slide.letterSpacingTagline ?? -0.005}em`,
+            textTransform: slide.transformTagline ?? "none",
+            textAlign: slide.alignTagline ?? "left",
             whiteSpace: "pre-line",
           }}
         >
@@ -267,7 +280,7 @@ export default function TemplateFeedIconeCta({
         </div>
       )}
 
-      {/* ============ CTA — 72px fixo do rodapé ============ */}
+      {/* ============ CTA — ancorado por bottom ============ */}
       {slide.mostrarCTA !== false && slide.cta && (
         <div
           style={{
@@ -281,7 +294,9 @@ export default function TemplateFeedIconeCta({
             fontSize: e(tamCTA * escalaGeral),
             fontWeight: pesoCTA,
             fontStyle: italicCTA ? "italic" : "normal",
-            letterSpacing: "-0.005em",
+            letterSpacing: `${slide.letterSpacingCTA ?? -0.005}em`,
+            textTransform: slide.transformCTA ?? "none",
+            textAlign: slide.alignCTA ?? "left",
             paddingTop: e(22),
             paddingBottom: e(20),
             paddingLeft: e(48),

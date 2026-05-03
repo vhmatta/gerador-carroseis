@@ -1634,6 +1634,7 @@ function TipografiaAvancada({
 }) {
   const [aberto, setAberto] = useState(false);
 
+  const usaPilula = camposUsados.includes("pilula");
   const usaHeadline = camposUsados.includes("headline");
   const usaSubhead = camposUsados.includes("subhead");
   const usaTagline = camposUsados.includes("tagline");
@@ -1682,6 +1683,32 @@ function TipografiaAvancada({
             backgroundColor: "#0f0f0f",
           }}
         >
+          {usaPilula && (
+            <ControlesElemento
+              titulo="Pílula (kicker)"
+              peso={slide.pesoPilula}
+              tamanho={slide.tamPilula}
+              italic={slide.italicPilula}
+              lineHeight={slide.lineHeightPilula}
+              letterSpacing={slide.letterSpacingPilula}
+              align={slide.alignPilula}
+              transform={slide.transformPilula}
+              mb={slide.mbPilula}
+              onPesoChange={(v) => onChange({ pesoPilula: v })}
+              onTamanhoChange={(v) => onChange({ tamPilula: v })}
+              onItalicChange={(v) => onChange({ italicPilula: v })}
+              onLineHeightChange={(v) => onChange({ lineHeightPilula: v })}
+              onLetterSpacingChange={(v) => onChange({ letterSpacingPilula: v })}
+              onAlignChange={(v) => onChange({ alignPilula: v })}
+              onTransformChange={(v) => onChange({ transformPilula: v })}
+              onMbChange={(v) => onChange({ mbPilula: v })}
+              tamMin={14}
+              tamMax={60}
+              lhDefault={1.0}
+              lsDefault={-0.005}
+              alignDefault="left"
+            />
+          )}
           {usaHeadline && (
             <ControlesElemento
               titulo="Headline"
@@ -1689,13 +1716,23 @@ function TipografiaAvancada({
               tamanho={slide.tamHeadline}
               italic={slide.italicHeadline}
               lineHeight={slide.lineHeightHeadline}
+              letterSpacing={slide.letterSpacingHeadline}
+              align={slide.alignHeadline}
+              transform={slide.transformHeadline}
+              mb={slide.mbHeadline}
               onPesoChange={(v) => onChange({ pesoHeadline: v })}
               onTamanhoChange={(v) => onChange({ tamHeadline: v })}
               onItalicChange={(v) => onChange({ italicHeadline: v })}
               onLineHeightChange={(v) => onChange({ lineHeightHeadline: v })}
+              onLetterSpacingChange={(v) => onChange({ letterSpacingHeadline: v })}
+              onAlignChange={(v) => onChange({ alignHeadline: v })}
+              onTransformChange={(v) => onChange({ transformHeadline: v })}
+              onMbChange={(v) => onChange({ mbHeadline: v })}
               tamMin={40}
               tamMax={250}
               lhDefault={1.0}
+              lsDefault={-0.02}
+              alignDefault="left"
             />
           )}
           {usaSubhead && (
@@ -1705,13 +1742,23 @@ function TipografiaAvancada({
               tamanho={slide.tamSubhead}
               italic={slide.italicSubhead}
               lineHeight={slide.lineHeightSubhead}
+              letterSpacing={slide.letterSpacingSubhead}
+              align={slide.alignSubhead}
+              transform={slide.transformSubhead}
+              mb={slide.mbSubhead}
               onPesoChange={(v) => onChange({ pesoSubhead: v })}
               onTamanhoChange={(v) => onChange({ tamSubhead: v })}
               onItalicChange={(v) => onChange({ italicSubhead: v })}
               onLineHeightChange={(v) => onChange({ lineHeightSubhead: v })}
+              onLetterSpacingChange={(v) => onChange({ letterSpacingSubhead: v })}
+              onAlignChange={(v) => onChange({ alignSubhead: v })}
+              onTransformChange={(v) => onChange({ transformSubhead: v })}
+              onMbChange={(v) => onChange({ mbSubhead: v })}
               tamMin={30}
               tamMax={180}
               lhDefault={1.0}
+              lsDefault={-0.025}
+              alignDefault="left"
             />
           )}
           {usaTagline && (
@@ -1721,13 +1768,23 @@ function TipografiaAvancada({
               tamanho={slide.tamTagline}
               italic={slide.italicTagline}
               lineHeight={slide.lineHeightTagline}
+              letterSpacing={slide.letterSpacingTagline}
+              align={slide.alignTagline}
+              transform={slide.transformTagline}
+              mb={slide.mbTagline}
               onPesoChange={(v) => onChange({ pesoTagline: v })}
               onTamanhoChange={(v) => onChange({ tamTagline: v })}
               onItalicChange={(v) => onChange({ italicTagline: v })}
               onLineHeightChange={(v) => onChange({ lineHeightTagline: v })}
+              onLetterSpacingChange={(v) => onChange({ letterSpacingTagline: v })}
+              onAlignChange={(v) => onChange({ alignTagline: v })}
+              onTransformChange={(v) => onChange({ transformTagline: v })}
+              onMbChange={(v) => onChange({ mbTagline: v })}
               tamMin={20}
               tamMax={80}
               lhDefault={1.2}
+              lsDefault={-0.005}
+              alignDefault="left"
             />
           )}
           {usaCTA && (
@@ -1738,13 +1795,21 @@ function TipografiaAvancada({
                 tamanho={slide.tamCTA}
                 italic={slide.italicCTA}
                 lineHeight={slide.lineHeightCTA}
+                letterSpacing={slide.letterSpacingCTA}
+                align={slide.alignCTA}
+                transform={slide.transformCTA}
                 onPesoChange={(v) => onChange({ pesoCTA: v })}
                 onTamanhoChange={(v) => onChange({ tamCTA: v })}
                 onItalicChange={(v) => onChange({ italicCTA: v })}
                 onLineHeightChange={(v) => onChange({ lineHeightCTA: v })}
+                onLetterSpacingChange={(v) => onChange({ letterSpacingCTA: v })}
+                onAlignChange={(v) => onChange({ alignCTA: v })}
+                onTransformChange={(v) => onChange({ transformCTA: v })}
                 tamMin={18}
                 tamMax={60}
                 lhDefault={1.0}
+                lsDefault={-0.005}
+                alignDefault="left"
               />
               <CorPicker
                 label="Cor do CTA"
@@ -1757,22 +1822,45 @@ function TipografiaAvancada({
           <button
             onClick={() =>
               onChange({
+                tamPilula: undefined,
+                pesoPilula: undefined,
+                italicPilula: undefined,
+                lineHeightPilula: undefined,
+                letterSpacingPilula: undefined,
+                alignPilula: undefined,
+                transformPilula: undefined,
+                mbPilula: undefined,
                 pesoHeadline: undefined,
                 tamHeadline: undefined,
                 italicHeadline: undefined,
                 lineHeightHeadline: undefined,
+                letterSpacingHeadline: undefined,
+                alignHeadline: undefined,
+                transformHeadline: undefined,
+                mbHeadline: undefined,
                 pesoSubhead: undefined,
                 tamSubhead: undefined,
                 italicSubhead: undefined,
                 lineHeightSubhead: undefined,
+                letterSpacingSubhead: undefined,
+                alignSubhead: undefined,
+                transformSubhead: undefined,
+                mbSubhead: undefined,
                 pesoTagline: undefined,
                 tamTagline: undefined,
                 italicTagline: undefined,
                 lineHeightTagline: undefined,
+                letterSpacingTagline: undefined,
+                alignTagline: undefined,
+                transformTagline: undefined,
+                mbTagline: undefined,
                 pesoCTA: undefined,
                 tamCTA: undefined,
                 italicCTA: undefined,
                 lineHeightCTA: undefined,
+                letterSpacingCTA: undefined,
+                alignCTA: undefined,
+                transformCTA: undefined,
                 corCTA: undefined,
               })
             }
@@ -1803,27 +1891,46 @@ function ControlesElemento({
   tamanho,
   italic,
   lineHeight,
+  letterSpacing,
+  align,
+  transform,
+  mb,
   onPesoChange,
   onTamanhoChange,
   onItalicChange,
   onLineHeightChange,
+  onLetterSpacingChange,
+  onAlignChange,
+  onTransformChange,
+  onMbChange,
   tamMin,
   tamMax,
   lhDefault,
+  lsDefault,
+  alignDefault,
 }: {
   titulo: string;
   peso?: number;
   tamanho?: number;
   italic?: boolean;
   lineHeight?: number;
+  letterSpacing?: number;
+  align?: "left" | "center" | "right";
+  transform?: "none" | "uppercase" | "lowercase" | "capitalize";
+  mb?: number;
   onPesoChange: (v: number | undefined) => void;
   onTamanhoChange: (v: number | undefined) => void;
   onItalicChange: (v: boolean | undefined) => void;
   onLineHeightChange?: (v: number | undefined) => void;
+  onLetterSpacingChange?: (v: number | undefined) => void;
+  onAlignChange?: (v: "left" | "center" | "right" | undefined) => void;
+  onTransformChange?: (v: "none" | "uppercase" | "lowercase" | "capitalize" | undefined) => void;
+  onMbChange?: (v: number | undefined) => void;
   tamMin: number;
   tamMax: number;
-  /** Default de line-height do template (mostrado quando o usuário não customizou). */
   lhDefault?: number;
+  lsDefault?: number;
+  alignDefault?: "left" | "center" | "right";
 }) {
   const PESOS_KUFAM = [
     { v: 400, l: "Regular" },
@@ -1833,6 +1940,10 @@ function ControlesElemento({
     { v: 800, l: "ExtraBold" },
     { v: 900, l: "Black" },
   ];
+
+  const lsEfetivo = letterSpacing ?? lsDefault ?? 0;
+  const alignEfetivo = align ?? alignDefault ?? "left";
+  const transformEfetivo = transform ?? "none";
 
   return (
     <div
@@ -1885,11 +1996,14 @@ function ControlesElemento({
         />
       </div>
 
-      {/* Entrelinhas (line-height) — v7.7.9 */}
+      {/* Entrelinhas (line-height) */}
       {onLineHeightChange && (
         <div>
           <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 2 }}>
-            Entrelinhas: {lineHeight !== undefined ? lineHeight.toFixed(2) : `(padrão ${lhDefault?.toFixed(2) ?? "—"})`}
+            Entrelinhas:{" "}
+            {lineHeight !== undefined
+              ? lineHeight.toFixed(2)
+              : `(padrão ${lhDefault?.toFixed(2) ?? "—"})`}
           </label>
           <input
             type="range"
@@ -1898,6 +2012,114 @@ function ControlesElemento({
             step={0.05}
             value={lineHeight ?? lhDefault ?? 1.0}
             onChange={(e) => onLineHeightChange(parseFloat(e.target.value))}
+            style={{ width: "100%", accentColor: "#FFC528" }}
+          />
+        </div>
+      )}
+
+      {/* Letter-spacing (tracking) — v7.7.10 */}
+      {onLetterSpacingChange && (
+        <div>
+          <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 2 }}>
+            Espaçamento de letras:{" "}
+            {letterSpacing !== undefined
+              ? `${lsEfetivo > 0 ? "+" : ""}${lsEfetivo.toFixed(3)}em`
+              : `(padrão ${lsDefault !== undefined ? lsDefault.toFixed(3) + "em" : "—"})`}
+          </label>
+          <input
+            type="range"
+            min={-0.05}
+            max={0.1}
+            step={0.005}
+            value={lsEfetivo}
+            onChange={(e) => onLetterSpacingChange(parseFloat(e.target.value))}
+            style={{ width: "100%", accentColor: "#FFC528" }}
+          />
+        </div>
+      )}
+
+      {/* Alinhamento — v7.7.10 */}
+      {onAlignChange && (
+        <div>
+          <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 4 }}>
+            Alinhamento
+          </label>
+          <div style={{ display: "flex", gap: 4 }}>
+            {(["left", "center", "right"] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => onAlignChange(opt)}
+                style={{
+                  flex: 1,
+                  padding: "6px 4px",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  backgroundColor: alignEfetivo === opt ? "#FFC528" : "#1a1a1a",
+                  color: alignEfetivo === opt ? "#000" : "#aaa",
+                  border: alignEfetivo === opt ? "1px solid #FFC528" : "1px solid #2a2a2a",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                  textTransform: "capitalize",
+                }}
+              >
+                {opt === "left" ? "Esq" : opt === "center" ? "Centro" : "Dir"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Transform — v7.7.10 */}
+      {onTransformChange && (
+        <div>
+          <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 4 }}>
+            Caixa do texto
+          </label>
+          <div style={{ display: "flex", gap: 4 }}>
+            {([
+              { v: "none", l: "Normal" },
+              { v: "uppercase", l: "MAIÚSCULA" },
+              { v: "lowercase", l: "minúscula" },
+              { v: "capitalize", l: "Capitular" },
+            ] as const).map((opt) => (
+              <button
+                key={opt.v}
+                onClick={() => onTransformChange(opt.v === "none" ? undefined : opt.v)}
+                style={{
+                  flex: 1,
+                  padding: "6px 2px",
+                  fontSize: 9,
+                  fontWeight: 700,
+                  backgroundColor: transformEfetivo === opt.v ? "#FFC528" : "#1a1a1a",
+                  color: transformEfetivo === opt.v ? "#000" : "#aaa",
+                  border: transformEfetivo === opt.v ? "1px solid #FFC528" : "1px solid #2a2a2a",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                }}
+              >
+                {opt.l}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Margem inferior individual (8pt grid) — v7.7.10 */}
+      {onMbChange && (
+        <div>
+          <label style={{ fontSize: 10, color: "#888", display: "block", marginBottom: 2 }}>
+            Margem inferior:{" "}
+            <span style={{ color: mb !== undefined && mb > 0 ? "#FFC528" : "#888", fontWeight: 700 }}>
+              {mb ?? 0}px
+            </span>
+          </label>
+          <input
+            type="range"
+            min={0}
+            max={64}
+            step={8}
+            value={mb ?? 0}
+            onChange={(e) => onMbChange(parseInt(e.target.value, 10) || undefined)}
             style={{ width: "100%", accentColor: "#FFC528" }}
           />
         </div>
