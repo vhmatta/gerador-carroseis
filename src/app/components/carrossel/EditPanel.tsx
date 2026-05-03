@@ -8,6 +8,7 @@ import {
   Sparkles,
   ChevronRight,
   Eye,
+  ArrowRight,
 } from "lucide-react";
 import UnsplashSearch from "../UnsplashSearch";
 import { TEMAS_DISPONIVEIS, obterTema } from "../temas";
@@ -343,6 +344,111 @@ export default function EditPanel({
           ativo={slide.mostrarSetinha !== false}
           onChange={(v) => onChange({ mostrarSetinha: v ? undefined : false })}
         />
+      </div>
+
+      {/* v7.7.2: Customização da setinha */}
+      {slide.mostrarSetinha !== false && (
+        <div className="space-y-2 pt-2 border-t border-gray-800">
+          <div className="flex items-center justify-between">
+            <Label icone={<ArrowRight size={12} />}>Setinha (avançado)</Label>
+            <button
+              onClick={() =>
+                onChange({
+                  tamSetinha: undefined,
+                  corSetinha: undefined,
+                  espessuraSetinha: undefined,
+                })
+              }
+              className="text-[10px] text-gray-500 hover:text-[#FFC528] flex items-center gap-1"
+            >
+              <RotateCcw size={10} />
+              Resetar
+            </button>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] text-gray-400">
+              Tamanho: {slide.tamSetinha ?? 56}px
+            </label>
+            <input
+              type="range"
+              min={32}
+              max={120}
+              step={4}
+              value={slide.tamSetinha ?? 56}
+              onChange={(e) =>
+                onChange({ tamSetinha: parseInt(e.target.value, 10) })
+              }
+              className="w-full accent-[#FFC528]"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] text-gray-400">
+              Espessura do stroke: {(slide.espessuraSetinha ?? 3).toFixed(1)}
+            </label>
+            <input
+              type="range"
+              min={1}
+              max={6}
+              step={0.5}
+              value={slide.espessuraSetinha ?? 3}
+              onChange={(e) =>
+                onChange({ espessuraSetinha: parseFloat(e.target.value) })
+              }
+              className="w-full accent-[#FFC528]"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-[10px] text-gray-400 flex-shrink-0 w-14">
+              Cor:
+            </label>
+            <input
+              type="color"
+              value={slide.corSetinha || "#FFC528"}
+              onChange={(e) => onChange({ corSetinha: e.target.value })}
+              className="w-8 h-7 rounded border border-gray-800 bg-[#0f0f0f] cursor-pointer"
+            />
+            <input
+              type="text"
+              value={slide.corSetinha || ""}
+              onChange={(e) => onChange({ corSetinha: e.target.value || undefined })}
+              placeholder="(usa cor do tema)"
+              maxLength={7}
+              className="flex-1 px-2 py-1 text-[10px] bg-[#0f0f0f] border border-gray-800 rounded text-gray-300 font-mono"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* v7.7.2: Textura overlay */}
+      <div className="space-y-2 pt-2 border-t border-gray-800">
+        <Label icone={<Sparkles size={12} />}>Textura overlay</Label>
+        <ToggleElemento
+          label="Aplicar textura granulada"
+          dica="Mancha colorida + grão (mode Overlay 75%)"
+          ativo={!!slide.mostrarTextura}
+          onChange={(v) => onChange({ mostrarTextura: v || undefined })}
+        />
+        {slide.mostrarTextura && (
+          <div className="space-y-1 pl-1">
+            <label className="text-[10px] text-gray-400">
+              Opacidade: {Math.round((slide.opacidadeTextura ?? 0.75) * 100)}%
+            </label>
+            <input
+              type="range"
+              min={0.1}
+              max={1}
+              step={0.05}
+              value={slide.opacidadeTextura ?? 0.75}
+              onChange={(e) =>
+                onChange({ opacidadeTextura: parseFloat(e.target.value) })
+              }
+              className="w-full accent-[#FFC528]"
+            />
+          </div>
+        )}
       </div>
 
       {/* Pill de CTA */}

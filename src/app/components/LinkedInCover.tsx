@@ -9,6 +9,10 @@ interface LinkedInCoverProps {
   IconeCustomizado?: React.ComponentType<any>;
   usarLegenda1?: boolean;
   usarSubtitulo?: boolean;
+  /** v7.7.2: mostra textura granulada por cima (overlay 75% — igual Feed/Stories) */
+  mostrarTextura?: boolean;
+  /** v7.7.2: opacidade da textura (0-1, default 0.75) */
+  opacidadeTextura?: number;
 }
 
 // Assets servidos pela pasta /public (mesma origem, não contaminam canvas)
@@ -63,6 +67,8 @@ export default function LinkedInCover({
   IconeCustomizado,
   usarLegenda1 = true,
   usarSubtitulo = true,
+  mostrarTextura = false,
+  opacidadeTextura = 0.75,
 }: LinkedInCoverProps) {
   const fotoResolvida = resolveFotoUrl(fotoUrl);
   const isDataUrl = fotoResolvida.startsWith("data:");
@@ -241,6 +247,23 @@ export default function LinkedInCover({
             </p>
           )}
         </div>
+      )}
+
+      {/* v7.7.2: Textura granulada overlay (igual Feed/Stories) */}
+      {mostrarTextura && (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/textura-bg.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            mixBlendMode: "overlay",
+            opacity: opacidadeTextura,
+            pointerEvents: "none",
+          }}
+        />
       )}
     </div>
   );

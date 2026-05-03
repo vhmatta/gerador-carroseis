@@ -29,6 +29,8 @@ export default function CoverEditorAvancado() {
   const [iconeEscolhido, setIconeEscolhido] = useState<string>("CreditCard");
   const [usarLegenda1, setUsarLegenda1] = useState(true);
   const [usarSubtitulo, setUsarSubtitulo] = useState(true);
+  const [mostrarTextura, setMostrarTextura] = useState(false);
+  const [opacidadeTextura, setOpacidadeTextura] = useState(0.75);
   const [status, setStatus] = useState<Status>({ tipo: "idle" });
   const capaRef = useRef<HTMLDivElement>(null);
 
@@ -97,6 +99,8 @@ export default function CoverEditorAvancado() {
                   fotoUrl={fotoUrl}
                   usarLegenda1={usarLegenda1}
                   usarSubtitulo={usarSubtitulo}
+                  mostrarTextura={mostrarTextura}
+                  opacidadeTextura={opacidadeTextura}
                   IconeCustomizado={() => <IconeCustomizado IconeComponente={IconeComponente} />}
                 />
               </div>
@@ -198,6 +202,34 @@ export default function CoverEditorAvancado() {
                     className="input-base"
                     placeholder="o seu dia a dia financeiro."
                   />
+                </ToggleField>
+
+                {/* v7.7.2: textura overlay igual Feed/Stories */}
+                <ToggleField
+                  id="mostrarTextura"
+                  label="Textura granulada (overlay)"
+                  checked={mostrarTextura}
+                  onChange={setMostrarTextura}
+                >
+                  <div className="space-y-1">
+                    <label
+                      className="text-xs text-gray-500"
+                      htmlFor="opacidadeTextura"
+                    >
+                      Opacidade: {Math.round(opacidadeTextura * 100)}%
+                    </label>
+                    <input
+                      id="opacidadeTextura"
+                      type="range"
+                      min={0.1}
+                      max={1}
+                      step={0.05}
+                      value={opacidadeTextura}
+                      onChange={(e) => setOpacidadeTextura(parseFloat(e.target.value))}
+                      disabled={!mostrarTextura}
+                      className="w-full accent-[#FFC528]"
+                    />
+                  </div>
                 </ToggleField>
               </div>
             </div>

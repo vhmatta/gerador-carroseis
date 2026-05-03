@@ -129,6 +129,18 @@ export interface SlideData {
   mostrarTopbar?: boolean;
   /** Mostrar rodapé (texto inferior, ex. "▶ BRANDS PAGE 5/000"). Default true. */
   mostrarRodape?: boolean;
+
+  // ============ SETINHA E TEXTURA (v7.7.2) ============
+  /** Tamanho da setinha em px (default 56). */
+  tamSetinha?: number;
+  /** Cor da setinha (override; default usa accent do tema). */
+  corSetinha?: string;
+  /** Espessura do stroke do círculo da setinha (default 3). */
+  espessuraSetinha?: number;
+  /** Mostrar textura overlay granulada (default false no carrossel). */
+  mostrarTextura?: boolean;
+  /** Opacidade da textura (0-1, default 0.75). */
+  opacidadeTextura?: number;
   /** Override: forçar CAPS (true) ou minúsculas (false). undefined = usa default do layout */
   headlineCaps?: boolean;
   /** Override: multiplicador do tamanho default do layout (1 = padrão, 1.2 = +20%, 0.8 = -20%) */

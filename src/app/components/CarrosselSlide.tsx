@@ -53,9 +53,32 @@ const CarrosselSlide = forwardRef<HTMLDivElement, Props>(function CarrosselSlide
         ehUltimo,
       })}
 
+      {/* v7.7.2: Textura granulada por cima do conteúdo (default desligada no carrossel) */}
+      {slide.mostrarTextura && (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/textura-bg.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            mixBlendMode: "overlay",
+            opacity: slide.opacidadeTextura ?? 0.75,
+            pointerEvents: "none",
+            zIndex: 5,
+          }}
+        />
+      )}
+
       {/* Seta indicativa "deslize" no canto inferior direito (todos exceto último) */}
       {!ehUltimo && slide.mostrarSetinha !== false && (
-        <SetaDeslizar accent={coresResolvidas.accent} />
+        <SetaDeslizar
+          accent={slide.corSetinha || coresResolvidas.accent}
+          tamanho={slide.tamSetinha ?? 56}
+          espessura={slide.espessuraSetinha ?? 3}
+        />
       )}
     </div>
   );
@@ -70,36 +93,53 @@ const CarrosselSlide = forwardRef<HTMLDivElement, Props>(function CarrosselSlide
  * resolve o contraste (em fundo amarelo, accent vira preto; em fundo
  * preto, accent fica amarelo).
  */
-function SetaDeslizar({ accent }: { accent: string }) {
+/**
+ * Setinha indicativa de "deslize" no canto inferior direito.
+ * v7.7.2: substituída pela SVG oficial fornecida pelo cliente.
+ *
+ * - Círculo com stroke (preserva o stroke do design)
+ * - Seta interna apontando direita
+ * - Tamanho e cor editáveis
+ *
+ * Defaults: 56px, accent do tema.
+ */
+function SetaDeslizar({
+  accent,
+  tamanho = 56,
+  espessura = 3,
+}: {
+  accent: string;
+  tamanho?: number;
+  espessura?: number;
+}) {
   return (
     <div
       style={{
         position: "absolute",
         bottom: 32,
         right: 32,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 48,
-        height: 48,
-        borderRadius: "50%",
-        backgroundColor: "transparent",
-        border: `2px solid ${accent}`,
-        opacity: 0.75,
         zIndex: 10,
+        opacity: 0.85,
       }}
     >
       <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
+        width={tamanho}
+        height={tamanho}
+        viewBox="0 0 107 107"
         fill="none"
-        stroke={accent}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <polyline points="9 18 15 12 9 6" />
+        <circle
+          cx="53.5"
+          cy="53.5"
+          r="52"
+          stroke={accent}
+          strokeWidth={espessura}
+        />
+        <path
+          d="M82.0607 55.0607C82.6465 54.4749 82.6465 53.5251 82.0607 52.9393L72.5147 43.3934C71.9289 42.8076 70.9792 42.8076 70.3934 43.3934C69.8076 43.9792 69.8076 44.9289 70.3934 45.5147L78.8787 54L70.3934 62.4853C69.8076 63.0711 69.8076 64.0208 70.3934 64.6066C70.9792 65.1924 71.9289 65.1924 72.5147 64.6066L82.0607 55.0607ZM27 54V55.5L81 55.5V54V52.5L27 52.5V54Z"
+          fill={accent}
+        />
       </svg>
     </div>
   );

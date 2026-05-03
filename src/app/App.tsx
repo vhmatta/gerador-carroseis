@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import CoverEditorAvancado from "./components/CoverEditorAvancado";
 import GeradorLote from "./components/GeradorLote";
 import CarrosselEditor from "./components/CarrosselEditor";
+import { FeedEditor } from "./components/feed";
 import imgLogoGrupo from "../imports/logo_potencial_dark.png";
 import imgLogoPotencialFooter from "../imports/Logo_-_Potencial_Tecnologia_Horizontal_Negativa__2-2.png";
 import {
@@ -13,12 +14,13 @@ import {
   ChevronDown,
   Sun,
   Moon,
+  Image as ImageIcon,
 } from "lucide-react";
 import { ThemeProvider, useTheme } from "./lib/ThemeProvider";
 import { SPACING, RADIUS, FONT_WEIGHT, FONT_SIZE, TRANSITION, SHADOW } from "./lib/designSystem";
 import { Badge } from "./components/ui-premium";
 
-type Modo = "editor" | "lote" | "carrossel";
+type Modo = "editor" | "lote" | "carrossel" | "feed";
 
 interface ModoDef {
   id: Modo;
@@ -49,6 +51,13 @@ const MODOS: ModoDef[] = [
     label: "Carrossel",
     icone: <GalleryHorizontal size={14} strokeWidth={1.75} />,
     descricao: "Editor editorial com múltiplos slides",
+  },
+  {
+    id: "feed",
+    categoria: "instagram",
+    label: "Feed & Stories",
+    icone: <ImageIcon size={14} strokeWidth={1.75} />,
+    descricao: "Templates Parcele Aqui (1080×1350 / 1080×1920)",
   },
 ];
 
@@ -236,6 +245,7 @@ function AppShell() {
         {modo === "editor" && <CoverEditorAvancado />}
         {modo === "lote" && <GeradorLote />}
         {modo === "carrossel" && <CarrosselEditor />}
+        {modo === "feed" && <FeedEditor />}
       </main>
 
       {/* ================ FOOTER ================ */}
