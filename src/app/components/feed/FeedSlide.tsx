@@ -1,19 +1,24 @@
 import type { FeedSlideData, FeedTemplateId, TemplateInfo } from "./templates/tipos";
-import TemplateIpvaIptuFeed from "./templates/ipva_iptu_feed";
-import TemplateIpvaIptuStories from "./templates/ipva_iptu_stories";
-import TemplateRotativoFeed from "./templates/rotativo_feed";
+import TemplateFeedPilulaHeadline from "./templates/feed_pilula_headline";
+import TemplateStoriesPilulaHeadline from "./templates/stories_pilula_headline";
+import TemplateFeedIconeCta from "./templates/feed_icone_cta";
+import TemplateStoriesIconeCta from "./templates/stories_icone_cta";
 
 /**
  * Renderiza um slide Feed/Stories baseado no templateId.
- * Templates implementados na v7.7:
- *  - ipva_iptu_feed (1080×1350) ✅
- *  - ipva_iptu_stories (1080×1920) ✅
- *  - rotativo_feed (1080×1350) ✅
  *
- * Templates pendentes (mostram placeholder):
- *  - rotativo_stories
- *  - oque_e_feed / oque_e_stories
- *  - ate3_cartoes_feed / ate3_cartoes_stories
+ * Templates implementados (v7.7.6):
+ *  - feed_pilula_headline      ✅ (1080×1350) — antes "ipva_iptu_feed"
+ *  - stories_pilula_headline   ✅ (1080×1920) — antes "ipva_iptu_stories"
+ *  - feed_icone_cta            ✅ (1080×1350) — antes "rotativo_feed"
+ *  - stories_icone_cta         ✅ (1080×1920) — antes "rotativo_stories" (era placeholder)
+ *
+ * Templates pendentes (placeholder com aviso):
+ *  - feed_amarelo_ilustracao / stories_amarelo_ilustracao  (era "oque_e_*")
+ *  - feed_central_asset / stories_central_asset            (era "ate3_cartoes_*")
+ *
+ * Nomenclatura: IDs descrevem ESTRUTURA VISUAL, não conteúdo. Os textos do
+ * exemplo são sugestões — o usuário edita pra qualquer assunto.
  */
 export default function FeedSlide({
   slide,
@@ -23,12 +28,14 @@ export default function FeedSlide({
   escala?: number;
 }) {
   switch (slide.templateId) {
-    case "ipva_iptu_feed":
-      return <TemplateIpvaIptuFeed slide={slide} escala={escala} />;
-    case "ipva_iptu_stories":
-      return <TemplateIpvaIptuStories slide={slide} escala={escala} />;
-    case "rotativo_feed":
-      return <TemplateRotativoFeed slide={slide} escala={escala} />;
+    case "feed_pilula_headline":
+      return <TemplateFeedPilulaHeadline slide={slide} escala={escala} />;
+    case "stories_pilula_headline":
+      return <TemplateStoriesPilulaHeadline slide={slide} escala={escala} />;
+    case "feed_icone_cta":
+      return <TemplateFeedIconeCta slide={slide} escala={escala} />;
+    case "stories_icone_cta":
+      return <TemplateStoriesIconeCta slide={slide} escala={escala} />;
     default:
       return <TemplatePlaceholder slide={slide} escala={escala} />;
   }
@@ -37,7 +44,7 @@ export default function FeedSlide({
 /**
  * Placeholder para templates ainda não implementados.
  * Mantém estrutura visual consistente (1080×1350 ou 1080×1920) com
- * mensagem clara de "em breve".
+ * mensagem clara de "em construção".
  */
 function TemplatePlaceholder({
   slide,
@@ -46,7 +53,7 @@ function TemplatePlaceholder({
   slide: FeedSlideData;
   escala: number;
 }) {
-  const eh_stories = slide.templateId.endsWith("_stories");
+  const eh_stories = slide.templateId.startsWith("stories_");
   const w = 1080 * escala;
   const h = (eh_stories ? 1920 : 1350) * escala;
 
@@ -94,28 +101,28 @@ function TemplatePlaceholder({
       >
         Este template estará disponível em breve.
         <br />
-        Use <strong style={{ color: "#FFC528" }}>IPVA Feed</strong>,{" "}
-        <strong style={{ color: "#FFC528" }}>IPVA Stories</strong> ou{" "}
-        <strong style={{ color: "#FFC528" }}>Rotativo Feed</strong> nesta versão.
+        Use os modelos <strong style={{ color: "#FFC528" }}>Pílula + Headline</strong> ou{" "}
+        <strong style={{ color: "#FFC528" }}>Ícone + CTA</strong> nesta versão.
       </div>
     </div>
   );
 }
 
 // ============================================================
-// LISTA DE TEMPLATES (UI dropdown)
+// REGISTRY DE TEMPLATES — usado pelo dropdown e painel direito
 // ============================================================
 
 export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
   // ===== IMPLEMENTADOS =====
   {
-    id: "ipva_iptu_feed",
-    nome: "IPVA / IPTU — Feed (1080×1350)",
-    descricao: "Foto + headline grande amarelo + tagline + footer creme",
+    id: "feed_pilula_headline",
+    nome: "Pílula + Headline grande — Feed (1080×1350)",
+    descricao:
+      "Foto + pílula superior + headline grande + subhead alinhado direita + tagline + rodapé",
     formato: "feed",
     camposUsados: ["pilula", "headline", "subhead", "tagline", "foto"],
     exemplo: {
-      templateId: "ipva_iptu_feed",
+      templateId: "feed_pilula_headline",
       pilula: "Gestão financeira pessoal",
       headline: "Organize",
       subhead: "seus impostos",
@@ -129,13 +136,13 @@ export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
     },
   },
   {
-    id: "ipva_iptu_stories",
-    nome: "IPVA / IPTU — Stories (1080×1920)",
-    descricao: "Versão stories: foto vertical + texto + footer creme",
+    id: "stories_pilula_headline",
+    nome: "Pílula + Headline grande — Stories (1080×1920)",
+    descricao: "Versão stories: foto vertical + mesma estrutura do Feed",
     formato: "stories",
     camposUsados: ["pilula", "headline", "subhead", "tagline", "foto"],
     exemplo: {
-      templateId: "ipva_iptu_stories",
+      templateId: "stories_pilula_headline",
       pilula: "Gestão financeira pessoal",
       headline: "Organize",
       subhead: "seus impostos",
@@ -149,13 +156,34 @@ export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
     },
   },
   {
-    id: "rotativo_feed",
-    nome: "Rotativo vs Estratégia — Feed (1080×1350)",
-    descricao: "Foto na metade superior + footer amarelo curvo + CTA pílula preto",
+    id: "feed_icone_cta",
+    nome: "Ícone + CTA outline — Feed (1080×1350)",
+    descricao:
+      "Foto + ícone superior + headline + subhead + tagline + CTA pílula outline + rodapé",
     formato: "feed",
     camposUsados: ["headline", "subhead", "tagline", "cta", "foto"],
     exemplo: {
-      templateId: "rotativo_feed",
+      templateId: "feed_icone_cta",
+      pilula: "",
+      headline: "Rotativo",
+      subhead: "ou estratégia?",
+      tagline: "Entenda a diferença.",
+      cta: "Faça a escolha inteligente",
+      fotoUrl: "",
+      fotoPosicao: "center",
+      mostrarPilula: false,
+      mostrarFooter: true,
+      mostrarCTA: true,
+    },
+  },
+  {
+    id: "stories_icone_cta",
+    nome: "Ícone + CTA outline — Stories (1080×1920)",
+    descricao: "Versão stories: foto vertical + mesma estrutura do Feed",
+    formato: "stories",
+    camposUsados: ["headline", "subhead", "tagline", "cta", "foto"],
+    exemplo: {
+      templateId: "stories_icone_cta",
       pilula: "",
       headline: "Rotativo",
       subhead: "ou estratégia?",
@@ -171,31 +199,13 @@ export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
 
   // ===== EM CONSTRUÇÃO (placeholders) =====
   {
-    id: "rotativo_stories",
-    nome: "Rotativo vs Estratégia — Stories (em breve)",
-    descricao: "Em construção · será liberado em versão futura",
-    formato: "stories",
-    camposUsados: ["headline", "subhead", "tagline", "cta", "foto"],
-    exemplo: {
-      templateId: "rotativo_stories",
-      headline: "Rotativo",
-      subhead: "ou estratégia?",
-      tagline: "Entenda a diferença.",
-      cta: "Faça a escolha inteligente",
-      fotoUrl: "",
-      mostrarPilula: false,
-      mostrarFooter: true,
-      mostrarCTA: true,
-    },
-  },
-  {
-    id: "oque_e_feed",
-    nome: "O que é o Parcele Aqui — Feed (em breve)",
-    descricao: "Em construção · fundo amarelo + ilustrações isométricas",
+    id: "feed_amarelo_ilustracao",
+    nome: "Fundo amarelo + ilustração — Feed (em breve)",
+    descricao: "Em construção · fundo amarelo cheio + ilustrações isométricas",
     formato: "feed",
     camposUsados: ["headline", "subhead", "cta"],
     exemplo: {
-      templateId: "oque_e_feed",
+      templateId: "feed_amarelo_ilustracao",
       headline: "O que é o\nParcele aqui?",
       subhead: "Plataforma digital\npara parcelar boletos.",
       cta: "Conheça agora",
@@ -206,13 +216,13 @@ export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
     },
   },
   {
-    id: "oque_e_stories",
-    nome: "O que é o Parcele Aqui — Stories (em breve)",
+    id: "stories_amarelo_ilustracao",
+    nome: "Fundo amarelo + ilustração — Stories (em breve)",
     descricao: "Em construção · versão vertical do anterior",
     formato: "stories",
     camposUsados: ["headline", "subhead", "cta"],
     exemplo: {
-      templateId: "oque_e_stories",
+      templateId: "stories_amarelo_ilustracao",
       headline: "O que é o\nParcele aqui?",
       subhead: "Plataforma digital\npara parcelar boletos.",
       cta: "Conheça agora",
@@ -223,13 +233,13 @@ export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
     },
   },
   {
-    id: "ate3_cartoes_feed",
-    nome: "Até 3 cartões — Feed (em breve)",
-    descricao: "Em construção · headline central + asset de cartões + footer amarelo",
+    id: "feed_central_asset",
+    nome: "Headline central + asset — Feed (em breve)",
+    descricao: "Em construção · headline central + asset (cartões etc) + footer",
     formato: "feed",
     camposUsados: ["headline", "subhead", "tagline", "cta", "foto"],
     exemplo: {
-      templateId: "ate3_cartoes_feed",
+      templateId: "feed_central_asset",
       headline: "Use até 3 cartões",
       subhead: "no mesmo boleto",
       tagline: "Combine seus limites",
@@ -241,13 +251,13 @@ export const TEMPLATES_DISPONIVEIS: TemplateInfo[] = [
     },
   },
   {
-    id: "ate3_cartoes_stories",
-    nome: "Até 3 cartões — Stories (em breve)",
+    id: "stories_central_asset",
+    nome: "Headline central + asset — Stories (em breve)",
     descricao: "Em construção · versão vertical do anterior",
     formato: "stories",
     camposUsados: ["headline", "subhead", "tagline", "cta", "foto"],
     exemplo: {
-      templateId: "ate3_cartoes_stories",
+      templateId: "stories_central_asset",
       headline: "Use até 3 cartões",
       subhead: "no mesmo boleto",
       tagline: "Combine seus limites",
@@ -265,5 +275,10 @@ export function obterTemplate(id: FeedTemplateId): TemplateInfo | undefined {
 }
 
 export function templateImplementado(id: FeedTemplateId): boolean {
-  return ["ipva_iptu_feed", "ipva_iptu_stories", "rotativo_feed"].includes(id);
+  return [
+    "feed_pilula_headline",
+    "stories_pilula_headline",
+    "feed_icone_cta",
+    "stories_icone_cta",
+  ].includes(id);
 }

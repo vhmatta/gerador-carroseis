@@ -1,7 +1,7 @@
 {
   "name": "@figma/my-make-file",
   "private": true,
-  "version": "7.7.5",
+  "version": "7.7.6",
   "type": "module",
   "scripts": {
     "build": "vite build",
@@ -46,8 +46,8 @@
     "date-fns": "3.6.0",
     "embla-carousel-react": "8.6.0",
     "html-to-image": "^1.11.13",
-    "jszip": "^3.10.1",
     "input-otp": "1.4.2",
+    "jszip": "^3.10.1",
     "lucide-react": "0.487.0",
     "motion": "12.23.24",
     "next-themes": "0.4.6",
@@ -69,8 +69,11 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
     "@types/node": "^20.14.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "4.7.0",
     "tailwindcss": "4.1.12",
+    "typescript": "^6.0.3",
     "vite": "6.3.5"
   },
   "peerDependencies": {

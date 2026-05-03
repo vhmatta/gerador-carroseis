@@ -4,7 +4,7 @@
  * Formato esperado:
  *
  *   SLIDE 1
- *   TEMPLATE: ipva_iptu_feed
+ *   TEMPLATE: feed_pilula_headline
  *   PILULA: Gestão financeira pessoal
  *   HEADLINE: Organize
  *   SUBHEAD: seus impostos
@@ -13,7 +13,7 @@
  *   ---
  *
  *   SLIDE 2
- *   TEMPLATE: rotativo_feed
+ *   TEMPLATE: feed_icone_cta
  *   HEADLINE: Rotativo
  *   SUBHEAD: ou estratégia?
  *   TAGLINE: Entenda a diferença.
@@ -23,20 +23,39 @@
  * Campos suportados: TEMPLATE, PILULA, HEADLINE, SUBHEAD, TAGLINE, CTA
  *
  * Tudo case-insensitive. Multi-linha: continuar sem rótulo até próximo CAMPO: ou divisor.
+ *
+ * v7.7.6: IDs dos templates renomeados (ipva_iptu_* → feed_pilula_headline,
+ * rotativo_* → feed_icone_cta etc). IDs antigos continuam aceitos como ALIAS
+ * pra não quebrar textos salvos pelos usuários.
  */
 
 import type { FeedSlideData, FeedTemplateId } from "../components/feed/templates/tipos";
 
 const TEMPLATES_VALIDOS: FeedTemplateId[] = [
-  "ipva_iptu_feed",
-  "ipva_iptu_stories",
-  "rotativo_feed",
-  "rotativo_stories",
-  "oque_e_feed",
-  "oque_e_stories",
-  "ate3_cartoes_feed",
-  "ate3_cartoes_stories",
+  "feed_pilula_headline",
+  "stories_pilula_headline",
+  "feed_icone_cta",
+  "stories_icone_cta",
+  "feed_amarelo_ilustracao",
+  "stories_amarelo_ilustracao",
+  "feed_central_asset",
+  "stories_central_asset",
 ];
+
+/**
+ * Aliases: IDs antigos → IDs novos.
+ * Retrocompat pra textos colados em versões anteriores ao renaming v7.7.6.
+ */
+const ALIAS_TEMPLATES: Record<string, FeedTemplateId> = {
+  ipva_iptu_feed: "feed_pilula_headline",
+  ipva_iptu_stories: "stories_pilula_headline",
+  rotativo_feed: "feed_icone_cta",
+  rotativo_stories: "stories_icone_cta",
+  oque_e_feed: "feed_amarelo_ilustracao",
+  oque_e_stories: "stories_amarelo_ilustracao",
+  ate3_cartoes_feed: "feed_central_asset",
+  ate3_cartoes_stories: "stories_central_asset",
+};
 
 const ROTULOS: Record<string, keyof FeedSlideData> = {
   TEMPLATE: "templateId",
@@ -74,6 +93,21 @@ function parseRotulo(linha: string): { campo: keyof FeedSlideData; valor: string
   return { campo, valor: m[2].trim() };
 }
 
+/**
+ * Resolve um templateId entrado pelo usuário, aceitando IDs novos e antigos
+ * (com alias). Retorna o ID novo, ou null se não for reconhecido.
+ */
+function resolverTemplateId(valor: string): FeedTemplateId | null {
+  const limpo = valor.toLowerCase().trim();
+  if ((TEMPLATES_VALIDOS as string[]).includes(limpo)) {
+    return limpo as FeedTemplateId;
+  }
+  if (ALIAS_TEMPLATES[limpo]) {
+    return ALIAS_TEMPLATES[limpo];
+  }
+  return null;
+}
+
 export interface ResultadoParser {
   slides: FeedSlideData[];
   avisos: string[];
@@ -91,7 +125,7 @@ export function parsearTextoFeedStories(texto: string): ResultadoParser {
     if (!slideAtual) return;
     if (!slideAtual.templateId) {
       avisos.push(
-        `Slide ${slides.length + 1} sem TEMPLATE: definido — pulado. (Adicione "TEMPLATE: ipva_iptu_feed" ou outro)`
+        `Slide ${slides.length + 1} sem TEMPLATE: definido — pulado. (Adicione "TEMPLATE: feed_pilula_headline" ou outro)`
       );
       slideAtual = null;
       return;
@@ -128,21 +162,25 @@ export function parsearTextoFeedStories(texto: string): ResultadoParser {
       const { campo, valor } = rotulado;
 
       if (campo === "templateId") {
-        const tplLimpo = valor.toLowerCase().trim() as FeedTemplateId;
-        if (TEMPLATES_VALIDOS.includes(tplLimpo)) {
-          slideAtual.templateId = tplLimpo;
+        const resolvido = resolverTemplateId(valor);
+        if (resolvido) {
+          slideAtual.templateId = resolvido;
+          // Aviso amigável quando alias antigo foi usado
+          if (resolvido !== valor.toLowerCase().trim()) {
+            avisos.push(
+              `Linha ${i + 1}: TEMPLATE "${valor}" foi reconhecido como "${resolvido}" (renomeado na v7.7.6).`
+            );
+          }
         } else {
           avisos.push(
             `Linha ${i + 1}: TEMPLATE "${valor}" não reconhecido. Templates válidos: ${TEMPLATES_VALIDOS.join(", ")}`
           );
         }
       } else {
-        // Campo de texto
         (slideAtual as Record<string, unknown>)[campo] = valor;
       }
       ultimoCampo = campo;
     } else if (ultimoCampo && ultimoCampo !== "templateId" && slideAtual) {
-      // Linha continua o último campo (multi-linha)
       const valorAtual = (slideAtual as Record<string, string>)[ultimoCampo] || "";
       const adicional = linha.trim();
       if (adicional) {
@@ -157,7 +195,7 @@ export function parsearTextoFeedStories(texto: string): ResultadoParser {
 
   if (slides.length === 0 && texto.trim()) {
     avisos.push(
-      "Nenhum slide foi reconhecido. Verifique o formato — exemplo:\n\nSLIDE 1\nTEMPLATE: ipva_iptu_feed\nHEADLINE: Organize\n..."
+      "Nenhum slide foi reconhecido. Verifique o formato — exemplo:\n\nSLIDE 1\nTEMPLATE: feed_pilula_headline\nHEADLINE: Organize\n..."
     );
   }
 
@@ -166,7 +204,7 @@ export function parsearTextoFeedStories(texto: string): ResultadoParser {
 
 /** Exemplo de texto pra mostrar como guia ao usuário. */
 export const EXEMPLO_TEXTO_COLA = `SLIDE 1
-TEMPLATE: ipva_iptu_feed
+TEMPLATE: feed_pilula_headline
 PILULA: Gestão financeira pessoal
 HEADLINE: Organize
 SUBHEAD: seus impostos
@@ -175,7 +213,7 @@ TAGLINE: Parcele IPVA e IPTU com inteligência.
 ---
 
 SLIDE 2
-TEMPLATE: ipva_iptu_stories
+TEMPLATE: stories_pilula_headline
 PILULA: Gestão financeira pessoal
 HEADLINE: Organize
 SUBHEAD: seus impostos
@@ -184,7 +222,7 @@ TAGLINE: Parcele IPVA e IPTU com inteligência.
 ---
 
 SLIDE 3
-TEMPLATE: rotativo_feed
+TEMPLATE: feed_icone_cta
 HEADLINE: Rotativo
 SUBHEAD: ou estratégia?
 TAGLINE: Entenda a diferença.

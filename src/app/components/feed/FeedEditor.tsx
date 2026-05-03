@@ -16,6 +16,9 @@ import {
   RefreshCcw,
   ChevronDown,
   ChevronRight,
+  Sparkles,
+  Sun,
+  Frame,
 } from "lucide-react";
 import FeedSlide, {
   TEMPLATES_DISPONIVEIS,
@@ -25,6 +28,7 @@ import {
   type FeedSlideData,
   type FeedTemplateId,
   type TemplateInfo,
+  type TipoRodape,
   PARCELE_AQUI_CORES,
 } from "./templates/tipos";
 import { baixarCarrosselZIP } from "../../lib/gerarCarrossel";
@@ -49,7 +53,7 @@ type Status =
   | { tipo: "sucesso"; msg: string }
   | { tipo: "erro"; msg: string };
 
-function novoSlideVazio(templateId: FeedTemplateId = "ipva_iptu_feed"): FeedSlideData {
+function novoSlideVazio(templateId: FeedTemplateId = "feed_pilula_headline"): FeedSlideData {
   const tpl = TEMPLATES_DISPONIVEIS.find((t) => t.id === templateId);
   return {
     id: Math.random().toString(36).substring(2, 10),
@@ -85,7 +89,7 @@ export default function FeedEditor() {
   };
 
   const adicionarSlide = () => {
-    const novo = novoSlideVazio(slideAtivo?.templateId || "ipva_iptu_feed");
+    const novo = novoSlideVazio(slideAtivo?.templateId || "feed_pilula_headline");
     setSlides([...slides, novo]);
     setSlideAtivoIdx(slides.length);
   };
@@ -772,7 +776,8 @@ function PainelEdicao({
       <TipografiaAvancada slide={slide} onChange={onChange} camposUsados={camposUsados} />
 
       {/* ÍCONE (só pra templates que usam ícone, ex: Rotativo) */}
-      {slide.templateId.startsWith("rotativo_") && (
+      {/* ÍCONE — só pra templates que usam ícone (feed_icone_cta / stories_icone_cta) */}
+      {slide.templateId.endsWith("_icone_cta") && (
         <Secao titulo="Ícone" icone={<RefreshCcw size={12} />}>
           <Toggle
             label="Mostrar ícone"
@@ -873,28 +878,104 @@ function PainelEdicao({
         </Secao>
       )}
 
-      {/* VISIBILIDADE */}
-      <Secao titulo="Elementos visíveis" icone={<Type size={12} />}>
-        {usaPilula && (
-          <Toggle
-            label="Pílula superior"
-            ativo={slide.mostrarPilula !== false}
-            onChange={(v) => onChange({ mostrarPilula: v })}
-          />
-        )}
-        {usaCTA && (
-          <Toggle
-            label="Botão CTA"
-            ativo={slide.mostrarCTA !== false}
-            onChange={(v) => onChange({ mostrarCTA: v })}
-          />
-        )}
+      {/* RODAPÉ — v7.7.6 (seletor 2 cards com thumbnail) */}
+      <Secao titulo="Rodapé" icone={<Frame size={12} />}>
+        <SeletorRodape
+          valor={slide.tipoRodape ?? defaultRodapeDoTemplate(slide.templateId)}
+          formato={slide.templateId.startsWith("stories_") ? "stories" : "feed"}
+          onChange={(v) => onChange({ tipoRodape: v })}
+        />
         <Toggle
-          label="Footer (URL + logo)"
+          label="Mostrar rodapé"
           ativo={slide.mostrarFooter !== false}
           onChange={(v) => onChange({ mostrarFooter: v })}
         />
       </Secao>
+
+      {/* TEXTURA — v7.7.6 (toggle + slider opacidade) */}
+      <Secao titulo="Textura granulada" icone={<Sparkles size={12} />}>
+        <Toggle
+          label="Aplicar textura overlay"
+          ativo={slide.mostrarTextura !== false}
+          onChange={(v) => onChange({ mostrarTextura: v })}
+        />
+        {slide.mostrarTextura !== false && (
+          <div style={{ marginTop: 8 }}>
+            <label
+              style={{ fontSize: 11, color: "#bbb", display: "block", marginBottom: 4 }}
+            >
+              Opacidade: {Math.round((slide.opacidadeTextura ?? 0.75) * 100)}%
+            </label>
+            <input
+              type="range"
+              min={0.1}
+              max={1}
+              step={0.05}
+              value={slide.opacidadeTextura ?? 0.75}
+              onChange={(e) =>
+                onChange({ opacidadeTextura: parseFloat(e.target.value) })
+              }
+              style={{ width: "100%", accentColor: "#FFC528" }}
+            />
+            <p style={{ fontSize: 10, color: "#666", marginTop: 4, lineHeight: 1.4 }}>
+              A textura nunca invade o rodapé — fica clipada acima dele.
+            </p>
+          </div>
+        )}
+      </Secao>
+
+      {/* GRADIENTE DE LEITURA — v7.7.6 (toggle + slider opacidade) */}
+      <Secao titulo="Gradiente de leitura" icone={<Sun size={12} />}>
+        <Toggle
+          label="Escurecer base da foto"
+          ativo={slide.mostrarGradienteLeitura !== false}
+          onChange={(v) => onChange({ mostrarGradienteLeitura: v })}
+        />
+        {slide.mostrarGradienteLeitura !== false && (
+          <div style={{ marginTop: 8 }}>
+            <label
+              style={{ fontSize: 11, color: "#bbb", display: "block", marginBottom: 4 }}
+            >
+              Opacidade: {Math.round((slide.opacidadeGradienteLeitura ?? 0.5) * 100)}%
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={0.8}
+              step={0.05}
+              value={slide.opacidadeGradienteLeitura ?? 0.5}
+              onChange={(e) =>
+                onChange({ opacidadeGradienteLeitura: parseFloat(e.target.value) })
+              }
+              style={{ width: "100%", accentColor: "#FFC528" }}
+            />
+            <p style={{ fontSize: 10, color: "#666", marginTop: 4, lineHeight: 1.4 }}>
+              Gradiente preto→transparente entre foto e textos pra dar leitura. Não
+              invade o rodapé.
+            </p>
+          </div>
+        )}
+      </Secao>
+
+      {/* VISIBILIDADE — só aparece se template tem pílula ou CTA pra alternar */}
+      {(usaPilula || usaCTA) && (
+        <Secao titulo="Elementos visíveis" icone={<Type size={12} />}>
+          {usaPilula && (
+            <Toggle
+              label="Pílula superior"
+              ativo={slide.mostrarPilula !== false}
+              onChange={(v) => onChange({ mostrarPilula: v })}
+            />
+          )}
+          {usaCTA && (
+            <Toggle
+              label="Botão CTA"
+              ativo={slide.mostrarCTA !== false}
+              onChange={(v) => onChange({ mostrarCTA: v })}
+            />
+          )}
+        </Secao>
+      )}
     </aside>
   );
 }
@@ -1045,9 +1126,10 @@ function ModalColaTexto({
 
           <div style={{ fontSize: 11, color: "#666", lineHeight: 1.6 }}>
             <strong style={{ color: "#aaa" }}>Templates válidos:</strong>{" "}
-            <code style={{ color: "#FFC528" }}>ipva_iptu_feed</code>,{" "}
-            <code style={{ color: "#FFC528" }}>ipva_iptu_stories</code>,{" "}
-            <code style={{ color: "#FFC528" }}>rotativo_feed</code>
+            <code style={{ color: "#FFC528" }}>feed_pilula_headline</code>,{" "}
+            <code style={{ color: "#FFC528" }}>stories_pilula_headline</code>,{" "}
+            <code style={{ color: "#FFC528" }}>feed_icone_cta</code>,{" "}
+            <code style={{ color: "#FFC528" }}>stories_icone_cta</code>
             <br />
             <strong style={{ color: "#aaa" }}>Campos:</strong>{" "}
             <code>TEMPLATE</code>, <code>PILULA</code>, <code>HEADLINE</code>,{" "}
@@ -1113,6 +1195,107 @@ function btnStyle(bg: string, color: string, hover?: string): React.CSSPropertie
     cursor: "pointer",
     fontFamily: "Poppins, sans-serif",
   };
+}
+
+// ============================================================
+// SELETOR DE RODAPÉ — v7.7.6
+// ============================================================
+/**
+ * Default de rodapé baseado no template:
+ *  - feed_icone_cta / stories_icone_cta → rodape_01 (amarelo cheio)
+ *  - todos os outros → rodape_02 (creme com curva)
+ */
+function defaultRodapeDoTemplate(templateId: FeedTemplateId): TipoRodape {
+  if (templateId === "feed_icone_cta" || templateId === "stories_icone_cta") {
+    return "rodape_01";
+  }
+  return "rodape_02";
+}
+
+function SeletorRodape({
+  valor,
+  formato,
+  onChange,
+}: {
+  valor: TipoRodape;
+  formato: "feed" | "stories";
+  onChange: (v: TipoRodape) => void;
+}) {
+  const opcoes: { id: TipoRodape; nome: string; descricao: string }[] = [
+    {
+      id: "rodape_01",
+      nome: "Amarelo",
+      descricao: "Cheio com grão (logo creme)",
+    },
+    {
+      id: "rodape_02",
+      nome: "Creme",
+      descricao: "Curva amarela (logo amarelo)",
+    },
+  ];
+
+  return (
+    <div style={{ display: "flex", gap: 8 }}>
+      {opcoes.map((op) => {
+        const ativo = valor === op.id;
+        return (
+          <button
+            key={op.id}
+            onClick={() => onChange(op.id)}
+            style={{
+              flex: 1,
+              padding: 0,
+              border: ativo ? "2px solid #FFC528" : "2px solid #2a2a2a",
+              borderRadius: 8,
+              cursor: "pointer",
+              backgroundColor: "#0a0a0a",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              transition: "border-color 120ms",
+            }}
+          >
+            {/* Thumbnail do PNG */}
+            <div
+              style={{
+                width: "100%",
+                aspectRatio: "16 / 5",
+                backgroundColor: op.id === "rodape_01" ? "#FFC528" : "#FFF9E8",
+                backgroundImage: `url('/rodapes/${op.id}_${formato}.png')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div
+              style={{
+                padding: "6px 8px",
+                fontSize: 11,
+                fontWeight: 700,
+                color: ativo ? "#FFC528" : "#ddd",
+                textAlign: "left",
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              {op.nome}
+              <div
+                style={{
+                  fontSize: 9,
+                  fontWeight: 400,
+                  color: "#666",
+                  marginTop: 2,
+                  lineHeight: 1.3,
+                  textTransform: "none",
+                  letterSpacing: 0,
+                }}
+              >
+                {op.descricao}
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 function Secao({

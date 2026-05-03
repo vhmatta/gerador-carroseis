@@ -2,16 +2,30 @@
 // TIPOS DO MÓDULO FEED/STORIES (v7.7)
 // ============================================================
 
-/** ID único de cada template Feed/Stories. */
+/**
+ * ID único de cada template Feed/Stories.
+ *
+ * Nomenclatura: `<formato>_<descrição da estrutura>`. Os IDs descrevem a
+ * ESTRUTURA VISUAL, não o conteúdo (que vai mudar a cada uso). Exemplos:
+ *  - feed_pilula_headline   → foto + pílula superior + headline grande
+ *  - feed_icone_cta         → foto + ícone + CTA outline
+ *  - feed_amarelo_ilustracao → fundo amarelo + ilustração isométrica
+ *  - feed_central_asset     → headline central + asset (cartões etc)
+ *
+ * v7.7.6: renomeados — antes eram "ipva_iptu_*", "rotativo_*", "oque_e_*",
+ * "ate3_cartoes_*", o que misturava conteúdo de exemplo com estrutura visual.
+ */
 export type FeedTemplateId =
-  | "ipva_iptu_feed"
-  | "ipva_iptu_stories"
-  | "oque_e_feed"
-  | "oque_e_stories"
-  | "ate3_cartoes_feed"
-  | "ate3_cartoes_stories"
-  | "rotativo_feed"
-  | "rotativo_stories";
+  // Implementados
+  | "feed_pilula_headline"
+  | "stories_pilula_headline"
+  | "feed_icone_cta"
+  | "stories_icone_cta"
+  // Em construção (placeholders)
+  | "feed_amarelo_ilustracao"
+  | "stories_amarelo_ilustracao"
+  | "feed_central_asset"
+  | "stories_central_asset";
 
 /** Formato da peça (impacta dimensões de export). */
 export type FeedFormato = "feed" | "stories";
@@ -112,10 +126,29 @@ export interface FeedSlideData {
   modoTextura?: "overlay" | "soft-light" | "multiply" | "normal";
   /** v7.7.4: Se TRUE, textura cobre só a foto (não invade rodapé amarelo). Default false. */
   mascaraTexturaSoFoto?: boolean;
-  /** v7.7.4: Opacidade da textura SOMENTE no rodapé (override). Quando definido, sobrepõe opacidadeTextura no rodapé. */
+  /** v7.7.4: Opacidade da textura SOMENTE no rodapé (override). @deprecated v7.7.6: rodapé é PNG separado, sempre por cima. */
   opacidadeTexturaRodape?: number;
-  /** v7.7.4: Modo de blend da textura SOMENTE no rodapé (override). */
+  /** v7.7.4: Modo de blend da textura SOMENTE no rodapé (override). @deprecated v7.7.6 */
   modoTexturaRodape?: "overlay" | "soft-light" | "multiply" | "normal";
+
+  // ============ RODAPÉ — v7.7.6 ============
+  /**
+   * Qual rodapé exibir. PNGs em /public/rodapes/.
+   *  - "rodape_01" = amarelo cheio com grão (logo creme + URL preta)
+   *  - "rodape_02" = creme com curva amarela à esquerda (logo amarelo + URL preta)
+   * Default depende do template (ex: rotativo usa 01, ipva usa 02).
+   */
+  tipoRodape?: "rodape_01" | "rodape_02";
+
+  // ============ GRADIENTE DE LEITURA — v7.7.6 ============
+  /**
+   * Gradiente sutil entre foto e textos (preto na base → transparente no topo)
+   * pra garantir legibilidade dos textos sobre fotos claras/contrastadas.
+   * Sempre clipado pra NÃO invadir o rodapé.
+   */
+  mostrarGradienteLeitura?: boolean;
+  /** Opacidade do gradiente de leitura (0-1). Default 0.5. */
+  opacidadeGradienteLeitura?: number;
 
   // ============ VISIBILIDADE ============
   /** Mostrar pílula superior (default true se template usa). */
@@ -172,3 +205,25 @@ export const PARCELE_AQUI_CORES = {
 
 /** Fonte oficial: Kufam (Google Fonts). */
 export const FONTE_KUFAM = "'Kufam', system-ui, sans-serif";
+
+/**
+ * v7.7.6: Configuração dos rodapés PNG.
+ * Cada rodapé tem altura definida em px no espaço da peça (1080×1350 ou 1080×1920).
+ * O ponto Y de início do rodapé = altura_peca - alturaRodape.
+ *
+ * Coordenadas calculadas das dimensões reais dos PNGs do Figma:
+ *   rodape_01_feed: PNG 3240x1386 → 1080×462 (y=888 a y=1350)
+ *   rodape_01_stories: PNG 3237x1398 → 1080×466 (y=1454 a y=1920)
+ *   rodape_02_feed: PNG 3240x975 → 1080×325 (y=1025 a y=1350)
+ *   rodape_02_stories: PNG 3240x1317 → 1080×439 (y=1481 a y=1920)
+ */
+export type TipoRodape = "rodape_01" | "rodape_02";
+
+export const ALTURAS_RODAPE: Record<TipoRodape, Record<FeedFormato, number>> = {
+  rodape_01: { feed: 462, stories: 466 },
+  rodape_02: { feed: 325, stories: 439 },
+};
+
+export function obterAlturaRodape(tipo: TipoRodape, formato: FeedFormato): number {
+  return ALTURAS_RODAPE[tipo][formato];
+}
