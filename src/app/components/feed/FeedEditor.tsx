@@ -31,7 +31,7 @@ import {
   type TipoRodape,
   PARCELE_AQUI_CORES,
 } from "./templates/tipos";
-import { baixarCarrosselZIP } from "../../lib/gerarCarrossel";
+import { baixarCarrosselZIP, baixarSlideUnico } from "../../lib/gerarCarrossel";
 import {
   parsearTextoFeedStories,
   EXEMPLO_TEXTO_COLA,
@@ -403,6 +403,46 @@ export default function FeedEditor() {
                           title="Duplicar"
                         >
                           <Copy size={11} />
+                        </span>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          aria-label="Baixar este slide"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            const el = slideRefs.current.get(s.id);
+                            if (!el) return;
+                            const tplFmt = tplInfo?.formato === "stories" ? "stories" : "feed";
+                            const dataIso = new Date().toISOString().slice(0, 10);
+                            await baixarSlideUnico(
+                              el,
+                              `parceleaqui-${tplFmt}-${String(i + 1).padStart(2, "0")}-${dataIso}.png`
+                            );
+                          }}
+                          onKeyDown={async (e) => {
+                            if (e.key === "Enter") {
+                              e.stopPropagation();
+                              const el = slideRefs.current.get(s.id);
+                              if (!el) return;
+                              const tplFmt = tplInfo?.formato === "stories" ? "stories" : "feed";
+                              const dataIso = new Date().toISOString().slice(0, 10);
+                              await baixarSlideUnico(
+                                el,
+                                `parceleaqui-${tplFmt}-${String(i + 1).padStart(2, "0")}-${dataIso}.png`
+                              );
+                            }
+                          }}
+                          style={{
+                            padding: 3,
+                            color: "#FFC528",
+                            cursor: "pointer",
+                            display: "flex",
+                            border: "none",
+                            background: "transparent",
+                          }}
+                          title="Baixar este slide (PNG)"
+                        >
+                          <Download size={11} />
                         </span>
                         <span
                           role="button"
@@ -1466,18 +1506,19 @@ function EspacamentosBloco({
     <div
       style={{
         borderRadius: 8,
-        border: "1px solid #2a2a2a",
+        border: "1px solid #3a3a3a",
         overflow: "hidden",
+        backgroundColor: "#1a1a1a",
       }}
     >
       <button
         onClick={() => setAberto(!aberto)}
         style={{
           width: "100%",
-          padding: "10px 12px",
-          backgroundColor: aberto ? "#1a1a1a" : "transparent",
+          padding: "12px 14px",
+          backgroundColor: aberto ? "#222" : "#1a1a1a",
           border: "none",
-          color: "#ddd",
+          color: "#FFC528",
           fontSize: 11,
           fontWeight: 700,
           textTransform: "uppercase",
@@ -1644,18 +1685,19 @@ function TipografiaAvancada({
     <div
       style={{
         borderRadius: 8,
-        border: "1px solid #2a2a2a",
+        border: "1px solid #3a3a3a",
         overflow: "hidden",
+        backgroundColor: "#1a1a1a",
       }}
     >
       <button
         onClick={() => setAberto(!aberto)}
         style={{
           width: "100%",
-          padding: "10px 12px",
-          backgroundColor: aberto ? "#1a1a1a" : "transparent",
+          padding: "12px 14px",
+          backgroundColor: aberto ? "#222" : "#1a1a1a",
           border: "none",
-          color: "#ddd",
+          color: "#FFC528",
           fontSize: 11,
           fontWeight: 700,
           textTransform: "uppercase",
