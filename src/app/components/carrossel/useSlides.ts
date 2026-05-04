@@ -1,7 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { SlideData, LayoutId, TemaId } from "../temas/tipos";
 import { obterTema, criarSlideVazio } from "../temas/tipos";
 import { obterTema as buscarTema } from "../temas";
+
+const AUTOSAVE_KEY = "parceleaqui:carrossel:slides:v1";
 
 function uid() {
   return Math.random().toString(36).substring(2, 10);
@@ -17,6 +19,25 @@ export function slidesIniciaisDoTema(temaId: TemaId): SlideData[] {
   return tema.slidesExemplo.map((s) => ({ ...s, id: uid() }));
 }
 
+function carregarSalvos(): SlideData[] | null {
+  try {
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+    if (parsed.some((s) => !s?.id || !s?.layout)) return null;
+    return parsed as SlideData[];
+  } catch {
+    return null;
+  }
+}
+
+function salvarSlides(slides: SlideData[]) {
+  try {
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(slides));
+  } catch {}
+}
+
 export interface UseSlidesReturn {
   slides: SlideData[];
   setSlides: React.Dispatch<React.SetStateAction<SlideData[]>>;
@@ -29,17 +50,26 @@ export interface UseSlidesReturn {
   duplicarSlide: (i: number) => void;
   moverSlide: (de: number, para: number) => void;
   resetarParaExemplos: (temaId: TemaId) => void;
+  limparTudo: (temaId: TemaId) => void;
 }
 
 /**
  * Hook que centraliza o state e as ações de manipulação de slides.
  * Usado pelo CarrosselEditor pra evitar passar 6+ callbacks por props.
+ *
+ * Auto-save (v7.7.15): persiste slides no localStorage. Quando o
+ * usuário recarrega a página, volta exatamente como estava.
  */
 export function useSlides(temaIdInicial: TemaId): UseSlidesReturn {
-  const [slides, setSlides] = useState<SlideData[]>(() =>
-    slidesIniciaisDoTema(temaIdInicial)
+  const [slides, setSlides] = useState<SlideData[]>(
+    () => carregarSalvos() ?? slidesIniciaisDoTema(temaIdInicial)
   );
   const [indiceAtivo, setIndiceAtivo] = useState(0);
+
+  // Auto-save: salva sempre que slides mudam
+  useEffect(() => {
+    salvarSlides(slides);
+  }, [slides]);
 
   const slideAtivo = slides[indiceAtivo];
 
@@ -107,6 +137,14 @@ export function useSlides(temaIdInicial: TemaId): UseSlidesReturn {
     setIndiceAtivo(0);
   }, []);
 
+  const limparTudo = useCallback((temaId: TemaId) => {
+    try {
+      localStorage.removeItem(AUTOSAVE_KEY);
+    } catch {}
+    setSlides(slidesIniciaisDoTema(temaId));
+    setIndiceAtivo(0);
+  }, []);
+
   return {
     slides,
     setSlides,
@@ -119,5 +157,6 @@ export function useSlides(temaIdInicial: TemaId): UseSlidesReturn {
     duplicarSlide,
     moverSlide,
     resetarParaExemplos,
+    limparTudo,
   };
 }

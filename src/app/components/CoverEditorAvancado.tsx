@@ -4,6 +4,7 @@ import * as LucideIcons from "lucide-react";
 import UnsplashSearch from "./UnsplashSearch";
 import { gerarCapaPNG } from "../lib/gerarCapa";
 import SelectIconeComPreview, { iconesDisponiveis } from "./SelectIconeComPreview";
+import { useLocalStorage } from "../lib/useLocalStorage";
 
 function IconeCustomizado({ IconeComponente }: { IconeComponente: any }) {
   // Shape amarelo está em left:77 top:301 com 85×85
@@ -20,17 +21,20 @@ function IconeCustomizado({ IconeComponente }: { IconeComponente: any }) {
 
 type Status = { tipo: "idle" } | { tipo: "gerando" } | { tipo: "sucesso" } | { tipo: "erro"; msg: string };
 
+// Auto-save (v7.7.15): cada campo persiste no localStorage com chave única
+const KEY = (campo: string) => `parceleaqui:cover:${campo}:v1`;
+
 export default function CoverEditorAvancado() {
-  const [numero, setNumero] = useState("49");
-  const [titulo, setTitulo] = useState("Mercado B2C: o uso estratégico e consciente do parcelamento");
-  const [legendaLinha1, setLegendaLinha1] = useState("Tecnologia que destrava");
-  const [legendaLinha2, setLegendaLinha2] = useState("o seu dia a dia financeiro.");
-  const [fotoUrl, setFotoUrl] = useState("/assets/94f0de88dd7da2aa7b58f6680bcc081b5b16c90f.png");
-  const [iconeEscolhido, setIconeEscolhido] = useState<string>("CreditCard");
-  const [usarLegenda1, setUsarLegenda1] = useState(true);
-  const [usarSubtitulo, setUsarSubtitulo] = useState(true);
-  const [mostrarTextura, setMostrarTextura] = useState(false);
-  const [opacidadeTextura, setOpacidadeTextura] = useState(0.75);
+  const [numero, setNumero] = useLocalStorage(KEY("numero"), "49");
+  const [titulo, setTitulo] = useLocalStorage(KEY("titulo"), "Mercado B2C: o uso estratégico e consciente do parcelamento");
+  const [legendaLinha1, setLegendaLinha1] = useLocalStorage(KEY("legenda1"), "Tecnologia que destrava");
+  const [legendaLinha2, setLegendaLinha2] = useLocalStorage(KEY("legenda2"), "o seu dia a dia financeiro.");
+  const [fotoUrl, setFotoUrl] = useLocalStorage(KEY("fotoUrl"), "/assets/94f0de88dd7da2aa7b58f6680bcc081b5b16c90f.png");
+  const [iconeEscolhido, setIconeEscolhido] = useLocalStorage<string>(KEY("icone"), "CreditCard");
+  const [usarLegenda1, setUsarLegenda1] = useLocalStorage(KEY("usarLegenda1"), true);
+  const [usarSubtitulo, setUsarSubtitulo] = useLocalStorage(KEY("usarSubtitulo"), true);
+  const [mostrarTextura, setMostrarTextura] = useLocalStorage(KEY("mostrarTextura"), false);
+  const [opacidadeTextura, setOpacidadeTextura] = useLocalStorage(KEY("opacidadeTextura"), 0.75);
   const [status, setStatus] = useState<Status>({ tipo: "idle" });
   const capaRef = useRef<HTMLDivElement>(null);
 

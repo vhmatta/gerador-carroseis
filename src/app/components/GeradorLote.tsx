@@ -3,6 +3,7 @@ import LinkedInCover from "./LinkedInCover";
 import * as LucideIcons from "lucide-react";
 import UnsplashSearch from "./UnsplashSearch";
 import { gerarCapaBlob } from "../lib/gerarCapa";
+import { useLocalStorage } from "../lib/useLocalStorage";
 import SelectIconeComPreview, { iconesDisponiveis } from "./SelectIconeComPreview";
 import MiniPreviewBloco from "./MiniPreviewBloco";
 import JSZip from "jszip";
@@ -67,17 +68,21 @@ function criarBlocoPadrao(index: number): BlocoConfig {
   };
 }
 
+// Auto-save (v7.7.15)
+const KEY_LOTE = (campo: string) => `parceleaqui:lote:${campo}:v1`;
+
 export default function GeradorLote() {
-  const [numeroInicial, setNumeroInicial] = useState("1");
-  const [titulos, setTitulos] = useState("");
-  const [quantidadePorVez, setQuantidadePorVez] = useState(10);
+  const [numeroInicial, setNumeroInicial] = useLocalStorage(KEY_LOTE("numeroInicial"), "1");
+  const [titulos, setTitulos] = useLocalStorage(KEY_LOTE("titulos"), "");
+  const [quantidadePorVez, setQuantidadePorVez] = useLocalStorage(KEY_LOTE("qtdPorVez"), 10);
   // v7.7.5: textura overlay aplicada em todas as capas geradas em lote
-  const [mostrarTextura, setMostrarTextura] = useState(false);
-  const [opacidadeTextura, setOpacidadeTextura] = useState(0.75);
+  const [mostrarTextura, setMostrarTextura] = useLocalStorage(KEY_LOTE("mostrarTextura"), false);
+  const [opacidadeTextura, setOpacidadeTextura] = useLocalStorage(KEY_LOTE("opacidadeTextura"), 0.75);
   const capaRef = useRef<HTMLDivElement>(null);
 
   /** Array de blocos (1 config por grupo de N capas) */
-  const [blocos, setBlocos] = useState<BlocoConfig[]>(() =>
+  const [blocos, setBlocos] = useLocalStorage<BlocoConfig[]>(
+    KEY_LOTE("blocos"),
     Array.from({ length: 6 }, (_, i) => criarBlocoPadrao(i))
   );
 
