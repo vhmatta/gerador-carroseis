@@ -196,6 +196,8 @@ export default function TemplateFeedIconeCta({
         escala={escala}
       />
 
+      {/* BLOCO DE TEXTO (com offsetY pra ajuste fino) */}
+      <BlocoTextoWrapper offsetY={slide.offsetYBloco} escala={escala}>
       {/* ============ ÍCONE ============ */}
       {slide.mostrarIcone !== false && (
         <div
@@ -309,6 +311,8 @@ export default function TemplateFeedIconeCta({
           {slide.cta}
         </div>
       )}
+
+      </BlocoTextoWrapper>
 
       {/* ============ RODAPÉ PNG ============ */}
       {slide.mostrarFooter !== false && (

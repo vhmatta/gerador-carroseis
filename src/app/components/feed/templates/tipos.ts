@@ -164,6 +164,15 @@ export interface FeedSlideData {
   mbTagline?: number;
   mbCTA?: number;
 
+  /**
+   * Offset Y do bloco inteiro de texto (v7.7.17).
+   * Move TODO o conteúdo verticalmente em px. Negativo = sobe, positivo = desce.
+   * Range -200 a +200, step 8 (8pt grid). Default 0 (sem deslocamento).
+   * Útil para ajustes finos de composição quando o bloco está ligeiramente
+   * mal posicionado em relação à foto/textura/rodapé.
+   */
+  offsetYBloco?: number;
+
   // ============ PÍLULA (KICKER) — v7.7.10: agora com tipografia ============
   /** Tamanho fonte da pílula em px. Default depende do template (24 feed, 32 stories). */
   tamPilula?: number;

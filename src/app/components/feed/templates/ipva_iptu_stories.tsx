@@ -2,6 +2,7 @@ import type { FeedSlideData } from "./tipos";
 import { PARCELE_AQUI_CORES, FONTE_KUFAM } from "./tipos";
 import LogoParceleAqui from "../components/LogoParceleAqui";
 import TexturaOverlay from "../components/TexturaOverlay";
+import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 
 /**
  * Template "IPVA / IPTU — Organize seus impostos" — Stories 1080×1920
@@ -92,6 +93,8 @@ export default function TemplateIpvaIptuStories({
       />
 
       {/* PÍLULA */}
+{/* BLOCO DE TEXTO (com offsetY pra ajuste fino) */}
+<BlocoTextoWrapper offsetY={slide.offsetYBloco} escala={escala}>
       {slide.mostrarPilula !== false && slide.pilula && (
         <div
           style={{
@@ -184,6 +187,8 @@ export default function TemplateIpvaIptuStories({
       )}
 
       {/* FOOTER CREME CURVO */}
+</BlocoTextoWrapper>
+
       {slide.mostrarFooter !== false && (
         <>
           <svg

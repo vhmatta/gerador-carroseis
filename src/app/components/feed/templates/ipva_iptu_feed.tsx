@@ -2,6 +2,7 @@ import type { FeedSlideData } from "./tipos";
 import { PARCELE_AQUI_CORES, FONTE_KUFAM } from "./tipos";
 import LogoParceleAqui from "../components/LogoParceleAqui";
 import TexturaOverlay from "../components/TexturaOverlay";
+import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 
 /**
  * Template "IPVA / IPTU — Organize seus impostos" — Feed 1080x1350
@@ -97,6 +98,8 @@ export default function TemplateIpvaIptuFeed({
       />
 
       {/* ============ PÍLULA SUPERIOR ============ */}
+{/* BLOCO DE TEXTO (com offsetY pra ajuste fino) */}
+<BlocoTextoWrapper offsetY={slide.offsetYBloco} escala={escala}>
       {slide.mostrarPilula !== false && slide.pilula && (
         <div
           style={{
@@ -195,6 +198,8 @@ export default function TemplateIpvaIptuFeed({
       )}
 
       {/* ============ FOOTER CREME CURVO ============ */}
+</BlocoTextoWrapper>
+
       {slide.mostrarFooter !== false && (
         <>
           {/* Path SVG do footer com curva orgânica no canto esquerdo (extraído do Figma) */}

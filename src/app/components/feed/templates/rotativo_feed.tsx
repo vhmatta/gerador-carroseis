@@ -200,6 +200,8 @@ export default function TemplateRotativoFeed({
       )}
 
       {/* ============ ÍCONE REFRESH ============ */}
+{/* BLOCO DE TEXTO (com offsetY pra ajuste fino) */}
+<BlocoTextoWrapper offsetY={slide.offsetYBloco} escala={escala}>
       {slide.mostrarIcone !== false && (
         <div
           style={{
@@ -306,6 +308,8 @@ export default function TemplateRotativoFeed({
       )}
 
       {/* ============ URL + LOGO no footer ============ */}
+</BlocoTextoWrapper>
+
       {slide.mostrarFooter !== false && (
         <>
           <div

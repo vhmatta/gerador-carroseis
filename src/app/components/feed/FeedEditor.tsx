@@ -19,6 +19,7 @@ import {
   Sparkles,
   Sun,
   Frame,
+  MoveVertical,
 } from "lucide-react";
 import FeedSlide, {
   TEMPLATES_DISPONIVEIS,
@@ -867,6 +868,54 @@ function PainelEdicao({
         />
         <div style={{ fontSize: 11, color: "#888", textAlign: "center" }}>
           {Math.round((slide.escalaGeral ?? 1) * 100)}%
+        </div>
+      </Secao>
+
+      {/* POSIÇÃO VERTICAL DO BLOCO — v7.7.17 */}
+      <Secao titulo="Posição vertical do bloco" icone={<MoveVertical size={12} />}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <p style={{ fontSize: 10, color: "#666", margin: 0, lineHeight: 1.4, fontFamily: "Poppins, sans-serif" }}>
+            Move TODO o bloco de texto pra cima (-) ou pra baixo (+). 8pt grid.
+          </p>
+          <input
+            type="range"
+            min={-200}
+            max={200}
+            step={8}
+            value={slide.offsetYBloco ?? 0}
+            onChange={(e) => {
+              const v = parseInt(e.target.value, 10);
+              onChange({ offsetYBloco: v === 0 ? undefined : v });
+            }}
+            style={{ width: "100%", accentColor: "#FFC528" }}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#666" }}>
+            <span>-200px</span>
+            <span style={{ color: slide.offsetYBloco ? "#FFC528" : "#888", fontWeight: 600 }}>
+              {slide.offsetYBloco === undefined || slide.offsetYBloco === 0
+                ? "0 (default)"
+                : `${slide.offsetYBloco > 0 ? "+" : ""}${slide.offsetYBloco}px`}
+            </span>
+            <span>+200px</span>
+          </div>
+          {slide.offsetYBloco !== undefined && slide.offsetYBloco !== 0 && (
+            <button
+              onClick={() => onChange({ offsetYBloco: undefined })}
+              style={{
+                fontSize: 10,
+                color: "#888",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                alignSelf: "flex-start",
+              }}
+            >
+              <RotateCcw size={10} /> Resetar posição
+            </button>
+          )}
         </div>
       </Secao>
 

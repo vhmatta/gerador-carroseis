@@ -170,6 +170,8 @@ export default function TemplateStoriesIconeCta({
         alturaTotal={1920}
         escala={escala}
       />
+{/* BLOCO DE TEXTO (com offsetY pra ajuste fino) */}
+<BlocoTextoWrapper offsetY={slide.offsetYBloco} escala={escala}>
 
       {slide.mostrarIcone !== false && (
         <div
@@ -279,6 +281,8 @@ export default function TemplateStoriesIconeCta({
           {slide.cta}
         </div>
       )}
+</BlocoTextoWrapper>
+
 
       {slide.mostrarFooter !== false && (
         <RodapePNG tipo={tipoRodape} formato="stories" escala={escala} />

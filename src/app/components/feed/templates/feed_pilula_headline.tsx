@@ -8,6 +8,7 @@ import {
 import RodapePNG from "../components/RodapePNG";
 import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
+import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 
 /**
  * Template "Pílula + Headline grande" — Feed 1080×1350 (v7.7.7)
@@ -125,6 +126,8 @@ export default function TemplateFeedPilulaHeadline({
         escala={escala}
       />
 
+      {/* BLOCO DE TEXTO (com offsetY pra ajuste fino) */}
+      <BlocoTextoWrapper offsetY={slide.offsetYBloco} escala={escala}>
       {/* PÍLULA */}
       {slide.mostrarPilula !== false && slide.pilula && (
         <div
@@ -226,6 +229,7 @@ export default function TemplateFeedPilulaHeadline({
           {slide.tagline}
         </div>
       )}
+      </BlocoTextoWrapper>
 
       {/* RODAPÉ PNG */}
       {slide.mostrarFooter !== false && (
