@@ -38,6 +38,7 @@ import {
   EXEMPLO_TEXTO_COLA,
 } from "../../lib/parsearTextoFeed";
 import UnsplashSearch from "../UnsplashSearch";
+import IconePicker from "./components/IconePicker";
 
 // ============================================================
 // FEED EDITOR — v7.7
@@ -931,8 +932,8 @@ function PainelEdicao({
         </Secao>
       )}
 
-      {/* ÍCONE — só pra templates que usam ícone (feed_icone_cta / stories_icone_cta) */}
-      {slide.templateId.endsWith("_icone_cta") && (
+      {/* ÍCONE — só pra templates que usam ícone */}
+      {(slide.templateId.endsWith("_icone_cta") || slide.templateId === "rotativo_feed") && (
         <Secao titulo="Ícone" icone={<RefreshCcw size={12} />}>
           <Toggle
             label="Mostrar ícone"
@@ -941,7 +942,14 @@ function PainelEdicao({
           />
           {slide.mostrarIcone !== false && (
             <>
-              <div style={{ marginTop: 6 }}>
+              <div style={{ marginTop: 8 }}>
+                <IconePicker
+                  valor={slide.iconeNome}
+                  onChange={(v) => onChange({ iconeNome: v })}
+                  defaultNome="RefreshCcw"
+                />
+              </div>
+              <div style={{ marginTop: 12 }}>
                 <label style={{ fontSize: 11, color: "#bbb", display: "block", marginBottom: 4 }}>
                   Tamanho do ícone: {slide.tamIcone ?? 120}px
                 </label>

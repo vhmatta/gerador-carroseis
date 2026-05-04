@@ -2,7 +2,7 @@ import type { FeedSlideData } from "./tipos";
 import { PARCELE_AQUI_CORES, FONTE_KUFAM } from "./tipos";
 import LogoParceleAqui from "../components/LogoParceleAqui";
 import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
-import { RefreshCcw } from "lucide-react";
+import IconeLucide from "../components/IconeLucide";
 
 /**
  * Template "Rotativo vs Estratégia" — Feed 1080×1350
@@ -213,7 +213,7 @@ export default function TemplateRotativoFeed({
             display: "flex",
           }}
         >
-          <RefreshCcw size={tamIcone * escala} strokeWidth={espessuraIcone} />
+          <IconeLucide nome={slide.iconeNome} size={tamIcone * escala} strokeWidth={espessuraIcone} />
         </div>
       )}
 

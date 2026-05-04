@@ -8,7 +8,7 @@ import RodapePNG from "../components/RodapePNG";
 import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
 import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
-import { RefreshCcw } from "lucide-react";
+import IconeLucide from "../components/IconeLucide";
 
 /**
  * Template "Ícone + CTA outline" — Stories 1080×1920 (v7.7.7)
@@ -184,7 +184,7 @@ export default function TemplateStoriesIconeCta({
             display: "flex",
           }}
         >
-          <RefreshCcw size={tamIcone * escala} strokeWidth={espessuraIcone} />
+          <IconeLucide nome={slide.iconeNome} size={tamIcone * escala} strokeWidth={espessuraIcone} />
         </div>
       )}
 

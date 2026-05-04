@@ -116,6 +116,27 @@ export interface FeedSlideData {
   corIcone?: string;
   /** v7.7.2: Espessura do traço do ícone (lucide strokeWidth). 0.5-3, default 2. */
   espessuraIcone?: number;
+  /**
+   * v7.7.19: Nome do ícone Lucide (string PascalCase, ex: "RefreshCcw",
+   * "DollarSign", "ShoppingCart"). Default depende do template.
+   * Ver lista em https://lucide.dev/icons/
+   */
+  iconeNome?: string;
+
+  // ============ FOTO — drag + zoom (v7.7.19) — pendente UI ============
+  /**
+   * Zoom da foto (1.0 = 100%, 1.5 = 150%, 3.0 = 300%). Default 1.0.
+   * Quando >1, a foto fica maior que o canvas e o usuário pode arrastá-la
+   * pra reposicionar.
+   */
+  fotoZoom?: number;
+  /**
+   * Offset X da foto em % (-50 a +50). Quando 0, fotoPosicao center.
+   * Salvo automaticamente quando o usuário arrasta a foto no preview.
+   */
+  fotoOffsetX?: number;
+  /** Offset Y da foto em % (-50 a +50). */
+  fotoOffsetY?: number;
 
   // ============ ENTRELINHAS (line-height) — v7.7.9 ============
   /**
