@@ -124,6 +124,9 @@ export default function CoverEditorAvancado() {
             <h2 className="text-xl font-semibold text-white font-['Archivo',sans-serif]">
               Configuração
             </h2>
+            <span className="text-[10px] uppercase tracking-wider ml-2" style={{ color: "#10b981" }}>
+              ● Auto-save ativo
+            </span>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">

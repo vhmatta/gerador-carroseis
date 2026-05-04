@@ -43,7 +43,7 @@ export default function Toolbar({
             placeholder="MARCA · SEÇÃO"
           />
           <p className="text-[10px] text-gray-600 mt-1 uppercase tracking-wider">
-            Aparece no topo de cada slide
+            Aparece no topo de cada slide · <span style={{ color: "#10b981" }}>● Auto-save ativo</span>
           </p>
         </div>
       </div>
