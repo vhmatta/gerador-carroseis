@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Download,
   Loader2,
@@ -71,14 +71,53 @@ function novoSlideVazio(templateId: FeedTemplateId = "feed_pilula_headline"): Fe
   };
 }
 
+// ============================================================
+// AUTO-SAVE — v7.7.14
+// Persiste os slides do Feed/Stories no localStorage do navegador.
+// Toda mudança é salva automaticamente. Quando o usuário recarrega
+// a página, os slides voltam exatamente como estavam.
+// ============================================================
+const AUTOSAVE_KEY = "parceleaqui:feed-stories:slides:v1";
+
+function carregarSlidesSalvos(): FeedSlideData[] | null {
+  try {
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+    // Validação mínima: cada item tem id e templateId
+    if (parsed.some((s) => !s?.id || !s?.templateId)) return null;
+    return parsed as FeedSlideData[];
+  } catch {
+    return null;
+  }
+}
+
+function salvarSlides(slides: FeedSlideData[]) {
+  try {
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(slides));
+  } catch {
+    // Se localStorage estourar (5MB), ignora silenciosamente.
+    // Pode acontecer se houver muitas fotos em base64; nesses casos o
+    // usuário pode limpar manualmente em Console: localStorage.clear()
+  }
+}
+
 export default function FeedEditor() {
-  const [slides, setSlides] = useState<FeedSlideData[]>([novoSlideVazio()]);
+  const [slides, setSlides] = useState<FeedSlideData[]>(
+    () => carregarSlidesSalvos() ?? [novoSlideVazio()]
+  );
   const [slideAtivoIdx, setSlideAtivoIdx] = useState(0);
   const [status, setStatus] = useState<Status>({ tipo: "idle" });
   const [colaAberta, setColaAberta] = useState(false);
   const [textoCola, setTextoCola] = useState("");
   const [avisosCola, setAvisosCola] = useState<string[]>([]);
   const slideRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Auto-save — salva sempre que slides mudam
+  useEffect(() => {
+    salvarSlides(slides);
+  }, [slides]);
 
   const slideAtivo = slides[slideAtivoIdx];
 
@@ -238,11 +277,30 @@ export default function FeedEditor() {
                 textTransform: "uppercase",
               }}
             >
-              {slides.length} slide{slides.length !== 1 ? "s" : ""} · Tipografia Kufam
+              {slides.length} slide{slides.length !== 1 ? "s" : ""} · Tipografia Kufam · <span style={{ color: "#10b981" }}>● Auto-save ativo</span>
             </p>
           </div>
 
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "Tem certeza? Isso vai apagar TODOS os slides e começar do zero. Os textos, fotos e ajustes serão perdidos."
+                  )
+                ) {
+                  setSlides([novoSlideVazio()]);
+                  setSlideAtivoIdx(0);
+                  try {
+                    localStorage.removeItem(AUTOSAVE_KEY);
+                  } catch {}
+                }
+              }}
+              style={btnStyle("#1F2937", "#ccc", "#374151")}
+              title="Apaga todos os slides salvos e começa do zero"
+            >
+              <Trash2 size={14} /> Limpar tudo
+            </button>
             <button
               onClick={() => setColaAberta(true)}
               style={btnStyle("#1F2937", "#fff", "#374151")}

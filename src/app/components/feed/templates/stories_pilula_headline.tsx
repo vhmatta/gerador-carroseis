@@ -46,6 +46,14 @@ export default function TemplateStoriesPilulaHeadline({
   const lhSubhead = slide.lineHeightSubhead ?? 1.0;
   const lhTagline = slide.lineHeightTagline ?? 1.2;
 
+  // Margem inferior — v7.7.14
+  const mbPilula = slide.mbPilula ?? 0;
+  const mbHeadline = slide.mbHeadline ?? 0;
+  const mbSubhead = slide.mbSubhead ?? 0;
+  const topHeadline = 992 + mbPilula;
+  const topSubhead = 1177 + mbPilula + mbHeadline;
+  const topTagline = 1340 + mbPilula + mbHeadline + mbSubhead;
+
   return (
     <div
       style={{
@@ -145,11 +153,11 @@ export default function TemplateStoriesPilulaHeadline({
         <div
           style={{
             position: "absolute",
-            top: e(992),
+            top: e(topHeadline),
             left: e(140),
             right: e(140),
             color: corHeadline,
-            fontSize: e(180 * escalaGeral),
+            fontSize: e((slide.tamHeadline ?? 180) * escalaGeral),
             fontWeight: slide.pesoHeadline ?? 900,
             fontStyle: slide.italicHeadline ? "italic" : "normal",
             lineHeight: lhHeadline,
@@ -167,11 +175,11 @@ export default function TemplateStoriesPilulaHeadline({
         <div
           style={{
             position: "absolute",
-            top: e(1177),
+            top: e(topSubhead),
             left: e(140),
             right: e(140),
             color: corSubhead,
-            fontSize: e(76 * escalaGeral),
+            fontSize: e((slide.tamSubhead ?? 76) * escalaGeral),
             fontWeight: slide.pesoSubhead ?? 700,
             fontStyle: slide.italicSubhead ? "italic" : "normal",
             lineHeight: lhSubhead,
@@ -189,11 +197,11 @@ export default function TemplateStoriesPilulaHeadline({
         <div
           style={{
             position: "absolute",
-            top: e(1340),
+            top: e(topTagline),
             left: e(140),
             right: e(140),
             color: corSubhead,
-            fontSize: e(40 * escalaGeral),
+            fontSize: e((slide.tamTagline ?? 40) * escalaGeral),
             fontWeight: slide.pesoTagline ?? 700,
             fontStyle: slide.italicTagline ? "italic" : "normal",
             lineHeight: lhTagline,

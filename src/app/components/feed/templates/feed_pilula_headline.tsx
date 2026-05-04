@@ -49,6 +49,15 @@ export default function TemplateFeedPilulaHeadline({
   const lhSubhead = slide.lineHeightSubhead ?? 1.0;
   const lhTagline = slide.lineHeightTagline ?? 1.2;
 
+  // Margem inferior — v7.7.14 (empurra elementos subsequentes pra baixo cumulativamente)
+  const mbPilula = slide.mbPilula ?? 0;
+  const mbHeadline = slide.mbHeadline ?? 0;
+  const mbSubhead = slide.mbSubhead ?? 0;
+  // Posições com cumulativo
+  const topHeadline = 560 + mbPilula;
+  const topSubhead = 740 + mbPilula + mbHeadline;
+  const topTagline = 905 + mbPilula + mbHeadline + mbSubhead;
+
   return (
     <div
       style={{
@@ -154,11 +163,11 @@ export default function TemplateFeedPilulaHeadline({
         <div
           style={{
             position: "absolute",
-            top: e(560),
+            top: e(topHeadline),
             left: e(140),
             right: e(140),
             color: corHeadline,
-            fontSize: e(165 * escalaGeral),
+            fontSize: e((slide.tamHeadline ?? 165) * escalaGeral),
             fontWeight: slide.pesoHeadline ?? 800,
             fontStyle: slide.italicHeadline ? "italic" : "normal",
             lineHeight: lhHeadline,
@@ -177,11 +186,11 @@ export default function TemplateFeedPilulaHeadline({
         <div
           style={{
             position: "absolute",
-            top: e(740),
+            top: e(topSubhead),
             left: e(140),
             right: e(140),
             color: corSubhead,
-            fontSize: e(72 * escalaGeral),
+            fontSize: e((slide.tamSubhead ?? 72) * escalaGeral),
             fontWeight: slide.pesoSubhead ?? 500,
             fontStyle: slide.italicSubhead ? "italic" : "normal",
             lineHeight: lhSubhead,
@@ -200,11 +209,11 @@ export default function TemplateFeedPilulaHeadline({
         <div
           style={{
             position: "absolute",
-            top: e(905),
+            top: e(topTagline),
             left: e(140),
             right: e(140),
             color: corSubhead,
-            fontSize: e(38 * escalaGeral),
+            fontSize: e((slide.tamTagline ?? 38) * escalaGeral),
             fontWeight: slide.pesoTagline ?? 600,
             fontStyle: slide.italicTagline ? "italic" : "normal",
             lineHeight: lhTagline,
