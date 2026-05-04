@@ -812,12 +812,16 @@ function PainelEdicao({
         </div>
       </Secao>
 
-      {/* TIPOGRAFIA AVANÇADA (recolhível) */}
-      <TipografiaAvancada slide={slide} onChange={onChange} camposUsados={camposUsados} />
+      {/* TIPOGRAFIA AVANÇADA — usando padrão Secao normal (v7.7.13) */}
+      <Secao titulo="Tipografia avançada" icone={<Type size={12} />}>
+        <ConteudoTipografia slide={slide} onChange={onChange} camposUsados={camposUsados} />
+      </Secao>
 
-      {/* ESPAÇAMENTOS (recolhível, só pra templates _icone_cta com bloco coeso) — v7.7.9 */}
+      {/* ESPAÇAMENTOS — só pra templates _icone_cta */}
       {slide.templateId.endsWith("_icone_cta") && (
-        <EspacamentosBloco slide={slide} onChange={onChange} />
+        <Secao titulo="Espaçamentos" icone={<Layers size={12} />}>
+          <ConteudoEspacamentos slide={slide} onChange={onChange} />
+        </Secao>
       )}
 
       {/* ÍCONE — só pra templates que usam ícone (feed_icone_cta / stories_icone_cta) */}
@@ -1487,140 +1491,97 @@ function Toggle({
 // Sliders pros 4 gaps verticais entre elementos no template _icone_cta.
 // Step 8 (8-point grid). Recolhível por padrão.
 // ============================================================
-function EspacamentosBloco({
+// ============================================================
+// CONTEÚDO ESPAÇAMENTOS — v7.7.13 (sem wrapper recolhível)
+// Renderiza direto os 4 sliders de gap. Wrapper externo é Secao.
+// ============================================================
+function ConteudoEspacamentos({
   slide,
   onChange,
 }: {
   slide: FeedSlideData;
   onChange: (patch: Partial<FeedSlideData>) => void;
 }) {
-  const [aberto, setAberto] = useState(false);
-
-  // Defaults da v7.7.9 (8pt grid)
   const DEF_ICONE_HEAD = 24;
   const DEF_HEAD_SUB = 32;
   const DEF_SUB_CTA = 64;
   const DEF_CTA_ROD = 72;
 
   return (
-    <div
-      style={{
-        borderRadius: 8,
-        border: "2px solid #FFC528",
-        overflow: "hidden",
-        backgroundColor: "#1a1a1a",
-        boxShadow: "0 0 0 1px rgba(255, 197, 40, 0.2)",
-      }}
-    >
-      <button
-        onClick={() => setAberto(!aberto)}
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <p
         style={{
-          width: "100%",
-          padding: "14px 16px",
-          backgroundColor: aberto ? "#FFC528" : "#1a1a1a",
-          border: "none",
-          color: aberto ? "#000" : "#FFC528",
-          fontSize: 12,
-          fontWeight: 800,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          fontSize: 10,
+          color: "#666",
+          lineHeight: 1.4,
+          margin: 0,
           fontFamily: "Poppins, sans-serif",
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Layers size={14} /> Espaçamentos
-        </span>
-        {aberto ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        8-point grid (múltiplos de 8). Quando há tagline, o gap subhead → CTA é
+        distribuído automaticamente entre subhead → tagline e tagline → CTA.
+      </p>
+
+      <SliderGap
+        titulo="Ícone → Headline"
+        valor={slide.gapIconeHeadline}
+        defaultValor={DEF_ICONE_HEAD}
+        min={16}
+        max={64}
+        onChange={(v) => onChange({ gapIconeHeadline: v })}
+      />
+      <SliderGap
+        titulo="Headline → Subhead"
+        valor={slide.gapHeadlineSubhead}
+        defaultValor={DEF_HEAD_SUB}
+        min={16}
+        max={80}
+        onChange={(v) => onChange({ gapHeadlineSubhead: v })}
+      />
+      <SliderGap
+        titulo="Subhead → CTA"
+        valor={slide.gapSubheadCTA}
+        defaultValor={DEF_SUB_CTA}
+        min={24}
+        max={96}
+        onChange={(v) => onChange({ gapSubheadCTA: v })}
+      />
+      <SliderGap
+        titulo="CTA → Rodapé"
+        valor={slide.gapCTARodape}
+        defaultValor={DEF_CTA_ROD}
+        min={48}
+        max={120}
+        onChange={(v) => onChange({ gapCTARodape: v })}
+      />
+
+      <button
+        onClick={() =>
+          onChange({
+            gapIconeHeadline: undefined,
+            gapHeadlineSubhead: undefined,
+            gapSubheadCTA: undefined,
+            gapCTARodape: undefined,
+          })
+        }
+        style={{
+          fontSize: 10,
+          color: "#888",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          alignSelf: "flex-start",
+        }}
+      >
+        <RotateCcw size={10} /> Resetar espaçamentos
       </button>
-
-      {aberto && (
-        <div
-          style={{
-            padding: 12,
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            backgroundColor: "#0f0f0f",
-          }}
-        >
-          <p
-            style={{
-              fontSize: 10,
-              color: "#666",
-              lineHeight: 1.4,
-              margin: 0,
-              fontFamily: "Poppins, sans-serif",
-            }}
-          >
-            8-point grid (múltiplos de 8). Quando há tagline, o gap subhead → CTA é
-            distribuído automaticamente entre subhead → tagline e tagline → CTA.
-          </p>
-
-          <SliderGap
-            titulo="Ícone → Headline"
-            valor={slide.gapIconeHeadline}
-            defaultValor={DEF_ICONE_HEAD}
-            min={16}
-            max={64}
-            onChange={(v) => onChange({ gapIconeHeadline: v })}
-          />
-          <SliderGap
-            titulo="Headline → Subhead"
-            valor={slide.gapHeadlineSubhead}
-            defaultValor={DEF_HEAD_SUB}
-            min={16}
-            max={80}
-            onChange={(v) => onChange({ gapHeadlineSubhead: v })}
-          />
-          <SliderGap
-            titulo="Subhead → CTA"
-            valor={slide.gapSubheadCTA}
-            defaultValor={DEF_SUB_CTA}
-            min={24}
-            max={96}
-            onChange={(v) => onChange({ gapSubheadCTA: v })}
-          />
-          <SliderGap
-            titulo="CTA → Rodapé"
-            valor={slide.gapCTARodape}
-            defaultValor={DEF_CTA_ROD}
-            min={48}
-            max={120}
-            onChange={(v) => onChange({ gapCTARodape: v })}
-          />
-
-          <button
-            onClick={() =>
-              onChange({
-                gapIconeHeadline: undefined,
-                gapHeadlineSubhead: undefined,
-                gapSubheadCTA: undefined,
-                gapCTARodape: undefined,
-              })
-            }
-            style={{
-              fontSize: 10,
-              color: "#888",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              alignSelf: "flex-start",
-            }}
-          >
-            <RotateCcw size={10} /> Resetar espaçamentos
-          </button>
-        </div>
-      )}
     </div>
   );
 }
+
 
 // Slider individual de um gap (step 8 = 8-point grid)
 function SliderGap({
@@ -1662,10 +1623,11 @@ function SliderGap({
 }
 
 // ============================================================
-// TIPOGRAFIA AVANÇADA — controles por elemento (v7.7.1)
-// Recolhida por padrão pra não poluir UI.
+// CONTEÚDO TIPOGRAFIA AVANÇADA — v7.7.13 (sem wrapper recolhível)
+// Renderiza direto os cards de cada elemento. Wrapper externo é
+// uma <Secao> normal (mesmo padrão de "Cores", "Tamanho geral", etc).
 // ============================================================
-function TipografiaAvancada({
+function ConteudoTipografia({
   slide,
   onChange,
   camposUsados,
@@ -1674,8 +1636,6 @@ function TipografiaAvancada({
   onChange: (patch: Partial<FeedSlideData>) => void;
   camposUsados: TemplateInfo["camposUsados"];
 }) {
-  const [aberto, setAberto] = useState(false);
-
   const usaPilula = camposUsados.includes("pilula");
   const usaHeadline = camposUsados.includes("headline");
   const usaSubhead = camposUsados.includes("subhead");
@@ -1683,250 +1643,206 @@ function TipografiaAvancada({
   const usaCTA = camposUsados.includes("cta");
 
   return (
-    <div
-      style={{
-        borderRadius: 8,
-        border: "2px solid #FFC528",
-        overflow: "hidden",
-        backgroundColor: "#1a1a1a",
-        boxShadow: "0 0 0 1px rgba(255, 197, 40, 0.2)",
-      }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {usaPilula && (
+        <ControlesElemento
+          titulo="Pílula (kicker)"
+          peso={slide.pesoPilula}
+          tamanho={slide.tamPilula}
+          italic={slide.italicPilula}
+          lineHeight={slide.lineHeightPilula}
+          letterSpacing={slide.letterSpacingPilula}
+          align={slide.alignPilula}
+          transform={slide.transformPilula}
+          mb={slide.mbPilula}
+          onPesoChange={(v) => onChange({ pesoPilula: v })}
+          onTamanhoChange={(v) => onChange({ tamPilula: v })}
+          onItalicChange={(v) => onChange({ italicPilula: v })}
+          onLineHeightChange={(v) => onChange({ lineHeightPilula: v })}
+          onLetterSpacingChange={(v) => onChange({ letterSpacingPilula: v })}
+          onAlignChange={(v) => onChange({ alignPilula: v })}
+          onTransformChange={(v) => onChange({ transformPilula: v })}
+          onMbChange={(v) => onChange({ mbPilula: v })}
+          tamMin={14}
+          tamMax={60}
+          lhDefault={1.0}
+          lsDefault={-0.005}
+          alignDefault="left"
+        />
+      )}
+      {usaHeadline && (
+        <ControlesElemento
+          titulo="Headline"
+          peso={slide.pesoHeadline}
+          tamanho={slide.tamHeadline}
+          italic={slide.italicHeadline}
+          lineHeight={slide.lineHeightHeadline}
+          letterSpacing={slide.letterSpacingHeadline}
+          align={slide.alignHeadline}
+          transform={slide.transformHeadline}
+          mb={slide.mbHeadline}
+          onPesoChange={(v) => onChange({ pesoHeadline: v })}
+          onTamanhoChange={(v) => onChange({ tamHeadline: v })}
+          onItalicChange={(v) => onChange({ italicHeadline: v })}
+          onLineHeightChange={(v) => onChange({ lineHeightHeadline: v })}
+          onLetterSpacingChange={(v) => onChange({ letterSpacingHeadline: v })}
+          onAlignChange={(v) => onChange({ alignHeadline: v })}
+          onTransformChange={(v) => onChange({ transformHeadline: v })}
+          onMbChange={(v) => onChange({ mbHeadline: v })}
+          tamMin={40}
+          tamMax={250}
+          lhDefault={1.0}
+          lsDefault={-0.02}
+          alignDefault="left"
+        />
+      )}
+      {usaSubhead && (
+        <ControlesElemento
+          titulo="Subhead"
+          peso={slide.pesoSubhead}
+          tamanho={slide.tamSubhead}
+          italic={slide.italicSubhead}
+          lineHeight={slide.lineHeightSubhead}
+          letterSpacing={slide.letterSpacingSubhead}
+          align={slide.alignSubhead}
+          transform={slide.transformSubhead}
+          mb={slide.mbSubhead}
+          onPesoChange={(v) => onChange({ pesoSubhead: v })}
+          onTamanhoChange={(v) => onChange({ tamSubhead: v })}
+          onItalicChange={(v) => onChange({ italicSubhead: v })}
+          onLineHeightChange={(v) => onChange({ lineHeightSubhead: v })}
+          onLetterSpacingChange={(v) => onChange({ letterSpacingSubhead: v })}
+          onAlignChange={(v) => onChange({ alignSubhead: v })}
+          onTransformChange={(v) => onChange({ transformSubhead: v })}
+          onMbChange={(v) => onChange({ mbSubhead: v })}
+          tamMin={30}
+          tamMax={180}
+          lhDefault={1.0}
+          lsDefault={-0.025}
+          alignDefault="left"
+        />
+      )}
+      {usaTagline && (
+        <ControlesElemento
+          titulo="Tagline"
+          peso={slide.pesoTagline}
+          tamanho={slide.tamTagline}
+          italic={slide.italicTagline}
+          lineHeight={slide.lineHeightTagline}
+          letterSpacing={slide.letterSpacingTagline}
+          align={slide.alignTagline}
+          transform={slide.transformTagline}
+          mb={slide.mbTagline}
+          onPesoChange={(v) => onChange({ pesoTagline: v })}
+          onTamanhoChange={(v) => onChange({ tamTagline: v })}
+          onItalicChange={(v) => onChange({ italicTagline: v })}
+          onLineHeightChange={(v) => onChange({ lineHeightTagline: v })}
+          onLetterSpacingChange={(v) => onChange({ letterSpacingTagline: v })}
+          onAlignChange={(v) => onChange({ alignTagline: v })}
+          onTransformChange={(v) => onChange({ transformTagline: v })}
+          onMbChange={(v) => onChange({ mbTagline: v })}
+          tamMin={20}
+          tamMax={80}
+          lhDefault={1.2}
+          lsDefault={-0.005}
+          alignDefault="left"
+        />
+      )}
+      {usaCTA && (
+        <>
+          <ControlesElemento
+            titulo="CTA"
+            peso={slide.pesoCTA}
+            tamanho={slide.tamCTA}
+            italic={slide.italicCTA}
+            lineHeight={slide.lineHeightCTA}
+            letterSpacing={slide.letterSpacingCTA}
+            align={slide.alignCTA}
+            transform={slide.transformCTA}
+            onPesoChange={(v) => onChange({ pesoCTA: v })}
+            onTamanhoChange={(v) => onChange({ tamCTA: v })}
+            onItalicChange={(v) => onChange({ italicCTA: v })}
+            onLineHeightChange={(v) => onChange({ lineHeightCTA: v })}
+            onLetterSpacingChange={(v) => onChange({ letterSpacingCTA: v })}
+            onAlignChange={(v) => onChange({ alignCTA: v })}
+            onTransformChange={(v) => onChange({ transformCTA: v })}
+            tamMin={18}
+            tamMax={60}
+            lhDefault={1.0}
+            lsDefault={-0.005}
+            alignDefault="left"
+          />
+          <CorPicker
+            label="Cor do CTA"
+            valor={slide.corCTA}
+            fallback="#FFFFFF"
+            onChange={(v) => onChange({ corCTA: v })}
+          />
+        </>
+      )}
       <button
-        onClick={() => setAberto(!aberto)}
+        onClick={() =>
+          onChange({
+            tamPilula: undefined,
+            pesoPilula: undefined,
+            italicPilula: undefined,
+            lineHeightPilula: undefined,
+            letterSpacingPilula: undefined,
+            alignPilula: undefined,
+            transformPilula: undefined,
+            mbPilula: undefined,
+            pesoHeadline: undefined,
+            tamHeadline: undefined,
+            italicHeadline: undefined,
+            lineHeightHeadline: undefined,
+            letterSpacingHeadline: undefined,
+            alignHeadline: undefined,
+            transformHeadline: undefined,
+            mbHeadline: undefined,
+            pesoSubhead: undefined,
+            tamSubhead: undefined,
+            italicSubhead: undefined,
+            lineHeightSubhead: undefined,
+            letterSpacingSubhead: undefined,
+            alignSubhead: undefined,
+            transformSubhead: undefined,
+            mbSubhead: undefined,
+            pesoTagline: undefined,
+            tamTagline: undefined,
+            italicTagline: undefined,
+            lineHeightTagline: undefined,
+            letterSpacingTagline: undefined,
+            alignTagline: undefined,
+            transformTagline: undefined,
+            mbTagline: undefined,
+            pesoCTA: undefined,
+            tamCTA: undefined,
+            italicCTA: undefined,
+            lineHeightCTA: undefined,
+            letterSpacingCTA: undefined,
+            alignCTA: undefined,
+            transformCTA: undefined,
+            corCTA: undefined,
+          })
+        }
         style={{
-          width: "100%",
-          padding: "14px 16px",
-          backgroundColor: aberto ? "#FFC528" : "#1a1a1a",
+          fontSize: 10,
+          color: "#888",
+          background: "none",
           border: "none",
-          color: aberto ? "#000" : "#FFC528",
-          fontSize: 12,
-          fontWeight: 800,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          fontFamily: "Poppins, sans-serif",
+          gap: 4,
+          alignSelf: "flex-start",
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Type size={14} /> Tipografia avançada
-        </span>
-        {aberto ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        <RotateCcw size={10} /> Resetar tipografia
       </button>
-
-      {aberto && (
-        <div
-          style={{
-            padding: 12,
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-            backgroundColor: "#0f0f0f",
-          }}
-        >
-          {usaPilula && (
-            <ControlesElemento
-              titulo="Pílula (kicker)"
-              peso={slide.pesoPilula}
-              tamanho={slide.tamPilula}
-              italic={slide.italicPilula}
-              lineHeight={slide.lineHeightPilula}
-              letterSpacing={slide.letterSpacingPilula}
-              align={slide.alignPilula}
-              transform={slide.transformPilula}
-              mb={slide.mbPilula}
-              onPesoChange={(v) => onChange({ pesoPilula: v })}
-              onTamanhoChange={(v) => onChange({ tamPilula: v })}
-              onItalicChange={(v) => onChange({ italicPilula: v })}
-              onLineHeightChange={(v) => onChange({ lineHeightPilula: v })}
-              onLetterSpacingChange={(v) => onChange({ letterSpacingPilula: v })}
-              onAlignChange={(v) => onChange({ alignPilula: v })}
-              onTransformChange={(v) => onChange({ transformPilula: v })}
-              onMbChange={(v) => onChange({ mbPilula: v })}
-              tamMin={14}
-              tamMax={60}
-              lhDefault={1.0}
-              lsDefault={-0.005}
-              alignDefault="left"
-            />
-          )}
-          {usaHeadline && (
-            <ControlesElemento
-              titulo="Headline"
-              peso={slide.pesoHeadline}
-              tamanho={slide.tamHeadline}
-              italic={slide.italicHeadline}
-              lineHeight={slide.lineHeightHeadline}
-              letterSpacing={slide.letterSpacingHeadline}
-              align={slide.alignHeadline}
-              transform={slide.transformHeadline}
-              mb={slide.mbHeadline}
-              onPesoChange={(v) => onChange({ pesoHeadline: v })}
-              onTamanhoChange={(v) => onChange({ tamHeadline: v })}
-              onItalicChange={(v) => onChange({ italicHeadline: v })}
-              onLineHeightChange={(v) => onChange({ lineHeightHeadline: v })}
-              onLetterSpacingChange={(v) => onChange({ letterSpacingHeadline: v })}
-              onAlignChange={(v) => onChange({ alignHeadline: v })}
-              onTransformChange={(v) => onChange({ transformHeadline: v })}
-              onMbChange={(v) => onChange({ mbHeadline: v })}
-              tamMin={40}
-              tamMax={250}
-              lhDefault={1.0}
-              lsDefault={-0.02}
-              alignDefault="left"
-            />
-          )}
-          {usaSubhead && (
-            <ControlesElemento
-              titulo="Subhead"
-              peso={slide.pesoSubhead}
-              tamanho={slide.tamSubhead}
-              italic={slide.italicSubhead}
-              lineHeight={slide.lineHeightSubhead}
-              letterSpacing={slide.letterSpacingSubhead}
-              align={slide.alignSubhead}
-              transform={slide.transformSubhead}
-              mb={slide.mbSubhead}
-              onPesoChange={(v) => onChange({ pesoSubhead: v })}
-              onTamanhoChange={(v) => onChange({ tamSubhead: v })}
-              onItalicChange={(v) => onChange({ italicSubhead: v })}
-              onLineHeightChange={(v) => onChange({ lineHeightSubhead: v })}
-              onLetterSpacingChange={(v) => onChange({ letterSpacingSubhead: v })}
-              onAlignChange={(v) => onChange({ alignSubhead: v })}
-              onTransformChange={(v) => onChange({ transformSubhead: v })}
-              onMbChange={(v) => onChange({ mbSubhead: v })}
-              tamMin={30}
-              tamMax={180}
-              lhDefault={1.0}
-              lsDefault={-0.025}
-              alignDefault="left"
-            />
-          )}
-          {usaTagline && (
-            <ControlesElemento
-              titulo="Tagline"
-              peso={slide.pesoTagline}
-              tamanho={slide.tamTagline}
-              italic={slide.italicTagline}
-              lineHeight={slide.lineHeightTagline}
-              letterSpacing={slide.letterSpacingTagline}
-              align={slide.alignTagline}
-              transform={slide.transformTagline}
-              mb={slide.mbTagline}
-              onPesoChange={(v) => onChange({ pesoTagline: v })}
-              onTamanhoChange={(v) => onChange({ tamTagline: v })}
-              onItalicChange={(v) => onChange({ italicTagline: v })}
-              onLineHeightChange={(v) => onChange({ lineHeightTagline: v })}
-              onLetterSpacingChange={(v) => onChange({ letterSpacingTagline: v })}
-              onAlignChange={(v) => onChange({ alignTagline: v })}
-              onTransformChange={(v) => onChange({ transformTagline: v })}
-              onMbChange={(v) => onChange({ mbTagline: v })}
-              tamMin={20}
-              tamMax={80}
-              lhDefault={1.2}
-              lsDefault={-0.005}
-              alignDefault="left"
-            />
-          )}
-          {usaCTA && (
-            <>
-              <ControlesElemento
-                titulo="CTA"
-                peso={slide.pesoCTA}
-                tamanho={slide.tamCTA}
-                italic={slide.italicCTA}
-                lineHeight={slide.lineHeightCTA}
-                letterSpacing={slide.letterSpacingCTA}
-                align={slide.alignCTA}
-                transform={slide.transformCTA}
-                onPesoChange={(v) => onChange({ pesoCTA: v })}
-                onTamanhoChange={(v) => onChange({ tamCTA: v })}
-                onItalicChange={(v) => onChange({ italicCTA: v })}
-                onLineHeightChange={(v) => onChange({ lineHeightCTA: v })}
-                onLetterSpacingChange={(v) => onChange({ letterSpacingCTA: v })}
-                onAlignChange={(v) => onChange({ alignCTA: v })}
-                onTransformChange={(v) => onChange({ transformCTA: v })}
-                tamMin={18}
-                tamMax={60}
-                lhDefault={1.0}
-                lsDefault={-0.005}
-                alignDefault="left"
-              />
-              <CorPicker
-                label="Cor do CTA"
-                valor={slide.corCTA}
-                fallback="#FFFFFF"
-                onChange={(v) => onChange({ corCTA: v })}
-              />
-            </>
-          )}
-          <button
-            onClick={() =>
-              onChange({
-                tamPilula: undefined,
-                pesoPilula: undefined,
-                italicPilula: undefined,
-                lineHeightPilula: undefined,
-                letterSpacingPilula: undefined,
-                alignPilula: undefined,
-                transformPilula: undefined,
-                mbPilula: undefined,
-                pesoHeadline: undefined,
-                tamHeadline: undefined,
-                italicHeadline: undefined,
-                lineHeightHeadline: undefined,
-                letterSpacingHeadline: undefined,
-                alignHeadline: undefined,
-                transformHeadline: undefined,
-                mbHeadline: undefined,
-                pesoSubhead: undefined,
-                tamSubhead: undefined,
-                italicSubhead: undefined,
-                lineHeightSubhead: undefined,
-                letterSpacingSubhead: undefined,
-                alignSubhead: undefined,
-                transformSubhead: undefined,
-                mbSubhead: undefined,
-                pesoTagline: undefined,
-                tamTagline: undefined,
-                italicTagline: undefined,
-                lineHeightTagline: undefined,
-                letterSpacingTagline: undefined,
-                alignTagline: undefined,
-                transformTagline: undefined,
-                mbTagline: undefined,
-                pesoCTA: undefined,
-                tamCTA: undefined,
-                italicCTA: undefined,
-                lineHeightCTA: undefined,
-                letterSpacingCTA: undefined,
-                alignCTA: undefined,
-                transformCTA: undefined,
-                corCTA: undefined,
-              })
-            }
-            style={{
-              fontSize: 10,
-              color: "#888",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              alignSelf: "flex-start",
-            }}
-          >
-            <RotateCcw size={10} /> Resetar tipografia
-          </button>
-        </div>
-      )}
     </div>
   );
 }
+
 
 // Controles de peso/tamanho/entrelinhas/italic pra um elemento (Headline, Subhead, etc)
 function ControlesElemento({
