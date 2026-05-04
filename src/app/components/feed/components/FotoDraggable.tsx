@@ -66,11 +66,10 @@ export default function FotoDraggable({
       // dx/dy em pixels da viewport → convertido pra % do container
       const dxPct = ((e.clientX - dragRef.current.iniciouEm.x) / rect.width) * 100;
       const dyPct = ((e.clientY - dragRef.current.iniciouEm.y) / rect.height) * 100;
-      // Quando arrasta pra direita, queremos que a foto pareça mover pra direita
-      // → objectPosition % vai pra ESQUERDA (negativo)
-      // Inverte sinal
-      const novoX = clamp(dragRef.current.offsetInicial.x - dxPct, -50, 50);
-      const novoY = clamp(dragRef.current.offsetInicial.y - dyPct, -50, 50);
+      // v7.7.22: usando transform translate() — sinal natural (foto segue o mouse).
+      // Multiplicar por zoom porque translate é aplicado APÓS scale.
+      const novoX = clamp(dragRef.current.offsetInicial.x + dxPct * zoom, -50, 50);
+      const novoY = clamp(dragRef.current.offsetInicial.y + dyPct * zoom, -50, 50);
       onPositionChange(novoX, novoY);
     };
 
@@ -84,12 +83,28 @@ export default function FotoDraggable({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [arrastando, onPositionChange]);
+  }, [arrastando, onPositionChange, zoom]);
 
-  // objectPosition: 0,0 = "50% 50%" (center). offsetX +10 → "60% 50%"
-  const posX = 50 + offsetX;
-  const posY = 50 + offsetY;
-  const objectPosition = `${posX}% ${posY}%`;
+  // Estratégia v7.7.22: usar transform translate() pra deslocar.
+  // objectPosition tem limite porque só desloca DENTRO do que foi cropado
+  // pelo objectFit. Mas com transform scale + translate, a imagem inteira
+  // pode ser deslocada livremente.
+  //
+  // offsetX/Y vão de -50 a +50 (% do container).
+  // Translate em % é relativo ao TAMANHO da imagem (não do container).
+  // Como a imagem ocupa 100% do container, % traduz 1:1.
+
+  // Quando zoom > 1, há "sobra" de imagem além do container que pode ser deslocada
+  // O quanto pode deslocar: (zoom - 1) / 2 * 100% do container
+  // Mas pra simplificar e bater com a UX (-50 a +50), aplicamos direto
+
+  const transformParts: string[] = [];
+  if (zoom !== 1) transformParts.push(`scale(${zoom})`);
+  if (offsetX !== 0 || offsetY !== 0) {
+    // dividir por zoom porque translate é aplicado APÓS scale
+    transformParts.push(`translate(${offsetX / zoom}%, ${offsetY / zoom}%)`);
+  }
+  const transformValue = transformParts.length > 0 ? transformParts.join(" ") : undefined;
 
   return (
     <div
@@ -115,8 +130,8 @@ export default function FotoDraggable({
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          objectPosition,
-          transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+          objectPosition: "center",
+          transform: transformValue,
           transformOrigin: "center center",
           pointerEvents: "none",
         }}
