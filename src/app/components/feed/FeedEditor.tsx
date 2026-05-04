@@ -1506,23 +1506,24 @@ function EspacamentosBloco({
     <div
       style={{
         borderRadius: 8,
-        border: "1px solid #3a3a3a",
+        border: "2px solid #FFC528",
         overflow: "hidden",
         backgroundColor: "#1a1a1a",
+        boxShadow: "0 0 0 1px rgba(255, 197, 40, 0.2)",
       }}
     >
       <button
         onClick={() => setAberto(!aberto)}
         style={{
           width: "100%",
-          padding: "12px 14px",
-          backgroundColor: aberto ? "#222" : "#1a1a1a",
+          padding: "14px 16px",
+          backgroundColor: aberto ? "#FFC528" : "#1a1a1a",
           border: "none",
-          color: "#FFC528",
-          fontSize: 11,
-          fontWeight: 700,
+          color: aberto ? "#000" : "#FFC528",
+          fontSize: 12,
+          fontWeight: 800,
           textTransform: "uppercase",
-          letterSpacing: "0.08em",
+          letterSpacing: "0.1em",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -1530,10 +1531,10 @@ function EspacamentosBloco({
           fontFamily: "Poppins, sans-serif",
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <Layers size={12} /> Espaçamentos
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Layers size={14} /> Espaçamentos
         </span>
-        {aberto ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        {aberto ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
 
       {aberto && (
@@ -1685,23 +1686,24 @@ function TipografiaAvancada({
     <div
       style={{
         borderRadius: 8,
-        border: "1px solid #3a3a3a",
+        border: "2px solid #FFC528",
         overflow: "hidden",
         backgroundColor: "#1a1a1a",
+        boxShadow: "0 0 0 1px rgba(255, 197, 40, 0.2)",
       }}
     >
       <button
         onClick={() => setAberto(!aberto)}
         style={{
           width: "100%",
-          padding: "12px 14px",
-          backgroundColor: aberto ? "#222" : "#1a1a1a",
+          padding: "14px 16px",
+          backgroundColor: aberto ? "#FFC528" : "#1a1a1a",
           border: "none",
-          color: "#FFC528",
-          fontSize: 11,
-          fontWeight: 700,
+          color: aberto ? "#000" : "#FFC528",
+          fontSize: 12,
+          fontWeight: 800,
           textTransform: "uppercase",
-          letterSpacing: "0.08em",
+          letterSpacing: "0.1em",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -1709,10 +1711,10 @@ function TipografiaAvancada({
           fontFamily: "Poppins, sans-serif",
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <Type size={12} /> Tipografia avançada
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Type size={14} /> Tipografia avançada
         </span>
-        {aberto ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        {aberto ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
 
       {aberto && (
