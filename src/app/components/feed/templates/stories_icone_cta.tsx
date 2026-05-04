@@ -7,6 +7,7 @@ import {
 import RodapePNG from "../components/RodapePNG";
 import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
+import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 import { RefreshCcw } from "lucide-react";
 
 /**

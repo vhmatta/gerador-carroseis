@@ -1,6 +1,7 @@
 import type { FeedSlideData } from "./tipos";
 import { PARCELE_AQUI_CORES, FONTE_KUFAM } from "./tipos";
 import LogoParceleAqui from "../components/LogoParceleAqui";
+import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 import { RefreshCcw } from "lucide-react";
 
 /**
