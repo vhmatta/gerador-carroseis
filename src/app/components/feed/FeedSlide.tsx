@@ -33,11 +33,11 @@ export default function FeedSlide({
     case "feed_pilula_headline":
       return <TemplateFeedPilulaHeadline slide={slide} escala={escala} onSlideChange={onSlideChange} />;
     case "stories_pilula_headline":
-      return <TemplateStoriesPilulaHeadline slide={slide} escala={escala} />;
+      return <TemplateStoriesPilulaHeadline slide={slide} escala={escala} onSlideChange={onSlideChange} />;
     case "feed_icone_cta":
-      return <TemplateFeedIconeCta slide={slide} escala={escala} />;
+      return <TemplateFeedIconeCta slide={slide} escala={escala} onSlideChange={onSlideChange} />;
     case "stories_icone_cta":
-      return <TemplateStoriesIconeCta slide={slide} escala={escala} />;
+      return <TemplateStoriesIconeCta slide={slide} escala={escala} onSlideChange={onSlideChange} />;
     default:
       return <TemplatePlaceholder slide={slide} escala={escala} />;
   }

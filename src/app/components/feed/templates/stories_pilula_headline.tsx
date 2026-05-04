@@ -9,6 +9,7 @@ import RodapePNG from "../components/RodapePNG";
 import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
 import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
+import FotoDraggable from "../components/FotoDraggable";
 
 /**
  * Template "Pílula + Headline grande" — Stories 1080×1920 (v7.7.7)
@@ -18,9 +19,11 @@ import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 export default function TemplateStoriesPilulaHeadline({
   slide,
   escala = 1,
+  onSlideChange,
 }: {
   slide: FeedSlideData;
   escala?: number;
+  onSlideChange?: (patch: Partial<FeedSlideData>) => void;
 }) {
   const e = (n: number) => `${n * escala}px`;
 
@@ -68,19 +71,18 @@ export default function TemplateStoriesPilulaHeadline({
     >
       {/* FOTO 100% (atrás do rodapé) */}
       {slide.fotoUrl ? (
-        <img
+        <FotoDraggable
           src={slide.fotoUrl}
-          alt=""
-          crossOrigin="anonymous"
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: e(1080),
-            height: e(1920),
-            objectFit: "cover",
-            objectPosition: slide.fotoPosicao || "center",
-          }}
+          width={1080 * escala}
+          height={1920 * escala}
+          zoom={slide.fotoZoom ?? 1}
+          offsetX={slide.fotoOffsetX ?? 0}
+          offsetY={slide.fotoOffsetY ?? 0}
+          onPositionChange={
+            onSlideChange
+              ? (x, y) => onSlideChange({ fotoOffsetX: x, fotoOffsetY: y })
+              : undefined
+          }
         />
       ) : (
         <div

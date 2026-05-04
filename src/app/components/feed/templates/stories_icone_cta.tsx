@@ -8,6 +8,7 @@ import RodapePNG from "../components/RodapePNG";
 import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
 import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
+import FotoDraggable from "../components/FotoDraggable";
 import IconeLucide from "../components/IconeLucide";
 
 /**
@@ -27,9 +28,11 @@ import IconeLucide from "../components/IconeLucide";
 export default function TemplateStoriesIconeCta({
   slide,
   escala = 1,
+  onSlideChange,
 }: {
   slide: FeedSlideData;
   escala?: number;
+  onSlideChange?: (patch: Partial<FeedSlideData>) => void;
 }) {
   const e = (n: number) => `${n * escala}px`;
 
@@ -127,17 +130,19 @@ export default function TemplateStoriesIconeCta({
         }}
       >
         {slide.fotoUrl ? (
-          <img
-            src={slide.fotoUrl}
-            alt=""
-            crossOrigin="anonymous"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: slide.fotoPosicao || "center",
-            }}
-          />
+          <FotoDraggable
+          src={slide.fotoUrl}
+          width={1080 * escala}
+          height={1920 * escala}
+          zoom={slide.fotoZoom ?? 1}
+          offsetX={slide.fotoOffsetX ?? 0}
+          offsetY={slide.fotoOffsetY ?? 0}
+          onPositionChange={
+            onSlideChange
+              ? (x, y) => onSlideChange({ fotoOffsetX: x, fotoOffsetY: y })
+              : undefined
+          }
+        />
         ) : (
           <div
             style={{

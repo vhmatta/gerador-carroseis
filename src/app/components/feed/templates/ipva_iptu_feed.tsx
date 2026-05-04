@@ -3,6 +3,7 @@ import { PARCELE_AQUI_CORES, FONTE_KUFAM } from "./tipos";
 import LogoParceleAqui from "../components/LogoParceleAqui";
 import TexturaOverlay from "../components/TexturaOverlay";
 import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
+import FotoDraggable from "../components/FotoDraggable";
 
 /**
  * Template "IPVA / IPTU — Organize seus impostos" — Feed 1080x1350
@@ -20,9 +21,11 @@ import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
 export default function TemplateIpvaIptuFeed({
   slide,
   escala = 1,
+  onSlideChange,
 }: {
   slide: FeedSlideData;
   escala?: number;
+  onSlideChange?: (patch: Partial<FeedSlideData>) => void;
 }) {
   const e = (n: number) => `${n * escala}px`;
 
@@ -48,18 +51,18 @@ export default function TemplateIpvaIptuFeed({
     >
       {/* ============ FOTO DE FUNDO (100% da peça) ============ */}
       {slide.fotoUrl ? (
-        <img
+        <FotoDraggable
           src={slide.fotoUrl}
-          alt=""
-          crossOrigin="anonymous"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: slide.fotoPosicao || "center",
-          }}
+          width={1080 * escala}
+          height={1350 * escala}
+          zoom={slide.fotoZoom ?? 1}
+          offsetX={slide.fotoOffsetX ?? 0}
+          offsetY={slide.fotoOffsetY ?? 0}
+          onPositionChange={
+            onSlideChange
+              ? (x, y) => onSlideChange({ fotoOffsetX: x, fotoOffsetY: y })
+              : undefined
+          }
         />
       ) : (
         <div

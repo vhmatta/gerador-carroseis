@@ -1027,8 +1027,8 @@ function PainelEdicao({
                 <option value="right">Direita</option>
               </select>
 
-              {/* Zoom da foto — v7.7.20 (só feed_pilula_headline por enquanto) */}
-              {slide.templateId === "feed_pilula_headline" && (
+              {/* Zoom da foto — v7.7.21: aplicado em todos templates que usam foto */}
+              {camposUsados.includes("foto") && (
                 <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #2a2a2a" }}>
                   <label style={{ fontSize: 11, color: "#bbb", display: "block", marginBottom: 4 }}>
                     Zoom da foto: {((slide.fotoZoom ?? 1) * 100).toFixed(0)}%
