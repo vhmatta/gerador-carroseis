@@ -21,13 +21,24 @@ async function carregarListaIcones(): Promise<string[]> {
   const lucide = await import("lucide-react");
   listaIconesCache = Object.keys(lucide).filter((k) => {
     const v = (lucide as Record<string, unknown>)[k];
-    return (
-      typeof v === "function" &&
-      /^[A-Z]/.test(k) &&
-      !k.startsWith("Lucide") &&
-      !k.endsWith("Icon") &&
-      !["Icon", "createLucideIcon", "Iconode"].includes(k)
-    );
+    if (!v) return false;
+    // Ícones do lucide podem ser function (versões antigas) OU
+    // object com $$typeof = forwardRef (versões novas).
+    const ehFuncao = typeof v === "function";
+    const ehForwardRef =
+      typeof v === "object" &&
+      v !== null &&
+      "$$typeof" in v &&
+      "render" in v;
+    if (!ehFuncao && !ehForwardRef) return false;
+    // Apenas nomes PascalCase
+    if (!/^[A-Z]/.test(k)) return false;
+    // Excluir alias com sufixo "Icon" (existem como duplicata)
+    if (k.endsWith("Icon")) return false;
+    // Excluir helpers
+    if (k.startsWith("Lucide")) return false;
+    if (["Icon", "createLucideIcon"].includes(k)) return false;
+    return true;
   });
   return listaIconesCache;
 }
@@ -146,10 +157,13 @@ export default function IconePicker({
             <input
               type="text"
               autoFocus
-              placeholder="Buscar ícone (ex: dollar, arrow, heart)..."
+              placeholder={
+                todosIcones.length === 0
+                  ? "Carregando ícones…"
+                  : "Buscar ícone (ex: dollar, arrow, heart)..."
+              }
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              disabled={todosIcones.length === 0}
               style={{
                 width: "100%",
                 padding: "8px 12px 8px 32px",

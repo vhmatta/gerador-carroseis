@@ -588,7 +588,7 @@ export default function FeedEditor() {
             >
               Preview · Slide {slideAtivoIdx + 1} de {slides.length}
             </div>
-            {slideAtivo && <PreviewSlide slide={slideAtivo} />}
+            {slideAtivo && <PreviewSlide slide={slideAtivo} onSlideChange={atualizarSlide} />}
 
             {slideAtivo && !templateImplementado(slideAtivo.templateId) && (
               <div
@@ -670,7 +670,13 @@ export default function FeedEditor() {
 // ============================================================
 // PREVIEW (renderiza slide ativo em escala 0.5)
 // ============================================================
-function PreviewSlide({ slide }: { slide: FeedSlideData }) {
+function PreviewSlide({
+  slide,
+  onSlideChange,
+}: {
+  slide: FeedSlideData;
+  onSlideChange?: (patch: Partial<FeedSlideData>) => void;
+}) {
   const tplInfo = TEMPLATES_DISPONIVEIS.find((t) => t.id === slide.templateId);
   const ehStories = tplInfo?.formato === "stories";
   const escala = ehStories ? 0.36 : 0.5;
@@ -688,7 +694,7 @@ function PreviewSlide({ slide }: { slide: FeedSlideData }) {
           boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
         }}
       >
-        <FeedSlide slide={slide} escala={escala} />
+        <FeedSlide slide={slide} escala={escala} onSlideChange={onSlideChange} />
       </div>
     </div>
   );
@@ -1020,10 +1026,73 @@ function PainelEdicao({
                 <option value="left">Esquerda</option>
                 <option value="right">Direita</option>
               </select>
+
+              {/* Zoom da foto — v7.7.20 (só feed_pilula_headline por enquanto) */}
+              {slide.templateId === "feed_pilula_headline" && (
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #2a2a2a" }}>
+                  <label style={{ fontSize: 11, color: "#bbb", display: "block", marginBottom: 4 }}>
+                    Zoom da foto: {((slide.fotoZoom ?? 1) * 100).toFixed(0)}%
+                  </label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    value={slide.fotoZoom ?? 1}
+                    onChange={(e) => {
+                      const v = parseFloat(e.target.value);
+                      onChange({ fotoZoom: v === 1 ? undefined : v });
+                    }}
+                    style={{ width: "100%", accentColor: "#FFC528" }}
+                  />
+                  <p
+                    style={{
+                      fontSize: 10,
+                      color: "#666",
+                      margin: "4px 0 0 0",
+                      lineHeight: 1.4,
+                      fontFamily: "Poppins, sans-serif",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {(slide.fotoZoom ?? 1) > 1
+                      ? "💡 Arraste a foto no preview pra reposicionar"
+                      : "Aumente o zoom pra poder arrastar a foto"}
+                  </p>
+                  {((slide.fotoZoom ?? 1) !== 1 ||
+                    (slide.fotoOffsetX ?? 0) !== 0 ||
+                    (slide.fotoOffsetY ?? 0) !== 0) && (
+                    <button
+                      onClick={() =>
+                        onChange({
+                          fotoZoom: undefined,
+                          fotoOffsetX: undefined,
+                          fotoOffsetY: undefined,
+                        })
+                      }
+                      style={{
+                        marginTop: 8,
+                        fontSize: 10,
+                        color: "#888",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 4,
+                        fontFamily: "Poppins, sans-serif",
+                      }}
+                    >
+                      <RotateCcw size={10} /> Resetar enquadramento
+                    </button>
+                  )}
+                </div>
+              )}
+
               <button
                 onClick={() => onChange({ fotoUrl: "" })}
                 style={{
-                  marginTop: 8,
+                  marginTop: 12,
                   fontSize: 11,
                   color: "#ef4444",
                   background: "none",

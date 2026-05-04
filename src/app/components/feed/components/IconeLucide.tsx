@@ -28,7 +28,14 @@ function obterComponenteIcone(nome: string): React.ComponentType<IconeLucideProp
   const Componente = lazy(async () => {
     const lucide = await import("lucide-react");
     const C = (lucide as Record<string, unknown>)[nome];
-    if (typeof C === "function") {
+    // Ícone pode ser function (lucide antigo) ou object forwardRef (lucide novo)
+    const valido =
+      typeof C === "function" ||
+      (typeof C === "object" &&
+        C !== null &&
+        "$$typeof" in C &&
+        "render" in C);
+    if (valido) {
       return { default: C as React.ComponentType<IconeLucideProps> };
     }
     // Fallback se nome inválido

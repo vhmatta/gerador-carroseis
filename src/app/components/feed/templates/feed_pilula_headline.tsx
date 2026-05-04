@@ -9,6 +9,7 @@ import RodapePNG from "../components/RodapePNG";
 import TexturaOverlay from "../components/TexturaOverlay";
 import GradienteLeitura from "../components/GradienteLeitura";
 import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
+import FotoDraggable from "../components/FotoDraggable";
 
 /**
  * Template "Pílula + Headline grande" — Feed 1080×1350 (v7.7.7)
@@ -17,13 +18,20 @@ import BlocoTextoWrapper from "../components/BlocoTextoWrapper";
  *  - Foto cobre 100% da peça (vai atrás do rodapé via alpha) — elimina faixa
  *    preta lateral que aparecia com rodape_01 amarelo.
  *  - Textos com posições absolutas (layout fixo do Figma) preservados.
+ *
+ * v7.7.20:
+ *  - Foto agora usa FotoDraggable: drag direto + zoom 1x-3x quando
+ *    onSlideChange é fornecido (modo editor). No export sem onSlideChange,
+ *    drag é desativado mas posição salva é renderizada normalmente.
  */
 export default function TemplateFeedPilulaHeadline({
   slide,
   escala = 1,
+  onSlideChange,
 }: {
   slide: FeedSlideData;
   escala?: number;
+  onSlideChange?: (patch: Partial<FeedSlideData>) => void;
 }) {
   const e = (n: number) => `${n * escala}px`;
 
@@ -70,21 +78,20 @@ export default function TemplateFeedPilulaHeadline({
         overflow: "hidden",
       }}
     >
-      {/* FOTO 100% (vai atrás do rodapé) */}
+      {/* FOTO 100% (vai atrás do rodapé) — v7.7.20: drag + zoom */}
       {slide.fotoUrl ? (
-        <img
+        <FotoDraggable
           src={slide.fotoUrl}
-          alt=""
-          crossOrigin="anonymous"
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: e(1080),
-            height: e(1350),
-            objectFit: "cover",
-            objectPosition: slide.fotoPosicao || "center",
-          }}
+          width={1080 * escala}
+          height={1350 * escala}
+          zoom={slide.fotoZoom ?? 1}
+          offsetX={slide.fotoOffsetX ?? 0}
+          offsetY={slide.fotoOffsetY ?? 0}
+          onPositionChange={
+            onSlideChange
+              ? (x, y) => onSlideChange({ fotoOffsetX: x, fotoOffsetY: y })
+              : undefined
+          }
         />
       ) : (
         <div

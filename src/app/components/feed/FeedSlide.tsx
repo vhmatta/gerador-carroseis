@@ -23,13 +23,15 @@ import TemplateStoriesIconeCta from "./templates/stories_icone_cta";
 export default function FeedSlide({
   slide,
   escala = 1,
+  onSlideChange,
 }: {
   slide: FeedSlideData;
   escala?: number;
+  onSlideChange?: (patch: Partial<FeedSlideData>) => void;
 }) {
   switch (slide.templateId) {
     case "feed_pilula_headline":
-      return <TemplateFeedPilulaHeadline slide={slide} escala={escala} />;
+      return <TemplateFeedPilulaHeadline slide={slide} escala={escala} onSlideChange={onSlideChange} />;
     case "stories_pilula_headline":
       return <TemplateStoriesPilulaHeadline slide={slide} escala={escala} />;
     case "feed_icone_cta":
