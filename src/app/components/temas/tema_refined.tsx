@@ -52,6 +52,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas, onSlid
           inset: 0,
           background:
             "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.95) 80%)",
+          pointerEvents: "none",
         }}
       />
       <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />
@@ -387,6 +388,7 @@ function LayoutFotoFullCTA({ slide, tema, marca, numero, coresResolvidas, onSlid
           inset: 0,
           background:
             "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.95) 88%)",
+          pointerEvents: "none",
         }}
       />
       <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} estilo="refined" mostrar={slide.mostrarTopbar !== false} />

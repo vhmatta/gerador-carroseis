@@ -176,6 +176,7 @@ function LayoutFotoRetrato({ slide, tema, marca, numero, coresResolvidas, onSlid
           inset: 0,
           background:
             "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.92) 90%)",
+          pointerEvents: "none",
         }}
       />
       <TopbarKeynote corTexto={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />

@@ -509,6 +509,9 @@ export function FotoOuPlaceholder({
           overflow: "hidden",
           cursor: podeArrastar ? (arrastando ? "grabbing" : "grab") : "default",
           userSelect: "none",
+          // v7.7.24: quando draggável, fica por cima dos overlays do template
+          // pra eventos de mouse não serem bloqueados por gradientes/topbars
+          zIndex: podeArrastar ? 100 : undefined,
           ...style,
         }}
         onMouseDown={handleMouseDown}

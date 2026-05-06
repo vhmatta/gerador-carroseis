@@ -49,6 +49,7 @@ function LayoutFotoCheia({ slide, tema, marca, numero, coresResolvidas, onSlideC
           inset: 0,
           background:
             "linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.96) 100%)",
+          pointerEvents: "none",
         }}
       />
       <Topbar cor={coresResolvidas.topbar} marca={marca} numero={numero} corNumero={coresResolvidas.numero} mostrar={slide.mostrarTopbar !== false} />
