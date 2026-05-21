@@ -8,7 +8,7 @@ import type React from "react";
  * IDs dos temas disponíveis. Cada tema tem seus próprios layouts.
  * Novos temas são adicionados aqui + arquivo correspondente em /temas.
  */
-export type TemaId = "brands_decoded_classic" | "editorial_refined" | "tweet_style" | "keynote_minimal";
+export type TemaId = "brands_decoded_classic" | "editorial_refined" | "tweet_style" | "keynote_minimal" | "editorial_pontencial";
 
 /** ID genérico de layout — cada tema define o seu conjunto */
 export type LayoutId = string;
